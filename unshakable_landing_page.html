@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNSHAKABLE by Dr. Hal H. Sacks - Build Foundations That Cannot Be Moved</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Discover how to build an unshakable life when everything around you is falling apart. A prophetic guide for uncertain times by Dr. Hal H. Sacks.">
+
+    <!-- Analytics -->
+    <!-- Google Analytics - Add your GA4 ID -->
+    <!-- Facebook Pixel - Add your pixel ID -->
+    <!-- TikTok Pixel - Add your pixel ID -->
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --fire-red: #e63946;
+            --fire-orange: #ff6b35;
+            --gold: #ffd700;
+            --text-dark: #1a202c;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+            --purple: #5b2c6f;
+            --success: #38a169;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            z-index: 9999;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--fire-red));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Floating Cart Button */
+        .floating-cart {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--fire-red);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(230, 57, 70, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 50px rgba(230, 57, 70, 0.6);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--gold);
+            color: var(--primary);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+            color: var(--white);
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announcement-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: #1a202c;
+            color: var(--white);
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background video */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Static gradient overlay for colorization */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(91, 44, 111, 0.65) 0%, rgba(26, 54, 93, 0.55) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-text {
+            max-width: 600px;
+        }
+
+        .book-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--primary);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: clamp(42px, 6vw, 64px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(20px, 3vw, 28px);
+            font-weight: 600;
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .hero-description {
+            font-size: clamp(16px, 2vw, 20px);
+            margin-bottom: 35px;
+            opacity: 0.9;
+            line-height: 1.7;
+        }
+
+        .hero-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .book-image-large {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .book-image-large:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        /* CTA Buttons */
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 20px 45px;
+            font-size: 18px;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: #ffed4e;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 3px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .btn-upgrade {
+            background: var(--fire-red);
+            color: var(--white);
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-upgrade:hover {
+            background: #d62839;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(230, 57, 70, 0.6);
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        .section-label {
+            color: var(--fire-red);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .section-description {
+            font-size: 18px;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* What You'll Learn */
+        .learn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .learn-card {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .learn-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            border-left-color: var(--fire-red);
+        }
+
+        .learn-icon {
+            font-size: 40px;
+            color: var(--fire-red);
+            margin-bottom: 20px;
+        }
+
+        .learn-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .learn-description {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            background: var(--bg-light);
+        }
+
+        .pricing-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 3px solid var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .pricing-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .pricing-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+
+        .price-display {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .price-old {
+            font-size: 24px;
+            color: var(--text-light);
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .price-new {
+            font-size: 64px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            margin: 10px 0;
+        }
+
+        .language-selector {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .language-selector label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .language-selector select {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        /* Upgrade Box */
+        .upgrade-box {
+            background: linear-gradient(135deg, var(--fire-red), var(--fire-orange));
+            color: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(230, 57, 70, 0.3);
+        }
+
+        .upgrade-box h3 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .upgrade-box .savings {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--gold);
+            margin: 20px 0;
+        }
+
+        /* Author Section */
+        .author-section {
+            background: var(--bg-light);
+        }
+
+        .author-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 50px;
+            align-items: start;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .author-photo-large {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .author-social {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .author-social .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--purple);
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .author-social .social-icon:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(91, 44, 111, 0.4);
+            background: #7c3a92;
+        }
+
+        .author-bio h3 {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .author-role {
+            font-size: 20px;
+            color: var(--fire-red);
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .author-text {
+            color: var(--text-dark);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 17px;
+        }
+
+        .credentials-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 25px;
+        }
+
+        .credentials-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .credentials-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        /* Testimonials */
+        .testimonials-section {
+            background: var(--white);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-light);
+            padding: 40px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .testimonial-quote {
+            font-size: 60px;
+            color: var(--primary);
+            line-height: 1;
+            opacity: 0.2;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .testimonial-author-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .testimonial-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 3px;
+        }
+
+        .testimonial-title {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .author-content {
+                grid-template-columns: 1fr;
+                padding: 30px;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .floating-cart {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        /* Contact Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px 20px;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .modal-header h2 {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .close-modal {
+            font-size: 40px;
+            font-weight: 300;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: var(--purple);
+        }
+
+        .modal-body {
+            padding: 30px 40px 40px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(91, 44, 111, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            background: white;
+        }
+
+        /* Video Section */
+        .video-section {
+            background: var(--bg-light);
+            padding: 80px 20px;
+        }
+
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            margin-top: 40px;
+        }
+
+        .video-wrapper iframe,
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Final CTA Section */
+        .final-cta-section {
+            background: linear-gradient(135deg, var(--purple), #3e1851);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .final-cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .final-cta-content h2 {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .final-cta-content p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+
+        .final-cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .final-cta-buttons .btn {
+            font-size: 20px;
+            padding: 20px 45px;
+        }
+
+        /* Social Proof Popup */
+        .social-proof-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 350px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            border-left: 4px solid var(--purple);
+        }
+
+        .social-proof-popup.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .social-proof-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--purple), #7c3a92);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .social-proof-content {
+            flex: 1;
+        }
+
+        .social-proof-name {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .social-proof-action {
+            color: var(--text-light);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .social-proof-close {
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 20px;
+            line-height: 1;
+            padding: 0 5px;
+            transition: color 0.3s ease;
+        }
+
+        .social-proof-close:hover {
+            color: var(--purple);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 24px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .video-section {
+                padding: 60px 20px;
+            }
+
+            .final-cta-section {
+                padding: 60px 20px;
+            }
+
+            .final-cta-content h2 {
+                font-size: 28px;
+            }
+
+            .final-cta-content p {
+                font-size: 16px;
+            }
+
+            .final-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .final-cta-buttons .btn {
+                width: 100%;
+                max-width: 400px;
+                font-size: 18px;
+                padding: 16px 35px;
+            }
+
+            .social-proof-popup {
+                left: 10px;
+                right: 10px;
+                max-width: calc(100% - 20px);
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Floating Cart -->
+    <div class="floating-cart" id="floatingCart">
+        <i class="fas fa-shopping-cart"></i>
+        <div class="cart-count" id="cartCount">0</div>
+    </div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <i class="fas fa-mountain"></i> NEW RELEASE: Learn how to Prepare for Uncertian Times <i class="fas fa-mountain"></i>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="Assets/hero-background-shaking Broadband High.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="book-badge">
+                    <i class="fas fa-book"></i> NEW RELEASE
+                </div>
+
+                <h1>UNSHAKABLE</h1>
+
+                <p class="hero-subtitle">
+                    Build a Life That Cannot Be Moved When Everything Around You Is Falling Apart
+                </p>
+
+                <p class="hero-description">
+                    The shaking has begun. Culture is shifting. Institutions are crumbling. Families are fracturing.
+                    But you don't have to face this moment unprepared. Discover how to build foundations that stand firm
+                    no matter what storm comes your way.
+                </p>
+
+                <div class="cta-group">
+                    <button class="btn btn-primary" onclick="scrollToOrder()">
+                        <i class="fas fa-shopping-cart"></i> Order Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="openChapterModal()">
+                        <i class="fas fa-book-open"></i> Read First Chapter
+                    </button>
+                    <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-upgrade">
+                        <i class="fas fa-fire"></i> Save with Bundle
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-image-container">
+                <img src="Assets/Product Images/Unshakable Book Hero.png"
+                     alt="UNSHAKABLE Book Cover"
+                     class="book-image-large">
+            </div>
+        </div>
+    </section>
+
+    <!-- What You'll Learn Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Inside This Book</span>
+                <h2 class="section-title">What You'll Discover</h2>
+                <p class="section-description">
+                    A prophetic roadmap for building an unshakable life, family, and faith in the most uncertain times
+                </p>
+            </div>
+
+            <div class="learn-grid">
+                <div class="learn-card">
+                    <div class="learn-icon"><i class="fas fa-bible"></i></div>
+                    <h3 class="learn-title">Build on the Rock</h3>
+                    <p class="learn-description">
+                        Discover how to anchor your life on the unchanging Word of God when everything else is shifting sand
+                    </p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="learn-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="learn-title">Spiritual Preparation</h3>
+                    <p class="learn-description">
+                        Learn practical steps to prepare yourself and your family spiritually for what's coming
+                    </p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="learn-icon"><i class="fas fa-users"></i></div>
+                    <h3 class="learn-title">Strengthen Your Family</h3>
+                    <p class="learn-description">
+                        Build family foundations that protect your children and keep everyone united in truth
+                    </p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="learn-icon"><i class="fas fa-compass"></i></div>
+                    <h3 class="learn-title">Navigate Cultural Chaos</h3>
+                    <p class="learn-description">
+                        Gain prophetic insight into current events and how to stand firm without fear
+                    </p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="learn-icon"><i class="fas fa-heart"></i></div>
+                    <h3 class="learn-title">Overcome Fear</h3>
+                    <p class="learn-description">
+                        Replace anxiety with unshakable peace that comes from knowing you're anchored to the Rock
+                    </p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="learn-icon"><i class="fas fa-crown"></i></div>
+                    <h3 class="learn-title">Walk in Authority</h3>
+                    <p class="learn-description">
+                        Step into your kingdom calling with confidence, knowing your foundation is secure
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="order">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Get Your Copy</span>
+                <h2 class="section-title">Start Building Today</h2>
+            </div>
+
+            <div class="pricing-container">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">
+                            <i class="fas fa-book"></i> UNSHAKABLE
+                        </h3>
+                        <p class="pricing-subtitle" id="formatLabel">Paperback Book</p>
+                    </div>
+
+                    <!-- Format Selector -->
+                    <div class="language-selector">
+                        <label for="bookFormat">
+                            <i class="fas fa-book-open"></i> Select Format:
+                        </label>
+                        <select id="bookFormat" onchange="updatePrice()">
+                            <option value="paperback">Paperback</option>
+                            <option value="ebook">Ebook (Digital Download)</option>
+                        </select>
+                    </div>
+
+                    <!-- Language Selector -->
+                    <div class="language-selector">
+                        <label for="bookLanguage">
+                            <i class="fas fa-globe"></i> Select Language:
+                        </label>
+                        <select id="bookLanguage">
+                            <option value="english">English</option>
+                            <option value="spanish">Español (Spanish)</option>
+                        </select>
+                    </div>
+
+                    <div class="price-display">
+                        <div class="price-new" id="bookPrice">$17.99</div>
+                    </div>
+
+                    <!-- Pre-Order Notice (hidden by default) -->
+                    <div id="preOrderNotice" style="display: none; background: linear-gradient(135deg, #fff3cd, #ffeaa7); border: 2px solid var(--gold); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                        <p style="color: var(--primary); font-weight: 700; margin-bottom: 10px;">
+                            <i class="fas fa-clock"></i> Pre-Order - Spanish Edition
+                        </p>
+                        <p style="font-size: 14px; color: var(--text-dark);">
+                            The Spanish edition is coming soon! Reserve your copy now and be among the first to receive it when it's available.
+                        </p>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; font-size: 20px;" onclick="addToCart('single')" id="addToCartBtn">
+                        <i class="fas fa-cart-plus"></i> <span id="btnText">Add to Cart</span>
+                    </button>
+
+                    <div style="text-align: center; margin-top: 25px; padding: 20px; background: #f0fff4; border-radius: 10px;">
+                        <p style="color: var(--success); font-weight: 700; margin-bottom: 10px;">
+                            <i class="fas fa-shield-alt"></i> 30-Day Money-Back Guarantee
+                        </p>
+                        <p style="font-size: 14px; color: var(--text-light);">
+                            If you're not completely satisfied, return for a full refund. No questions asked.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Upgrade Box -->
+                <div class="upgrade-box">
+                    <h3><i class="fas fa-fire"></i> Want to Save $5.98?</h3>
+                    <p style="font-size: 18px; opacity: 0.95; margin-bottom: 20px;">
+                        Get UNSHAKABLE + Fire on the Family Altar together and save!
+                    </p>
+                    <div class="savings">Save $5.98</div>
+                    <p style="margin-bottom: 25px; opacity: 0.9;">
+                        Plus get <strong>FREE bonuses</strong> ($49.90 value) when you order the bundle
+                    </p>
+                    <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-secondary" style="border-color: white;">
+                        <i class="fas fa-gift"></i> View Bundle Offer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bulk Orders Section -->
+    <section style="background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 60px 20px;">
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center; color: var(--white);">
+                <h2 style="font-size: 36px; font-weight: 900; margin-bottom: 20px;">
+                    <i class="fas fa-users"></i> Bulk Orders for Churches & Groups
+                </h2>
+                <p style="font-size: 20px; margin-bottom: 30px; opacity: 0.95; line-height: 1.7;">
+                    Planning to equip your church, small group, or ministry team? We offer special pricing for bulk orders of 10 or more copies.
+                </p>
+                <div style="background: rgba(255,255,255,0.15); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px);">
+                    <p style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">
+                        <i class="fas fa-church"></i> Perfect for:
+                    </p>
+                    <p style="font-size: 16px; margin-bottom: 20px; opacity: 0.95;">
+                        Church-wide campaigns • Small group studies • Ministry teams • Conferences • Retreats
+                    </p>
+                    <a href="mailto:orders@bridgebuilders.net?subject=Bulk Order Inquiry - UNSHAKABLE" class="btn btn-secondary" style="background: white; color: var(--primary); border: none; display: inline-block;">
+                        <i class="fas fa-envelope"></i> Request Bulk Pricing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Author Section -->
+    <section class="author-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Meet The Author</span>
+                <h2 class="section-title">Dr. Hal H. Sacks</h2>
+            </div>
+
+            <div class="author-content">
+                <div>
+                    <img src="Assets/People Images/Hal-Sacks-500x500.png"
+                         alt="Dr. Hal H. Sacks"
+                         class="author-photo-large">
+                    <div class="author-social">
+                        <a href="https://facebook.com/halsacks" target="_blank" rel="noopener" class="social-icon" title="Follow on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://instagram.com/halsacks" target="_blank" rel="noopener" class="social-icon" title="Follow on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://twitter.com/halsacks" target="_blank" rel="noopener" class="social-icon" title="Follow on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://linkedin.com/in/halsacks" target="_blank" rel="noopener" class="social-icon" title="Connect on LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                    <div style="margin-top: 25px; text-align: center;">
+                        <a href="mailto:speaking@bridgebuilders.net?subject=Speaking Engagement Inquiry - Dr. Hal Sacks" class="btn btn-primary" style="display: inline-block; font-size: 16px; padding: 15px 30px; margin-bottom: 10px;">
+                            <i class="fas fa-microphone"></i> Book Hal to Speak
+                        </a>
+                        <button onclick="openContactModal()" class="btn btn-secondary" style="display: inline-block; font-size: 16px; padding: 15px 30px; cursor: pointer; border: 2px solid var(--purple); background: white; color: var(--purple);">
+                            <i class="fas fa-envelope"></i> Contact Hal
+                        </button>
+                    </div>
+                </div>
+                <div class="author-bio">
+                    <p class="author-text">
+                        Dr. Hal Sacks was a successful Hollywood filmmaker when he encountered Jesus during the Jesus Movement
+                        of the 1970s. His life was transformed, and he left the entertainment industry to answer God's call
+                        to prayer and cultural transformation.
+                    </p>
+
+                    <p class="author-text">
+                        For over 40 years, Dr. Sacks has mobilized prayer initiatives that have impacted millions worldwide.
+                        He has coordinated historic prayer movements with measurable cultural impact and has been trusted by
+                        national leaders to provide strategic prayer counsel.
+                    </p>
+
+                    <p class="author-text">
+                        Raised in an Orthodox Jewish home, Dr. Sacks brings unique insight into biblical foundations and
+                        prophetic understanding of the times we're living in.
+                    </p>
+
+                    <ul class="credentials-list">
+                        <li>Co-founder of BridgeBuilders International</li>
+                        <li>Doctor of Ministry degree</li>
+                        <li>Author of Two Nations, One Prayer</li>
+                        <li>Featured on NewsMax, CBN, and other national media</li>
+                        <li>40+ years mobilizing prayer and cultural transformation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">What Leaders Are Saying</span>
+                <h2 class="section-title">Endorsed by Respected Voices</h2>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "The family mountain, hands down, is the most important! That's why I highly recommend this series and Dr. Sacks' prophetic insight."
+                    </p>
+                    <div class="testimonial-author-section">
+                        <img src="Assets/People Images/Lance-Wallnau-500x500.png"
+                             alt="Dr. Lance Wallnau"
+                             class="testimonial-photo">
+                        <div>
+                            <div class="testimonial-author">Dr. Lance Wallnau</div>
+                            <div class="testimonial-title">CEO, Lance Learning Group</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "Every believer needs to read UNSHAKABLE. This is a wake-up call we cannot afford to ignore. Dr. Sacks provides the roadmap we need for these times."
+                    </p>
+                    <div class="testimonial-author-section">
+                        <img src="Assets/People Images/Chuck-Pierce-500x500.png" alt="Chuck D. Pierce" class="testimonial-photo">
+                        <div>
+                            <div class="testimonial-author">Chuck D. Pierce</div>
+                            <div class="testimonial-title">President, Glory of Zion International</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "Dr. Hal Sacks combines prophetic insight with practical wisdom. This book will equip you to stand firm in the shakings ahead."
+                    </p>
+                    <div class="testimonial-author-section">
+                        <img src="Assets/People Images/Dutch-Sheets-500x500.png" alt="Dutch Sheets" class="testimonial-photo">
+                        <div>
+                            <div class="testimonial-author">Dutch Sheets</div>
+                            <div class="testimonial-title">Dutch Sheets Ministries</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <div class="container">
+            <div class="video-container">
+                <div class="section-header">
+                    <span class="section-label">Watch This</span>
+                    <h2 class="section-title">A Message from Dr. Hal Sacks</h2>
+                    <p class="section-description">
+                        Discover how to build unshakable foundations in uncertain times
+                    </p>
+                </div>
+                <div class="video-wrapper">
+                    <video controls preload="metadata" poster="Assets/Videos/Hal-Sacks-ItsSupernaturalKK-Broadband High.png">
+                        <source src="Assets/Videos/Hal-Sacks-ItsSupernaturalKK-Broadband High.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta-section">
+        <div class="container">
+            <div class="final-cta-content">
+                <h2>Ready to Build Unshakable Foundations?</h2>
+                <p>
+                    Don't wait another day. Start building the life that cannot be shaken. Order now and receive your FREE bonus guides instantly!
+                </p>
+                <div class="final-cta-buttons">
+                    <button class="btn btn-primary" onclick="scrollToOrder()">
+                        <i class="fas fa-shopping-cart"></i> Order Now
+                    </button>
+                    <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-secondary">
+                        <i class="fas fa-gift"></i> Get The Bundle
+                    </a>
+                </div>
+                <p style="margin-top: 30px; font-size: 16px; opacity: 0.9;">
+                    <i class="fas fa-truck"></i> Free Shipping • <i class="fas fa-gift"></i> Instant Bonus Access • <i class="fas fa-shield-alt"></i> 30-Day Guarantee
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 15px;">
+                <a href="https://bridgebuilders.net" target="_blank" rel="noopener" style="color: var(--white); text-decoration: none;">
+                    <strong style="font-size: 20px; letter-spacing: 2px;">BRIDGEBUILDERS INTERNATIONAL</strong>
+                </a>
+            </p>
+            <p class="copyright">
+                &copy; 2025 Dr. Hal H. Sacks | BridgeBuilders International. All rights reserved.
+            </p>
+            <p style="margin-top: 15px; font-size: 14px;">
+                <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=42c7b670-3f0d-40ab-8cbe-b952917fb888" target="_blank" style="color: rgba(255,255,255,0.6); margin: 0 15px;">Privacy Policy</a>
+                <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=7ccb6b4a-e80d-4bde-b7a4-3277e80af9e8" target="_blank" style="color: rgba(255,255,255,0.6); margin: 0 15px;">Terms & Conditions</a>
+                <a href="unshakable_bundle_landing_page_v2.html" style="color: rgba(255,255,255,0.8); margin: 0 15px;">View Bundle Offer</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Stripe Configuration
+        const STRIPE_PUBLIC_KEY = 'pk_live_51MtbYiENTZGZDoIEKfCfVrmc7YEAuZuGDX7euAj0vxRCuGY45XEiLqZR3iYJMOid6cKGDPIbVsat629uM5bIzou600giLIR4Xv';
+
+        // Product IDs
+        const PRODUCTS = {
+            unshakablePaperbackEnglish: 'prod_TKMQIIUotITNZo',
+            unshakablePaperbackSpanish: 'prod_TKMSsIjIYBf5Ev',
+            unshakableEbookEnglish: 'prod_TKMTKRgsWddE83',
+            unshakableEbookSpanish: 'prod_TKMTfrTuMRr7c3'
+        };
+
+        // Cart Management
+        let cart = JSON.parse(localStorage.getItem('unshakableCart')) || [];
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function updatePrice() {
+            const format = document.getElementById('bookFormat').value;
+            const language = document.getElementById('bookLanguage').value;
+            const priceElement = document.getElementById('bookPrice');
+            const labelElement = document.getElementById('formatLabel');
+            const preOrderNotice = document.getElementById('preOrderNotice');
+            const btnText = document.getElementById('btnText');
+
+            // Update price and label based on format
+            if (format === 'ebook') {
+                priceElement.textContent = '$9.99';
+                labelElement.textContent = 'Ebook (Digital Download)';
+            } else {
+                priceElement.textContent = '$17.99';
+                labelElement.textContent = 'Paperback Book';
+            }
+
+            // Show pre-order notice if Spanish is selected
+            if (language === 'spanish') {
+                preOrderNotice.style.display = 'block';
+                btnText.textContent = 'Pre-Order Now';
+            } else {
+                preOrderNotice.style.display = 'none';
+                btnText.textContent = 'Add to Cart';
+            }
+        }
+
+        // Add event listener for language selector
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelector = document.getElementById('bookLanguage');
+            if (languageSelector) {
+                languageSelector.addEventListener('change', updatePrice);
+            }
+        });
+
+        function addToCart(type) {
+            const language = document.getElementById('bookLanguage').value;
+            const format = document.getElementById('bookFormat').value;
+
+            let productId, price, formatName;
+
+            if (format === 'ebook') {
+                productId = language === 'english' ? PRODUCTS.unshakableEbookEnglish : PRODUCTS.unshakableEbookSpanish;
+                price = 9.99;
+                formatName = 'Ebook';
+            } else {
+                productId = language === 'english' ? PRODUCTS.unshakablePaperbackEnglish : PRODUCTS.unshakablePaperbackSpanish;
+                price = 17.99;
+                formatName = 'Paperback';
+            }
+
+            const item = {
+                id: productId,
+                name: `UNSHAKABLE ${formatName} (${language === 'english' ? 'English' : 'Español'})`,
+                price: price,
+                quantity: 1,
+                type: format,
+                language: language
+            };
+
+            // Check if already in cart
+            const existingIndex = cart.findIndex(i => i.id === productId);
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push(item);
+            }
+
+            localStorage.setItem('unshakableCart', JSON.stringify(cart));
+            updateCartCount();
+
+            // Show confirmation
+            if (language === 'spanish') {
+                alert('✅ UNSHAKABLE (Spanish Pre-Order) added to cart! Click the cart icon to checkout.');
+            } else {
+                alert('✅ UNSHAKABLE added to cart! Click the cart icon to checkout.');
+            }
+
+            // Track event for analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'add_to_cart', {
+                    items: [{
+                        item_id: productId,
+                        item_name: item.name,
+                        price: item.price,
+                        quantity: 1
+                    }]
+                });
+            }
+        }
+
+        function scrollToOrder() {
+            document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Floating Cart Click
+        document.getElementById('floatingCart').addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Your cart is empty. Add a book to get started!');
+                scrollToOrder();
+            } else {
+                window.location.href = 'cart.html';
+            }
+        });
+
+        // Initialize
+        updateCartCount();
+
+        // Contact Modal Functions
+        function openContactModal() {
+            document.getElementById('contactModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const contactModal = document.getElementById('contactModal');
+            const chapterModal = document.getElementById('chapterModal');
+            if (event.target === contactModal) {
+                closeContactModal();
+            }
+            if (event.target === chapterModal) {
+                closeChapterModal();
+            }
+        }
+
+        // Handle contact form submission
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const subject = formData.get('subject');
+            const message = formData.get('message');
+
+            // Create mailto link
+            const mailtoLink = `mailto:contact@bridgebuilders.net?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`)}`;
+            window.location.href = mailtoLink;
+
+            closeContactModal();
+        }
+
+        // Chapter Modal Functions
+        function openChapterModal() {
+            document.getElementById('chapterModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeChapterModal() {
+            document.getElementById('chapterModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updatePostalLabel() {
+            const country = document.getElementById('chapter-country').value;
+            const label = document.getElementById('postal-label');
+
+            if (country === 'US') {
+                label.textContent = 'Zip Code *';
+            } else if (country === 'IN') {
+                label.textContent = 'PIN Code *';
+            } else {
+                label.textContent = 'Zip/Postal Code *';
+            }
+        }
+
+        function handleChapterSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            // Store lead data in localStorage
+            const leadData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                country: formData.get('country'),
+                postal: formData.get('postal'),
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('unshakableChapterLead', JSON.stringify(leadData));
+
+            // Close modal
+            closeChapterModal();
+
+            // Open chapter preview in new window
+            window.open('unshakable_chapter_preview.html', '_blank');
+        }
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.learn-card, .testimonial-card, .pricing-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Social Proof Notification System
+        const socialProofData = [
+            { name: "Mark in Chicago, IL", action: "ordered UNSHAKABLE" },
+            { name: "Patricia in Miami, FL", action: "purchased the Unshakable Family Bundle" },
+            { name: "Thomas in Los Angeles, CA", action: "ordered UNSHAKABLE" },
+            { name: "Linda in Philadelphia, PA", action: "purchased UNSHAKABLE" },
+            { name: "Kevin in San Francisco, CA", action: "ordered the Unshakable Family Bundle" },
+            { name: "Nancy in Detroit, MI", action: "ordered UNSHAKABLE" },
+            { name: "Gary in Baltimore, MD", action: "purchased UNSHAKABLE" },
+            { name: "Sharon in Memphis, TN", action: "ordered the Unshakable Family Bundle" },
+            { name: "Kenneth in Milwaukee, WI", action: "purchased UNSHAKABLE" },
+            { name: "Carol in Sacramento, CA", action: "ordered UNSHAKABLE" },
+            { name: "Steven in Pittsburgh, PA", action: "purchased the Unshakable Family Bundle" },
+            { name: "Donna in Raleigh, NC", action: "ordered UNSHAKABLE" },
+            { name: "Paul in St. Louis, MO", action: "purchased UNSHAKABLE" },
+            { name: "Laura in Salt Lake City, UT", action: "ordered the Unshakable Family Bundle" },
+            { name: "Jeffrey in Louisville, KY", action: "purchased UNSHAKABLE" },
+            { name: "Sandra in Tulsa, OK", action: "ordered UNSHAKABLE" },
+            { name: "Richard in Omaha, NE", action: "purchased the Unshakable Family Bundle" },
+            { name: "Betty in Boise, ID", action: "ordered UNSHAKABLE" },
+            { name: "Edward in Des Moines, IA", action: "purchased UNSHAKABLE" },
+            { name: "Dorothy in Little Rock, AR", action: "ordered the Unshakable Family Bundle" }
+        ];
+
+        let socialProofTimeout;
+        let socialProofInterval;
+
+        function showSocialProof() {
+            const popup = document.getElementById('socialProofPopup');
+            const randomProof = socialProofData[Math.floor(Math.random() * socialProofData.length)];
+
+            document.getElementById('proofName').textContent = randomProof.name;
+            document.getElementById('proofAction').textContent = randomProof.action;
+
+            popup.classList.add('show');
+
+            // Auto hide after 5 seconds
+            socialProofTimeout = setTimeout(() => {
+                popup.classList.remove('show');
+            }, 5000);
+        }
+
+        function closeSocialProof() {
+            document.getElementById('socialProofPopup').classList.remove('show');
+            clearTimeout(socialProofTimeout);
+        }
+
+        // Show first notification after 10 seconds
+        setTimeout(() => {
+            showSocialProof();
+
+            // Then show every 25-35 seconds randomly
+            socialProofInterval = setInterval(() => {
+                const randomDelay = Math.floor(Math.random() * 10000) + 25000; // 25-35 seconds
+                setTimeout(showSocialProof, randomDelay);
+            }, 35000);
+        }, 10000);
+    </script>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contact Dr. Hal</h2>
+                <span class="close-modal" onclick="closeContactModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleContactSubmit(event)" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; cursor: pointer;">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Proof Popup -->
+    <div id="socialProofPopup" class="social-proof-popup">
+        <div class="social-proof-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="social-proof-content">
+            <div class="social-proof-name" id="proofName"></div>
+            <div class="social-proof-action" id="proofAction"></div>
+        </div>
+        <span class="social-proof-close" onclick="closeSocialProof()">&times;</span>
+    </div>
+
+    <!-- Chapter Preview Modal -->
+    <div id="chapterModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Read Chapter 1 Free</h2>
+                <span class="close-modal" onclick="closeChapterModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center; margin-bottom: 25px; color: var(--text-light); font-size: 16px;">
+                    Enter your details below to get instant access to the first chapter of UNSHAKABLE
+                </p>
+                <form onsubmit="handleChapterSubmit(event)" class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="chapter-first-name">First Name *</label>
+                            <input type="text" id="chapter-first-name" name="firstName" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="chapter-last-name">Last Name *</label>
+                            <input type="text" id="chapter-last-name" name="lastName" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="chapter-email">Email *</label>
+                        <input type="email" id="chapter-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chapter-country">Country *</label>
+                        <select id="chapter-country" name="country" required onchange="updatePostalLabel()">
+                            <option value="">Select Country</option>
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="GB">United Kingdom</option>
+                            <option value="AU">Australia</option>
+                            <option value="NZ">New Zealand</option>
+                            <option value="IE">Ireland</option>
+                            <option value="ZA">South Africa</option>
+                            <option value="IN">India</option>
+                            <option value="PH">Philippines</option>
+                            <option value="SG">Singapore</option>
+                            <option value="MY">Malaysia</option>
+                            <option value="MX">Mexico</option>
+                            <option value="BR">Brazil</option>
+                            <option value="AR">Argentina</option>
+                            <option value="CL">Chile</option>
+                            <option value="CO">Colombia</option>
+                            <option value="PE">Peru</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="ES">Spain</option>
+                            <option value="IT">Italy</option>
+                            <option value="NL">Netherlands</option>
+                            <option value="BE">Belgium</option>
+                            <option value="CH">Switzerland</option>
+                            <option value="AT">Austria</option>
+                            <option value="SE">Sweden</option>
+                            <option value="NO">Norway</option>
+                            <option value="DK">Denmark</option>
+                            <option value="FI">Finland</option>
+                            <option value="PL">Poland</option>
+                            <option value="RO">Romania</option>
+                            <option value="GR">Greece</option>
+                            <option value="PT">Portugal</option>
+                            <option value="JP">Japan</option>
+                            <option value="KR">South Korea</option>
+                            <option value="CN">China</option>
+                            <option value="TW">Taiwan</option>
+                            <option value="HK">Hong Kong</option>
+                            <option value="TH">Thailand</option>
+                            <option value="ID">Indonesia</option>
+                            <option value="VN">Vietnam</option>
+                            <option value="IL">Israel</option>
+                            <option value="AE">United Arab Emirates</option>
+                            <option value="SA">Saudi Arabia</option>
+                            <option value="EG">Egypt</option>
+                            <option value="NG">Nigeria</option>
+                            <option value="KE">Kenya</option>
+                            <option value="GH">Ghana</option>
+                            <option value="UG">Uganda</option>
+                            <option value="TZ">Tanzania</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="chapter-postal" id="postal-label">Zip/Postal Code *</label>
+                        <input type="text" id="chapter-postal" name="postal" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; cursor: pointer;">
+                        <i class="fas fa-book-open"></i> Read Chapter 1
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

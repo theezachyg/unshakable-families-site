@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNSHAKABLE - Chapter 1 Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --purple: #5b2c6f;
+            --gold: #ffd700;
+            --text-dark: #1a202c;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .preview-header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .header-cta .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--purple);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .header-cta .btn:hover {
+            background: #4a2159;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(91, 44, 111, 0.3);
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border: 2px solid var(--purple);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+            border-radius: 15px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .welcome-message h3 {
+            color: var(--purple);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+
+        /* Book Container */
+        .book-container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .flipbook-wrapper {
+            position: relative;
+            margin: 0 auto;
+            perspective: 2000px;
+        }
+
+        #flipbook {
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Mobile Scroll View */
+        .mobile-scroll-view {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mobile-page {
+            background: white;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .flipbook-page {
+            background: white;
+            padding: 40px 45px;
+            overflow: hidden;
+            background: linear-gradient(to right, #fefefe 0%, #ffffff 5%, #ffffff 95%, #fefefe 100%);
+        }
+
+        .page-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        .page-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .page-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .page-content::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 10px;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Book Navigation */
+        .book-controls {
+            text-align: center;
+            margin: 30px 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .book-controls button {
+            background: var(--purple);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            margin: 0 10px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .book-controls button:hover:not(:disabled) {
+            background: #4a2159;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(91, 44, 111, 0.3);
+        }
+
+        .book-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            margin-top: 15px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Typography */
+        .chapter-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .chapter-subtitle {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--purple);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .scripture {
+            font-style: italic;
+            color: var(--text-dark);
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(91, 44, 111, 0.05);
+            border-left: 4px solid var(--purple);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .section-heading {
+            font-size: 19px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 25px 0 12px;
+        }
+
+        .page-text {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .page-text em {
+            font-style: italic;
+        }
+
+        .page-text strong {
+            font-weight: bold;
+        }
+
+        .quote-block {
+            font-size: 17px;
+            font-weight: bold;
+            color: var(--purple);
+            margin: 20px 0;
+            padding: 15px;
+            text-align: center;
+            border-top: 2px solid var(--purple);
+            border-bottom: 2px solid var(--purple);
+        }
+
+        .prayer {
+            font-style: italic;
+            padding: 15px;
+            background: rgba(26, 54, 93, 0.05);
+            border-radius: 10px;
+            margin: 15px 0;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, var(--purple), #4a2159);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .cta-content p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--purple);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--purple);
+        }
+
+        /* Footer */
+        .preview-footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .preview-footer p {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            /* Hide flipbook on mobile, show scroll view */
+            .flipbook-wrapper {
+                display: none !important;
+            }
+
+            .book-controls {
+                display: none !important;
+            }
+
+            .mobile-scroll-view {
+                display: block !important;
+            }
+
+            .book-container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .chapter-title {
+                font-size: 24px;
+            }
+
+            .chapter-subtitle {
+                font-size: 18px;
+            }
+
+            .section-heading {
+                font-size: 18px;
+                margin: 20px 0 10px;
+            }
+
+            .page-text {
+                font-size: 15px;
+                line-height: 1.7;
+                margin-bottom: 12px;
+                text-align: left;
+            }
+
+            .scripture {
+                font-size: 14px;
+                padding: 15px;
+                margin: 15px 0;
+            }
+
+            .quote-block {
+                font-size: 16px;
+                padding: 15px;
+                margin: 20px 0;
+            }
+
+            .prayer {
+                font-size: 14px;
+                padding: 15px;
+            }
+
+            .cta-content h2 {
+                font-size: 24px;
+            }
+
+            .cta-content p {
+                font-size: 16px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="preview-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1>UNSHAKABLE - Chapter 1</h1>
+                <p>Discover how to build an unshakable family foundation</p>
+            </div>
+            <div class="header-cta">
+                <a href="unshakable_landing_page.html#order" class="btn">
+                    <i class="fas fa-shopping-cart"></i> Get The Full Book
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Message -->
+    <div class="welcome-message" id="welcomeMessage" style="display: none;">
+        <h3>Welcome, <span id="userName"></span>!</h3>
+        <p>Thank you for your interest in UNSHAKABLE. Enjoy Chapter 1!</p>
+    </div>
+
+    <!-- Book Container -->
+    <div class="book-container">
+        <div class="flipbook-wrapper">
+            <div id="flipbook">
+                <!-- Page 1: Cover -->
+                <div class="flipbook-page">
+                    <div class="page-content" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+                        <div>
+                            <div class="chapter-title" style="font-size: 36px; margin-bottom: 20px;">Chapter 1</div>
+                            <div class="chapter-subtitle" style="font-size: 24px; margin-bottom: 10px;">THE SHAKING & THE VISION</div>
+                            <div class="chapter-subtitle" style="font-size: 20px; font-weight: normal; color: var(--text-light);">Are You Ready for What's Coming?</div>
+                            <div style="margin-top: 60px;">
+                                <div style="font-size: 48px; font-weight: 900; color: var(--purple); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                    UNSHAKABLE
+                                </div>
+                                <div style="margin-top: 20px; font-size: 18px; color: var(--text-dark);">
+                                    Chapter Preview
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page 2 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            In the summer of 1970, I stood on the cliffs overlooking a small beach in Costa Mesa, California, a young Jewish filmmaker with a camera on my shoulder. I'd been asked to produce a documentary on what was happening below—thousands of hippies singing Jesus songs, getting baptized in the Pacific Ocean at Pirates Cove. Just another assignment, I thought. Just another California oddity I was looking to capture on film. As I watched through my lens, something unexpected happened. The scene below wasn't just religious theater. These young people—long-haired, barefoot, many still bearing the marks of hard living—were rejoicing, and profoundly real. They waded into the waves, singing, weeping, and embracing one another as they were baptized. Some had to be carried out of the water, so overcome were they by what they'd experienced.
+                        </p>
+                        <div class="page-number">2</div>
+                    </div>
+                </div>
+
+                <!-- Page 3 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            I was witnessing God's answer to a lost generation that had been shaken to its core. Vietnam had torn the nation apart. Cities burned with racial unrest—nationally beloved leaders were assassinated, and once respected institutions crumbled. Young people who'd grown up in prosperity found themselves adrift in a sea of LSD and other drugs, the "free love" movement, all ending up in existential despair. Everything their parents had built around them seemed to be collapsing.
+                        </p>
+                        <p class="page-text">
+                            But here, at the Pacific Coast, Heaven was responding to Earth's groaning.
+                        </p>
+                        <p class="page-text">
+                            That day on the cliffs, I was deeply challenged, marking the beginning of a lifelong journey—a journey that would lead me to encounter Jesus as my Messiah and where I would come to understand the generational patterns that brought us to that point.
+                        </p>
+                        <p class="page-text">
+                            That pursuit would take me five decades to grasp fully—a divine cycle that pulses through history. When human structures fail catastrophically, when society reaches a breaking point, when people cry out in desperation, God begins to move. He always has. He always will.
+                        </p>
+                        <p class="page-text">
+                            Now, in the later years of my life, I'm watching it unfold once again.
+                        </p>
+                        <div class="page-number">3</div>
+                    </div>
+                </div>
+
+                <!-- Page 4 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="section-heading">The Evidence of Another Great Shaking</div>
+                        <p class="page-text">
+                            As I write these words in early 2025, the evidence of another great shaking surrounds us. We stand in the midst of unprecedented collapse across every sphere of society—cultural, spiritual, economic, and governmental structures that once seemed permanent are crumbling before our eyes.
+                        </p>
+                        <p class="page-text">
+                            Our political landscape has fractured beyond recognition. Tribal divisions make common-sense governance nearly impossible. Leaders are chosen not for wisdom but for their ability to inflame their base. Justice has become selective, applied differently depending on political allegiance or moral view.
+                        </p>
+                        <div class="quote-block">
+                            It's hard to believe this is the same nation many of us grew up in.
+                        </div>
+                        <div class="page-number">4</div>
+                    </div>
+                </div>
+
+                <!-- Page 5 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Universities—once bastions of free thought and truth-seeking—have become ideological battlegrounds. Biblical worldviews are not merely challenged but openly mocked. Students are taught what to think, not how to think. Financial markets soar and crash in almost weekly occurrences, and entire nations teeter on the edge of default. The system, once built on trust, now runs on fear and speculation.
+                        </p>
+                        <p class="page-text">
+                            The shaking isn't just national, it's global. The world order established after World War II is unraveling. Old alliances fracture while new threats emerge. From Ukraine to the Middle East, from Taiwan to the South China Sea, regional conflicts threaten to ignite wider wars. Nations once considered pillars of stability now tremble from within.
+                        </p>
+                        <p class="page-text">
+                            The ground beneath us is no longer steady. We feel it shifting. It's like standing on sinking sand.
+                        </p>
+                        <div class="quote-block">
+                            The moral foundations are crumbling at breathtaking speed.
+                        </div>
+                        <div class="page-number">5</div>
+                    </div>
+                </div>
+
+                <!-- Page 6 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            What was unthinkable a generation ago is now mandated. What was sacred is now scorned. What protected children now preys upon them.
+                        </p>
+                        <p class="page-text">
+                            In our schools, innocence is under assault. Children are sexualized through curriculum that would have been considered pornographic just years ago. Kindergarteners learn about gender fluidity. Middle schoolers are taught to question their biology. Parents who object are labeled bigots.
+                        </p>
+                        <p class="page-text">
+                            On our streets, lawlessness reigns. Violent crime surges while prosecutors refuse to prosecute. Shoplifters walk free while shop owners go bankrupt. The elderly are offered death instead of care—euthanasia marketed as dignity. Life itself has become negotiable, disposable, a matter of convenience.
+                        </p>
+                        <div class="page-number">6</div>
+                    </div>
+                </div>
+
+                <!-- Page 7 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            In our homes, the family—God's first institution—lies in ruins. Marriage has been redefined, then discarded altogether. Children grow up without fathers. The birth rate plummets as self becomes the only altar we worship at. So many have forsaken the blessing of children in pursuit of personal freedom.
+                        </p>
+                        <p class="page-text">
+                            According to researcher Dr. George Barna, two-thirds of adults in America now reject absolute moral truth. When truth becomes relative, everything becomes permissible. When God's standards are abandoned, man's depravity knows no bounds.
+                        </p>
+                        <p class="page-text">
+                            Ancient hatreds have returned with modern vengeance. Antisemitism spreads from college campuses to city streets. Synagogues require armed guards. Jewish students hide their identity. The hatred many thought buried has risen from its grave, more brazen than ever.
+                        </p>
+                        <div class="page-number">7</div>
+                    </div>
+                </div>
+
+                <!-- Page 8 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            We haven't just lost our way—we've inverted our values. We call evil good and good evil. We celebrate what God condemns and condemn what God celebrates. We protect predators and persecute protectors.
+                        </p>
+                        <p class="page-text">
+                            Meanwhile, the Church in the West is shrinking and retreating. Congregations that once numbered in the thousands now struggle to fill a few pews. Young people flee organized religion, seeking spirituality without submission, experience without truth. Christian influence in public life is not just waning—it's openly scorned and systematically removed.
+                        </p>
+                        <div class="quote-block">
+                            Yes, God is still moving—but not at the scale or speed we desperately need.
+                        </div>
+                        <div class="page-number">8</div>
+                    </div>
+                </div>
+
+                <!-- Page 9 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            We all know of dynamic churches, ministries, and individuals who are making a real impact—winning people to Christ, discipling the next generation, and standing boldly for truth. These are bright lights in the darkness, and we thank God for them. But the statistics speak for themselves. Despite these faithful efforts, we are losing the larger cultural war. The next generation is slipping through our fingers. The Church cannot afford to settle for isolated victories—we must rise together with greater urgency, clarity, and commitment. We must do better.
+                        </p>
+                        <p class="page-text">
+                            What we're facing is more than cultural decline or institutional weakness. <strong>It's deeper.</strong> This is not merely about shifting trends or moral confusion—we are living in the midst of a spiritual crisis.
+                        </p>
+                        <div class="page-number">9</div>
+                    </div>
+                </div>
+
+                <!-- Page 10 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Wars and rumors of wars dominate the headlines. Floods, droughts, and famines strike with escalating frequency and intensity, leaving millions in peril. Civil unrest, terrorism, and the rising tide of "horrorism"—acts so brutal they defy comprehension—are fueling fear and destabilizing nations across the globe.
+                        </p>
+                        <div class="quote-block">
+                            The alarms are sounding. Can we hear them?
+                        </div>
+                        <p class="page-text">
+                            The signs are everywhere, yet many remain asleep. What we're seeing is not just political, social, or economic—it's prophetic. In fact, what God revealed to me in a vision decades ago is a warning of what will happen if we do not wake up and turn to Him. That warning now feels imminent.
+                        </p>
+                        <div class="page-number">10</div>
+                    </div>
+                </div>
+
+                <!-- Page 11 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="section-heading">The Vision That Changed Everything</div>
+                        <p class="page-text">
+                            In 1984, long before anyone was talking about cultural collapse or a coming shaking, God gave me a vision that has marked me ever since.
+                        </p>
+                        <p class="page-text">
+                            During a time of prayer, I suddenly seemed no longer in my room. In the vision, I stood gazing out over a desolate landscape blanketed with collapsed buildings and broken structures. As far as the eye could see, there was vast devastation—heaps of rubble, cracked foundations, and twisted debris. The air was thick with an eerie silence. It reminded me of those haunting images from Hiroshima—total destruction where life once thrived.
+                        </p>
+                        <div class="page-number">11</div>
+                    </div>
+                </div>
+
+                <!-- Page 12 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            But it wasn't just the destruction that gripped me—it was the people. They wandered among the ruins with expressions of utter shock and bewilderment. They had built their lives, their organizations, and their institutions on faulty foundations that couldn't hold up under the shaking.
+                        </p>
+                        <p class="page-text">
+                            The Lord spoke: "They built on sand, believing it would hold. They chose speed over depth, appearance over substance. Now the shaking reveals what was always true—only what is built on My Word will remain."
+                        </p>
+                        <p class="page-text">
+                            "When, Lord?" I asked.
+                        </p>
+                        <p class="page-text">
+                            "It has already begun," He said. "But the greater shaking is yet to come."
+                        </p>
+                        <div class="page-number">12</div>
+                    </div>
+                </div>
+
+                <!-- Page 13 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="section-heading">Recognizing the Divine Pattern</div>
+                        <p class="page-text">
+                            Throughout Scripture, God's pattern remains consistent:
+                        </p>
+                        <div class="quote-block" style="font-size: 15px; font-weight: normal; font-style: italic;">
+                            Blessing - Complacency - Rebellion - Shaking - Repentance - Restoration
+                        </div>
+                        <p class="page-text">
+                            <strong>In Judges:</strong> For nearly 400 years, Israel repeated this pattern. Whenever the Lord raised up a righteous judge for them, God would use that judge to deliver them...but when the judge died, the people returned to ways even more corrupt than those of their ancestors (see Judges 2:18-19). Seven times they cycled through blessing, rebellion, oppression, crying out, and deliverance. Each generation forgot the lessons of the previous one.
+                        </p>
+                        <div class="page-number">13</div>
+                    </div>
+                </div>
+
+                <!-- Page 14 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Israel would thrive under God's blessing, then drift into complacency. Complacency led to compromise and disobedience, and rebellion toward God. Then came the shaking—enemies would oppress them, systems would fail, and desperation would mount. In their crisis, they would cry out to God in repentance, and He would restore them.
+                        </p>
+                        <p class="page-text">
+                            <strong>In Jeremiah:</strong> God revealed this pattern once again to an entire nation then facing judgment. The people of Judah, and particularly their leaders, repeatedly violated their covenant with God by worshiping other gods, acting unjustly, and ignoring God's prophets. In this recurring cycle, God faithfully demonstrated His mercy even in judgment—always leaving a remnant, always providing a path back through repentance.
+                        </p>
+                        <div class="scripture">
+                            <em>"Therefore, this is what the Lord says: 'If you repent, I will restore you that you may serve Me...'"</em> (Jer. 15:19).
+                        </div>
+                        <div class="page-number">14</div>
+                    </div>
+                </div>
+
+                <!-- Page 15 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            <strong>In Israel's monarchy:</strong> From David's glory to exile in Babylon—the pattern played out over centuries. Solomon's wisdom gave way to idolatry. Revival under Hezekiah was followed by rebellion under Manasseh. Each generation had to choose.
+                        </p>
+                        <p class="page-text">
+                            <strong>In the Early Church:</strong> Even the New Testament church experienced these cycles. The passion of Pentecost cooled into the lukewarm Laodicea. Paul warned Timothy that <em>"there will be terrible times in the last days"</em> (2 Tim. 3:1) as people would have <em>"a form of godliness but denying its power"</em> (v. 5).
+                        </p>
+                        <p class="page-text">
+                            This divine pattern reveals three truths:
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • Before judgment comes, God gives space for mercy and repentance.
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • Shaking is meant to bring awakening, not desolation.
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • A godly remnant always emerges to rebuild on truth.
+                        </p>
+                        <div class="page-number">15</div>
+                    </div>
+                </div>
+
+                <!-- Page 16 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Consider how this pattern played out before the Jesus Movement I witnessed:
+                        </p>
+                        <p class="page-text">
+                            America in the 1950s experienced unprecedented blessing—prosperity, global influence, and church attendance at historic highs. But blessing bred complacency. By the early 1960s, that complacency had turned to rebellion. Prayer was expelled from classrooms in 1962.
+                        </p>
+                        <p class="page-text">
+                            The sexual revolution torched traditional values. Drug use exploded. Then came the shaking—the Vietnam war claimed 58,000 American lives while the nation watched on television. President John F. Kennedy was assassinated in 1963. Dr. Martin Luther King, Jr., was murdered in April 1968, followed by Senator Robert F. Kennedy just two months later.
+                        </p>
+                        <div class="page-number">16</div>
+                    </div>
+                </div>
+
+                <!-- Page 17 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Cities burned after Dr. King's death—Watts, Detroit, Newark, Washington, DC. Police clashed violently with protesters at the Chicago Democratic Convention. On campuses, students burned draft cards, flags, and Bibles while declaring God dead. The National Guard occupied universities. Everything that once seemed unshakable was shaken apart.
+                        </p>
+                        <p class="page-text">
+                            It was in the midst of that shaking that God moved. The "Jesus People" Movement wasn't the shaking—it was heaven's response to a generation that had been shaken back to desperation for truth.
+                        </p>
+                        <p class="page-text">
+                            The pattern is consistent—blessing, complacency, rebellion, shaking, repentance, and restoration. Yet shaking never comes without God first sounding the alarm.
+                        </p>
+                        <div class="page-number">17</div>
+                    </div>
+                </div>
+
+                <!-- Page 18 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            The Lord sends prophets not only to warn but to provide instruction on how to prepare. Simply knowing a tsunami is coming is not enough. Jesus spoke of two builders—one wise, one foolish. Both faced the same storm. Only one house stood unshaken.
+                        </p>
+                        <p class="page-text">
+                            This is why the shaking is actually mercy. As Hebrews 12:27 reveals, God shakes <em>"so that what cannot be shaken may remain."</em> He allows the breaking to produce blessing. He permits the collapse of false foundations, so we'll build on true ones.
+                        </p>
+                        <div class="section-heading">More Than Historical Cycles</div>
+                        <p class="page-text">
+                            God's patterns of shaking aren't random—they follow a divine rhythm so consistent that even secular historians have recognized it.
+                        </p>
+                        <div class="page-number">18</div>
+                    </div>
+                </div>
+
+                <!-- Page 19 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            In their landmark book <em>The Fourth Turning</em>, William Strauss and Neil Howe documented what believers have long understood: history moves in cycles.
+                        </p>
+                        <p class="page-text">
+                            These historians discovered that societies move through four distinct seasons roughly every 80-100 years—a saeculum, the span of a long human life:
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            1. <strong>"The High"</strong>—confident rebuilding after crisis, society united around shared purpose
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            2. <strong>"The Awakening"</strong>—spiritual renewal stirs, younger generations question the established order
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            3. <strong>"The Unraveling"</strong>—institutions weaken, cynicism grows, individualism erodes unity
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            4. <strong>"The Crisis" (Fourth Turning)</strong>—survival feels threatened, complete transformation follows
+                        </p>
+                        <div class="page-number">19</div>
+                    </div>
+                </div>
+
+                <!-- Page 20 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            America has experienced three previous Fourth Turnings:
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>The American Revolution</strong> (1770s-1780s)
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>The Civil War</strong> (1860s)
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>The Great Depression/World War II</strong> (1929-1945)
+                        </p>
+                        <p class="page-text">
+                            Each brought total transformation. Strauss and Howe predicted our next Fourth Turning would begin around the mid-2000s. They were right.
+                        </p>
+                        <p class="page-text">
+                            But here's what secular historians miss: behind every cultural shaking is a divine purpose. What they call generational patterns, the Bible reveals as God's redemptive rhythm.
+                        </p>
+                        <div class="page-number">20</div>
+                    </div>
+                </div>
+
+                <!-- Page 21 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Their "Awakening" phase often coincides with what the Church recognizes as revival. Their "Crisis" phase matches biblical shaking that removes what cannot remain.
+                        </p>
+                        <p class="page-text">
+                            Most people witness only one Fourth Turning in their lifetime. By God's providence, I've observed this pattern firsthand—from "The Awakening" of the '60s and '70s that birthed the Jesus Movement, through "The Unraveling" of institutions, to today's emerging Fourth Turning.
+                        </p>
+                        <p class="page-text">
+                            This rare perspective reveals something profound: we're not merely repeating cycles but moving in a spiral. Each turning intensifies; each crisis is more global. Technology has compressed time; what took decades now happens in years.
+                        </p>
+                        <div class="page-number">21</div>
+                    </div>
+                </div>
+
+                <!-- Page 22 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Paul warned that <em>"these things happened to them as examples and were written down as warnings for us, on whom the culmination of the ages has come"</em> (1 Cor. 10:11).
+                        </p>
+                        <p class="page-text">
+                            Jesus Himself described escalating birth pains in Matthew 24—each wave more intense than the last, all pointing toward His return. We're accelerating toward that culmination, when every shaking gives way to the eternal Kingdom that cannot be shaken.
+                        </p>
+                        <p class="page-text">
+                            Understanding these patterns is spiritually urgent. If we're in a Fourth Turning, crisis precedes transformation. The question is: Will we recognize this divine moment and position ourselves for God's redemptive work?
+                        </p>
+                        <div class="page-number">22</div>
+                    </div>
+                </div>
+
+                <!-- Page 23 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="section-heading">The Prophetic Convergence</div>
+                        <p class="page-text">
+                            I recently joined prophetic leaders from thirty-two nations for a three-day gathering in Dallas, Texas. The voices around the table confirmed what I've been sensing: a greater shaking is coming to America and the world.
+                        </p>
+                        <p class="page-text">
+                            These prophetic voices proclaim that the coming shaking will be more intense and expansive than most of us are expecting—and that out of this upheaval, a Greater Spiritual Awakening will arise, triggering a massive harvest more abundant than the Church is currently prepared to disciple.
+                        </p>
+                        <div class="page-number">23</div>
+                    </div>
+                </div>
+
+                <!-- Page 24 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            You and I are stepping into uncharted spiritual territory—an era unlike anything we've ever walked through in our lifetime. This will not be easy. The coming waves of disruption will test even mature believers. But our Mighty God is calling us to <em>"Arise, shine, for your light has come, and the glory of the LORD rises upon you. See, darkness covers the earth and thick darkness is over the peoples, but the LORD rises upon you and His glory appears over you"</em> (Isa. 60:1-2).
+                        </p>
+                        <p class="page-text">
+                            This is not only a corporate word—it is a personal summons. I believe the Lord is issuing a clarion call:
+                        </p>
+                        <div class="quote-block">
+                            "If you have ears to hear, get ready!"
+                        </div>
+                        <div class="page-number">24</div>
+                    </div>
+                </div>
+
+                <!-- Page 25 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            You need only to listen to the news to hear it—the headlines are crying out that we're entering perilous, chaotic, and unprecedented times. The upheaval around us is more than judgment—it's mercy. Like birth pangs increasing in frequency and intensity, these disruptions signal that something new is on the horizon. They are God's way of awakening us to realign with His purposes.
+                        </p>
+                        <p class="page-text">
+                            We cry out for revival—but do we understand what we're asking for?
+                        </p>
+                        <p class="page-text">
+                            People often ask me, "Some prophets say a great shaking is coming. Others say a massive revival is coming. Which is right?" I say—both. The shaking and the outpouring are not opposites—they are partners. The shaking clears the ground. The outpouring fills it.
+                        </p>
+                        <div class="page-number">25</div>
+                    </div>
+                </div>
+
+                <!-- Page 26 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Revival is coming, yes. But so is a tumultuous shaking. We must prepare for both.
+                        </p>
+                        <p class="page-text">
+                            As Hebrews 12:26-27 declares: <em>"Once more I will shake not only the earth but also the heavens...so that what cannot be shaken may remain."</em> Through these divine disruptions, God strips away what is temporary so that what is eternal can take root.
+                        </p>
+                        <p class="page-text">
+                            He's not just calling us to be attentive, but to hear what He's saying and obey, positioning ourselves for the restoration He promises (see 2 Chr. 7:13-14).
+                        </p>
+                        <p class="page-text">
+                            When God comes, He comes in holiness. And His holiness shakes everything that stands in opposition to Him...
+                        </p>
+                        <div class="page-number">26</div>
+                    </div>
+                </div>
+
+                <!-- Page 27 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="section-heading">The Moment of Decision</div>
+                        <p class="page-text">
+                            What will be your response? History reveals a powerful pattern: after every great national crisis (shaking) comes a window of opportunity for renewal and reformation. That same opportunity stands before us now.
+                        </p>
+                        <p class="page-text">
+                            This book is not a message of doom—it is a call to destiny. In the midst of shaking, God is summoning His people to rise in His strength and stand unshakable. It's not just about weathering the storm—it's about being Spirit-led into revival and rebuilding new, godly foundations that will stand firm in the days to come.
+                        </p>
+                        <div class="page-number">27</div>
+                    </div>
+                </div>
+
+                <!-- Page 28 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Great shaking often precedes great transformation. In such times, foundations are tested—what is built on sand will fall, but what is anchored to the Rock of God's Word will endure. And from what endures, we are given a divine opportunity: to rebuild, to reform, and to restore according to God's original design. How will you rebuild?
+                        </p>
+                        <p class="page-text">
+                            Standing on those cliffs in 1970, I faced a choice that would cost me everything. I could remain a detached observer, filming from above, or I could set down my camera and join what God was doing. But for a Jewish man, embracing Jesus meant exile from family, community, identity itself. That choice—between comfortable distance and costly discipleship—confronts us all when Heaven breaks into our carefully controlled world.
+                        </p>
+                        <div class="page-number">28</div>
+                    </div>
+                </div>
+
+                <!-- Page 29 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            The shaking isn't meant to destroy you—it's meant to free you from everything that's not eternal. It's an invitation to build your life, your family, and community on the only foundation that will stand: Jesus Christ.
+                        </p>
+                        <p class="page-text">
+                            This book is a wake-up call to the church. This will require courage, a new mind-set, and flexibility. We cannot assume that the way we have done things in the past will work in this new season.
+                        </p>
+                        <p class="page-text">
+                            In the chapters ahead, we'll explore how to:
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>Build your life on four unshakable foundation stones</strong> that will stand when everything else collapses—the bedrock relationships God designed to sustain you through any storm.
+                        </p>
+                        <div class="page-number">29</div>
+                    </div>
+                </div>
+
+                <!-- Page 30 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>Build authentic spiritual community</strong> that stands together when everything else fragments—covenant relationships that strengthen, support, and sharpen you for what's ahead.
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>Hear God's voice with crystal clarity</strong> when all other voices scream for your attention—learning to discern divine direction in the midst of chaos.
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>Prepare the next generations to stand unshakable</strong>—equipping them with bold faith and spiritual authority for the days ahead.
+                        </p>
+                        <p class="page-text" style="margin-left: 20px;">
+                            • <strong>Discover and step into your Kingdom assignment</strong> for this historic hour—positioned and empowered to transform your sphere of influence.
+                        </p>
+                        <div class="page-number">30</div>
+                    </div>
+                </div>
+
+                <!-- Page 31 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            You will learn how to become unentangled with the world and stand strong in every storm. You will emerge knowing how to position yourself to be part of God's redemptive work in this critical hour.
+                        </p>
+                        <div class="section-heading">Becoming Unshakable—Your Action Step</div>
+                        <p class="page-text">
+                            At the end of each chapter, you'll find reflective questions and prayers to help you apply these truths. The journey to becoming unshakable begins with honest assessment.
+                        </p>
+                        <p class="page-text">
+                            Before you turn the page, ask yourself: What has God already been speaking to me about that I've been hesitant to face? What foundations in my life need strengthening? Where have I built on sand instead of rock?
+                        </p>
+                        <div class="page-number">31</div>
+                    </div>
+                </div>
+
+                <!-- Page 32 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Write it down. Date it. This is your starting point.
+                        </p>
+                        <p class="page-text">
+                            The shaking has begun. The vision is unfolding.
+                        </p>
+                        <div class="quote-block">
+                            The time to prepare is now.
+                        </div>
+                        <div style="text-align: center; margin-top: 60px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--purple); margin-bottom: 20px;">
+                                Continue Your Journey
+                            </div>
+                            <p class="page-text" style="text-align: center;">
+                                This preview gives you the complete Chapter 1 from UNSHAKABLE. The full book contains many more transformative chapters that will equip you to stand firm in the days ahead.
+                            </p>
+                        </div>
+                        <div class="page-number">32</div>
+                    </div>
+                </div>
+
+                <!-- Page 33: End -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div style="text-align: center; margin-top: 80px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--purple); margin-bottom: 30px;">
+                                Get the Complete Book
+                            </div>
+                            <p class="page-text" style="text-align: center;">
+                                Don't stop here! The full UNSHAKABLE book contains many more chapters filled with biblical wisdom and practical guidance for building a family that stands firm in any season.
+                            </p>
+                            <button onclick="window.location.href='unshakable_landing_page.html#order'"
+                                    class="btn btn-primary"
+                                    style="margin-top: 30px; background: var(--purple); color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                <i class="fas fa-book"></i> Order UNSHAKABLE Now
+                            </button>
+                        </div>
+                        <div class="page-number">33</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Scroll View -->
+        <div class="mobile-scroll-view">
+            <!-- Cover -->
+            <div class="mobile-page" style="text-align: center; padding: 50px 20px;">
+                <div class="chapter-title" style="font-size: 32px; margin-bottom: 15px;">Chapter 1</div>
+                <div class="chapter-subtitle" style="font-size: 22px; margin-bottom: 10px;">THE SHAKING & THE VISION</div>
+                <div class="chapter-subtitle" style="font-size: 18px; font-weight: normal; color: var(--text-light);">Are You Ready for What's Coming?</div>
+                <div style="margin-top: 40px;">
+                    <div style="font-size: 42px; font-weight: 900; color: var(--purple); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                        UNSHAKABLE
+                    </div>
+                    <div style="margin-top: 15px; font-size: 16px; color: var(--text-dark);">
+                        Chapter Preview
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opening Story -->
+            <div class="mobile-page">
+                <p class="page-text">
+                    In the summer of 1970, I stood on the cliffs overlooking a small beach in Costa Mesa, California, a young Jewish filmmaker with a camera on my shoulder. I'd been asked to produce a documentary on what was happening below—thousands of hippies singing Jesus songs, getting baptized in the Pacific Ocean at Pirates Cove. Just another assignment, I thought. Just another California oddity I was looking to capture on film.
+                </p>
+                <p class="page-text">
+                    As I watched through my lens, something unexpected happened. The scene below wasn't just religious theater. These young people—long-haired, barefoot, many still bearing the marks of hard living—were rejoicing, and profoundly real. They waded into the waves, singing, weeping, and embracing one another as they were baptized. Some had to be carried out of the water, so overcome were they by what they'd experienced.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    I was witnessing God's answer to a lost generation that had been shaken to its core. Vietnam had torn the nation apart. Cities burned with racial unrest—nationally beloved leaders were assassinated, and once respected institutions crumbled. Young people who'd grown up in prosperity found themselves adrift in a sea of LSD and other drugs, the "free love" movement, all ending up in existential despair. Everything their parents had built around them seemed to be collapsing.
+                </p>
+                <p class="page-text">
+                    But here, at the Pacific Coast, Heaven was responding to Earth's groaning.
+                </p>
+                <p class="page-text">
+                    That day on the cliffs, I was deeply challenged, marking the beginning of a lifelong journey—a journey that would lead me to encounter Jesus as my Messiah and where I would come to understand the generational patterns that brought us to that point.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    That pursuit would take me five decades to grasp fully—a divine cycle that pulses through history. When human structures fail catastrophically, when society reaches a breaking point, when people cry out in desperation, God begins to move. He always has. He always will.
+                </p>
+                <p class="page-text">
+                    Now, in the later years of my life, I'm watching it unfold once again.
+                </p>
+                <div class="section-heading">The Evidence of Another Great Shaking</div>
+                <p class="page-text">
+                    As I write these words in early 2025, the evidence of another great shaking surrounds us. We stand in the midst of unprecedented collapse across every sphere of society—cultural, spiritual, economic, and governmental structures that once seemed permanent are crumbling before our eyes.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Our political landscape has fractured beyond recognition. Tribal divisions make common-sense governance nearly impossible. Leaders are chosen not for wisdom but for their ability to inflame their base. Justice has become selective, applied differently depending on political allegiance or moral view.
+                </p>
+                <div class="quote-block">
+                    It's hard to believe this is the same nation many of us grew up in.
+                </div>
+                <p class="page-text">
+                    Universities—once bastions of free thought and truth-seeking—have become ideological battlegrounds. Biblical worldviews are not merely challenged but openly mocked. Students are taught what to think, not how to think.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Financial markets soar and crash in almost weekly occurrences, and entire nations teeter on the edge of default. The system, once built on trust, now runs on fear and speculation.
+                </p>
+                <p class="page-text">
+                    The shaking isn't just national, it's global. The world order established after World War II is unraveling. Old alliances fracture while new threats emerge. From Ukraine to the Middle East, from Taiwan to the South China Sea, regional conflicts threaten to ignite wider wars.
+                </p>
+                <div class="quote-block">
+                    The moral foundations are crumbling at breathtaking speed.
+                </div>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    What was unthinkable a generation ago is now mandated. What was sacred is now scorned. What protected children now preys upon them.
+                </p>
+                <p class="page-text">
+                    In our schools, innocence is under assault. Children are sexualized through curriculum that would have been considered pornographic just years ago. On our streets, lawlessness reigns. The elderly are offered death instead of care—euthanasia marketed as dignity.
+                </p>
+                <p class="page-text">
+                    In our homes, the family—God's first institution—lies in ruins. Marriage has been redefined, then discarded altogether. According to researcher Dr. George Barna, two-thirds of adults in America now reject absolute moral truth.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Ancient hatreds have returned with modern vengeance. Antisemitism spreads from college campuses to city streets. We haven't just lost our way—we've inverted our values. We call evil good and good evil.
+                </p>
+                <p class="page-text">
+                    Meanwhile, the Church in the West is shrinking and retreating. Young people flee organized religion, seeking spirituality without submission, experience without truth.
+                </p>
+                <div class="quote-block">
+                    Yes, God is still moving—but not at the scale or speed we desperately need.
+                </div>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    We all know of dynamic churches, ministries, and individuals who are making a real impact. But the statistics speak for themselves. Despite these faithful efforts, we are losing the larger cultural war. The Church cannot afford to settle for isolated victories—we must rise together with greater urgency, clarity, and commitment. We must do better.
+                </p>
+                <p class="page-text">
+                    What we're facing is more than cultural decline or institutional weakness. <strong>It's deeper.</strong> This is not merely about shifting trends or moral confusion—we are living in the midst of a spiritual crisis.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Wars and rumors of wars dominate the headlines. Floods, droughts, and famines strike with escalating frequency. Civil unrest, terrorism, and "horrorism"—acts so brutal they defy comprehension—are fueling fear and destabilizing nations across the globe.
+                </p>
+                <div class="quote-block">
+                    The alarms are sounding. Can we hear them?
+                </div>
+                <p class="page-text">
+                    The signs are everywhere, yet many remain asleep. What we're seeing is not just political, social, or economic—it's prophetic. What God revealed to me in a vision decades ago is a warning of what will happen if we do not wake up and turn to Him. That warning now feels imminent.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">The Vision That Changed Everything</div>
+                <p class="page-text">
+                    In 1984, long before anyone was talking about cultural collapse or a coming shaking, God gave me a vision that has marked me ever since.
+                </p>
+                <p class="page-text">
+                    During a time of prayer, I suddenly seemed no longer in my room. In the vision, I stood gazing out over a desolate landscape blanketed with collapsed buildings and broken structures. As far as the eye could see, there was vast devastation—heaps of rubble, cracked foundations, and twisted debris. It reminded me of those haunting images from Hiroshima—total destruction where life once thrived.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    But it wasn't just the destruction that gripped me—it was the people. They wandered among the ruins with expressions of utter shock and bewilderment. They had built their lives, their organizations, and their institutions on faulty foundations that couldn't hold up under the shaking.
+                </p>
+                <p class="page-text">
+                    The Lord spoke: "They built on sand, believing it would hold. They chose speed over depth, appearance over substance. Now the shaking reveals what was always true—only what is built on My Word will remain."
+                </p>
+                <p class="page-text">
+                    "When, Lord?" I asked.
+                </p>
+                <p class="page-text">
+                    "It has already begun," He said. "But the greater shaking is yet to come."
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">Recognizing the Divine Pattern</div>
+                <p class="page-text">
+                    Throughout Scripture, God's pattern remains consistent:
+                </p>
+                <div class="quote-block" style="font-size: 15px; font-weight: normal; font-style: italic;">
+                    Blessing - Complacency - Rebellion - Shaking - Repentance - Restoration
+                </div>
+                <p class="page-text">
+                    <strong>In Judges:</strong> For nearly 400 years, Israel repeated this pattern. Seven times they cycled through blessing, rebellion, oppression, crying out, and deliverance. Each generation forgot the lessons of the previous one.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    <strong>In Jeremiah:</strong> God revealed this pattern once again to an entire nation facing judgment. In this recurring cycle, God faithfully demonstrated His mercy even in judgment—always leaving a remnant, always providing a path back through repentance.
+                </p>
+                <div class="scripture">
+                    <em>"Therefore, this is what the Lord says: 'If you repent, I will restore you that you may serve Me...'"</em> (Jer. 15:19).
+                </div>
+                <p class="page-text">
+                    <strong>In Israel's monarchy:</strong> From David's glory to exile in Babylon—the pattern played out over centuries. Solomon's wisdom gave way to idolatry. Revival under Hezekiah was followed by rebellion under Manasseh.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    <strong>In the Early Church:</strong> Even the New Testament church experienced these cycles. The passion of Pentecost cooled into the lukewarm Laodicea. Paul warned Timothy that <em>"there will be terrible times in the last days"</em> (2 Tim. 3:1).
+                </p>
+                <p class="page-text">
+                    This divine pattern reveals three truths:
+                </p>
+                <p class="page-text">
+                    • Before judgment comes, God gives space for mercy and repentance.<br>
+                    • Shaking is meant to bring awakening, not desolation.<br>
+                    • A godly remnant always emerges to rebuild on truth.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Consider how this pattern played out before the Jesus Movement I witnessed: America in the 1950s experienced unprecedented blessing. But blessing bred complacency. By the early 1960s, that complacency had turned to rebellion. Prayer was expelled from classrooms in 1962. The sexual revolution torched traditional values. Drug use exploded.
+                </p>
+                <p class="page-text">
+                    Then came the shaking—the Vietnam war, assassinations of President Kennedy, Dr. King, and Senator Robert Kennedy. Cities burned. The National Guard occupied universities. Everything that once seemed unshakable was shaken apart.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    It was in the midst of that shaking that God moved. The "Jesus People" Movement wasn't the shaking—it was heaven's response to a generation that had been shaken back to desperation for truth.
+                </p>
+                <p class="page-text">
+                    This is why the shaking is actually mercy. As Hebrews 12:27 reveals, God shakes <em>"so that what cannot be shaken may remain."</em> He allows the breaking to produce blessing. He permits the collapse of false foundations, so we'll build on true ones.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">More Than Historical Cycles</div>
+                <p class="page-text">
+                    God's patterns of shaking aren't random—they follow a divine rhythm so consistent that even secular historians have recognized it. In their landmark book <em>The Fourth Turning</em>, William Strauss and Neil Howe documented what believers have long understood: history moves in cycles.
+                </p>
+                <p class="page-text">
+                    These historians discovered that societies move through four distinct seasons roughly every 80-100 years: "The High," "The Awakening," "The Unraveling," and "The Crisis" (Fourth Turning).
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    America has experienced three previous Fourth Turnings: The American Revolution (1770s-1780s), The Civil War (1860s), and The Great Depression/World War II (1929-1945). Each brought total transformation.
+                </p>
+                <p class="page-text">
+                    But here's what secular historians miss: behind every cultural shaking is a divine purpose. What they call generational patterns, the Bible reveals as God's redemptive rhythm.
+                </p>
+                <p class="page-text">
+                    We're not merely repeating cycles but moving in a spiral. Each turning intensifies; each crisis is more global. Technology has compressed time; what took decades now happens in years.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Jesus Himself described escalating birth pains in Matthew 24—each wave more intense than the last, all pointing toward His return. We're accelerating toward that culmination, when every shaking gives way to the eternal Kingdom that cannot be shaken.
+                </p>
+                <div class="section-heading">The Prophetic Convergence</div>
+                <p class="page-text">
+                    I recently joined prophetic leaders from thirty-two nations for a three-day gathering in Dallas, Texas. The voices around the table confirmed what I've been sensing: a greater shaking is coming to America and the world.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    These prophetic voices proclaim that the coming shaking will be more intense and expansive than most of us are expecting—and that out of this upheaval, a Greater Spiritual Awakening will arise, triggering a massive harvest more abundant than the Church is currently prepared to disciple.
+                </p>
+                <p class="page-text">
+                    This will not be easy. The coming waves of disruption will test even mature believers. But our Mighty God is calling us to <em>"Arise, shine, for your light has come, and the glory of the LORD rises upon you"</em> (Isa. 60:1-2).
+                </p>
+                <div class="quote-block">
+                    "If you have ears to hear, get ready!"
+                </div>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    People often ask me, "Some prophets say a great shaking is coming. Others say a massive revival is coming. Which is right?" I say—both. The shaking and the outpouring are not opposites—they are partners. The shaking clears the ground. The outpouring fills it.
+                </p>
+                <p class="page-text">
+                    Revival is coming, yes. But so is a tumultuous shaking. We must prepare for both.
+                </p>
+                <p class="page-text">
+                    As Hebrews 12:26-27 declares: <em>"Once more I will shake not only the earth but also the heavens...so that what cannot be shaken may remain."</em>
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">The Moment of Decision</div>
+                <p class="page-text">
+                    What will be your response? History reveals a powerful pattern: after every great national crisis (shaking) comes a window of opportunity for renewal and reformation. That same opportunity stands before us now.
+                </p>
+                <p class="page-text">
+                    This book is not a message of doom—it is a call to destiny. In the midst of shaking, God is summoning His people to rise in His strength and stand unshakable. It's not just about weathering the storm—it's about being Spirit-led into revival and rebuilding new, godly foundations that will stand firm in the days to come.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Great shaking often precedes great transformation. In such times, foundations are tested—what is built on sand will fall, but what is anchored to the Rock of God's Word will endure.
+                </p>
+                <p class="page-text">
+                    Standing on those cliffs in 1970, I faced a choice that would cost me everything. That choice—between comfortable distance and costly discipleship—confronts us all when Heaven breaks into our carefully controlled world.
+                </p>
+                <p class="page-text">
+                    The shaking isn't meant to destroy you—it's meant to free you from everything that's not eternal. It's an invitation to build your life, your family, and community on the only foundation that will stand: Jesus Christ.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    This book is a wake-up call to the church. This will require courage, a new mind-set, and flexibility. In the chapters ahead, we'll explore how to:
+                </p>
+                <p class="page-text">
+                    • <strong>Build your life on four unshakable foundation stones</strong><br>
+                    • <strong>Build authentic spiritual community</strong><br>
+                    • <strong>Hear God's voice with crystal clarity</strong><br>
+                    • <strong>Prepare the next generations to stand unshakable</strong><br>
+                    • <strong>Discover and step into your Kingdom assignment</strong>
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">Becoming Unshakable—Your Action Step</div>
+                <p class="page-text">
+                    At the end of each chapter, you'll find reflective questions and prayers to help you apply these truths. The journey to becoming unshakable begins with honest assessment.
+                </p>
+                <p class="page-text">
+                    Before you turn the page, ask yourself: What has God already been speaking to me about that I've been hesitant to face? What foundations in my life need strengthening? Where have I built on sand instead of rock?
+                </p>
+                <p class="page-text">
+                    Write it down. Date it. This is your starting point.
+                </p>
+                <div class="quote-block">
+                    The time to prepare is now.
+                </div>
+            </div>
+
+            <!-- Final CTA -->
+            <div class="mobile-page" style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 24px; font-weight: bold; color: var(--purple); margin-bottom: 20px;">
+                    Get the Complete Book
+                </div>
+                <p class="page-text" style="text-align: center;">
+                    Don't stop here! The full UNSHAKABLE book contains many more chapters filled with biblical wisdom and practical guidance for building a family that stands firm in any season.
+                </p>
+                <a href="unshakable_landing_page.html#order"
+                   class="btn btn-primary"
+                   style="margin-top: 20px; background: var(--purple); color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <i class="fas fa-book"></i> Order UNSHAKABLE Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="book-controls">
+            <button id="prevBtn" onclick="previousPage()">
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button id="nextBtn" onclick="nextPage()">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="page-indicator">
+                Page <span id="currentPage">1</span> of <span id="totalPages">33</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Banner -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <h2>Ready to Build an Unshakable Family?</h2>
+            <p>
+                You've just read a preview of Chapter 1. The complete UNSHAKABLE book contains powerful chapters
+                packed with biblical wisdom and practical guidance for establishing your family on a firm foundation.
+            </p>
+            <div class="cta-buttons">
+                <a href="unshakable_landing_page.html#order" class="btn btn-primary">
+                    <i class="fas fa-book"></i> Order Now
+                </a>
+                <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-secondary">
+                    <i class="fas fa-gift"></i> Save with Bundle
+                </a>
+            </div>
+            <p style="margin-top: 25px; font-size: 16px;">
+                <i class="fas fa-shield-alt"></i> 30-Day Money-Back Guarantee
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="preview-footer">
+        <p>&copy; 2025 BridgeBuilders International. All rights reserved.</p>
+        <p style="margin-top: 10px;">
+            Questions? Email <a href="mailto:support@bridgebuilders.net" style="color: var(--gold); text-decoration: none;">support@bridgebuilders.net</a>
+        </p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Display personalized welcome message
+            const leadInfo = localStorage.getItem('unshakableChapterLead');
+            if (leadInfo) {
+                try {
+                    const lead = JSON.parse(leadInfo);
+                    const welcomeMsg = document.getElementById('welcomeMessage');
+                    const userName = document.getElementById('userName');
+
+                    if (lead.firstName) {
+                        userName.textContent = lead.firstName;
+                        welcomeMsg.style.display = 'block';
+                    }
+                } catch (e) {
+                    console.log('Could not parse lead info');
+                }
+            }
+
+            // Initialize flipbook
+            const flipbookWidth = 900;
+            const flipbookHeight = 700;
+
+            $("#flipbook").turn({
+                width: flipbookWidth,
+                height: flipbookHeight,
+                autoCenter: true,
+                acceleration: true,
+                elevation: 50,
+                gradients: true,
+                when: {
+                    turned: function(event, page) {
+                        updatePageIndicator(page);
+                    }
+                }
+            });
+
+            // Handle window resize
+            $(window).resize(function() {
+                const containerWidth = $('.book-container').width();
+                const scale = Math.min(1, (containerWidth - 40) / flipbookWidth);
+
+                if (scale < 1) {
+                    $("#flipbook").css({
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'top center'
+                    });
+                }
+            }).trigger('resize');
+
+            updatePageIndicator(1);
+        });
+
+        function nextPage() {
+            $("#flipbook").turn("next");
+        }
+
+        function previousPage() {
+            $("#flipbook").turn("previous");
+        }
+
+        function updatePageIndicator(page) {
+            const totalPages = $("#flipbook").turn("pages");
+            document.getElementById('currentPage').textContent = page;
+            document.getElementById('totalPages').textContent = totalPages;
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (page === 1);
+            document.getElementById('nextBtn').disabled = (page === totalPages);
+        }
+
+        // Track chapter preview view
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'chapter_preview', {
+                'event_category': 'engagement',
+                'event_label': 'UNSHAKABLE - Chapter 1'
+            });
+        }
+    </script>
+</body>
+</html>

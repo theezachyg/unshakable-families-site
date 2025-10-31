@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Unshakable Family</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --fire-red: #e63946;
+            --fire-orange: #ff6b35;
+            --gold: #ffd700;
+            --text-dark: #1a202c;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+            --purple: #5b2c6f;
+            --success: #38a169;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .cart-header {
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .cart-header h1 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .cart-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Cart Layout */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        /* Cart Items */
+        .cart-items {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .cart-items h2 {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 20px;
+            padding: 25px 0;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .item-details h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .item-details p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .item-language {
+            display: inline-block;
+            background: var(--bg-light);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        .item-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        .item-price {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--fire-red);
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-light);
+            padding: 8px 15px;
+            border-radius: 30px;
+        }
+
+        .quantity-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .quantity-display {
+            font-size: 18px;
+            font-weight: 700;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .remove-item {
+            color: var(--fire-red);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: underline;
+            transition: all 0.3s ease;
+        }
+
+        .remove-item:hover {
+            color: #c53030;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart i {
+            font-size: 80px;
+            color: var(--text-light);
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart h3 {
+            font-size: 24px;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .empty-cart p {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .order-summary h2 {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row.total {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary);
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 3px solid var(--fire-red);
+        }
+
+        .summary-label {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .summary-value {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .savings-highlight {
+            color: var(--success);
+            background: #f0fff4;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .bonuses-list {
+            background: #fffbeb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .bonuses-list h4 {
+            color: var(--fire-red);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .bonuses-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bonuses-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .bonuses-list li::before {
+            content: "🎁";
+            position: absolute;
+            left: 0;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--fire-red);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 25px;
+        }
+
+        .checkout-btn:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.4);
+        }
+
+        .checkout-btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .trust-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--bg-light);
+        }
+
+        .trust-icon {
+            font-size: 14px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .trust-icon i {
+            font-size: 18px;
+            color: var(--success);
+        }
+
+        /* Continue Shopping */
+        .continue-shopping {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .continue-shopping a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .continue-shopping a:hover {
+            color: var(--fire-red);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: relative;
+                top: 0;
+            }
+
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+            }
+
+            .item-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .item-actions {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .recommendations h2 {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .recommendations-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            background: var(--bg-light);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .recommendation-card.featured {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid var(--gold);
+        }
+
+        .recommendation-card.featured .recommendation-badge {
+            display: block;
+            background: var(--fire-red);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .recommendation-image {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 10px;
+        }
+
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+            min-height: 40px;
+        }
+
+        .recommendation-author {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .recommendation-price {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--fire-red);
+            margin-bottom: 15px;
+        }
+
+        .recommendation-savings {
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .add-to-cart-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .add-to-cart-btn.featured {
+            background: var(--fire-red);
+        }
+
+        .add-to-cart-btn.featured:hover {
+            background: #c53030;
+        }
+
+        @media (max-width: 768px) {
+            .recommendations-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid var(--bg-light);
+            border-top: 4px solid var(--fire-red);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-header">
+        <h1><i class="fas fa-shopping-cart"></i> Your Cart</h1>
+        <p>Review your items and proceed to secure checkout</p>
+    </div>
+
+    <div class="container">
+        <div class="cart-layout">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <h2>Cart Items (<span id="itemCount">0</span>)</h2>
+                <div id="cartItemsContainer">
+                    <!-- Cart items will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal:</span>
+                    <span class="summary-value" id="subtotal">$0.00</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Shipping:</span>
+                    <span class="summary-value" id="shippingValue">Calculated at checkout</span>
+                </div>
+
+                <div class="summary-row" id="discountRow" style="display: none;">
+                    <span class="summary-label" style="color: var(--success);">Discount (10%):</span>
+                    <span class="summary-value" style="color: var(--success);">-$<span id="discountAmount">0.00</span></span>
+                </div>
+
+                <div class="savings-highlight" id="freeShippingSection" style="display: none; background: linear-gradient(135deg, #f0fff4, #c6f6d5); border: 2px solid var(--success);">
+                    <i class="fas fa-shipping-fast"></i> You've unlocked FREE shipping!
+                </div>
+
+                <div class="savings-highlight" id="freeShippingProgress" style="display: none; background: linear-gradient(135deg, #fff3cd, #ffeaa7); border: 2px solid var(--gold);">
+                    <i class="fas fa-truck"></i> Add <span id="amountNeeded">$0.00</span> more for FREE shipping!
+                </div>
+
+                <div class="savings-highlight" id="addOnDiscountSection" style="display: none; background: linear-gradient(135deg, #e6f7ff, #b3e0ff); border: 2px solid var(--primary);">
+                    10% discount applied for adding recommended books!
+                </div>
+
+                <div class="summary-row total">
+                    <span class="summary-label">Total:</span>
+                    <span class="summary-value" id="total">$0.00</span>
+                </div>
+
+                <div class="savings-highlight" id="savingsSection" style="display: none;">
+                    <i class="fas fa-check-circle"></i> You're saving <span id="savings">$0.00</span>!
+                </div>
+
+                <div class="bonuses-list" id="bonusesList" style="display: none;">
+                    <h4><i class="fas fa-gift"></i> Included FREE Bonuses:</h4>
+                    <ul id="bonusesItems">
+                        <!-- Bonuses will be dynamically inserted -->
+                    </ul>
+                </div>
+
+                <button class="checkout-btn" id="checkoutBtn" onclick="proceedToCheckout()">
+                    <i class="fas fa-lock"></i> Proceed to Secure Checkout
+                </button>
+
+                <div class="trust-icons">
+                    <div class="trust-icon">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secure</span>
+                    </div>
+                    <div class="trust-icon">
+                        <i class="fas fa-undo"></i>
+                        <span>30-Day Returns</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="recommendations" id="recommendationsSection" style="display: none;">
+            <h2><i class="fas fa-star"></i> You Might Also Like</h2>
+            <p class="recommendations-subtitle">Complete your collection with these bestselling books</p>
+            <div class="recommendations-grid" id="recommendationsGrid">
+                <!-- Recommendations will be dynamically inserted -->
+            </div>
+        </div>
+
+        <div class="continue-shopping">
+            <a href="unshakable_bundle_landing_page_v2.html">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; color: var(--text-light);">Redirecting to secure checkout...</p>
+    </div>
+
+    <script>
+        // Stripe Configuration
+        const STRIPE_PUBLIC_KEY = 'pk_live_51MtbYiENTZGZDoIEKfCfVrmc7YEAuZuGDX7euAj0vxRCuGY45XEiLqZR3iYJMOid6cKGDPIbVsat629uM5bIzou600giLIR4Xv';
+        const stripe = Stripe(STRIPE_PUBLIC_KEY);
+
+        // Product Configuration with Stripe Price IDs
+        const PRODUCT_DETAILS = {
+            'prod_TKMYdi0tJ8PihI': {
+                name: 'Unshakable Family Bundle (English)',
+                price: 30.00,
+                image: 'Assets/Product Images/EN-Bundle-Paperback-Cart.png',
+                type: 'bundle',
+                language: 'English',
+                regularPrice: 35.98,
+                // Note: You'll need to create Price IDs in Stripe Dashboard for each product
+                stripePriceId: 'price_XXXXX' // Replace with actual Stripe Price ID
+            },
+            'prod_TKMZUqoZ3N0UqW': {
+                name: 'Unshakable Family Bundle (Español)',
+                price: 30.00,
+                image: 'Assets/Product Images/ES-Bundle-Paperback-Cart.png',
+                type: 'bundle',
+                language: 'Español',
+                regularPrice: 35.98,
+                stripePriceId: 'price_XXXXX' // Replace with actual Stripe Price ID
+            },
+            'prod_TKMQIIUotITNZo': {
+                name: 'Unshakable Paperback',
+                price: 17.99,
+                image: 'Assets/Product Images/EN-Unshakable-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMSsIjIYBf5Ev': {
+                name: 'Unshakable Paperback',
+                price: 17.99,
+                image: 'Assets/Product Images/ES-Unshakable-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMTKRgsWddE83': {
+                name: 'Unshakable Ebook',
+                price: 9.99,
+                image: 'Assets/Product Images/EN-Unshakable-Ebook-Cart.png',
+                type: 'ebook',
+                language: 'English',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMTfrTuMRr7c3': {
+                name: 'Unshakable Ebook',
+                price: 9.99,
+                image: 'Assets/Product Images/ES-Unshakable-Ebook-Cart.png',
+                type: 'ebook',
+                language: 'Español',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMUdCfcPzrqrm': {
+                name: 'Fire on the Family Altar Paperback',
+                price: 17.99,
+                image: 'Assets/Product Images/EN-FireOnTheFamilyAltar-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMUV9sItr20yy': {
+                name: 'Fire on the Family Altar Paperback',
+                price: 17.99,
+                image: 'Assets/Product Images/ES-FireOnTheFamilyAltar-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMU12ym0FzbZM': {
+                name: 'Fire on the Family Altar Ebook',
+                price: 9.99,
+                image: 'Assets/Product Images/EN-FireOnTheFamilyAltar-Ebook-Cart.png',
+                type: 'ebook',
+                language: 'English',
+                stripePriceId: 'price_XXXXX'
+            },
+            'prod_TKMVhWKaAW2sZf': {
+                name: 'Fire on the Family Altar Ebook',
+                price: 9.99,
+                image: 'Assets/Product Images/ES-FireOnTheFamilyAltar-Ebook-Cart.png',
+                type: 'ebook',
+                language: 'Español',
+                stripePriceId: 'price_XXXXX'
+            },
+            'rec_prayer_saturated_church': {
+                name: 'Prayer Saturated Church',
+                subtitle: 'A Comprehensive Handbook for Prayer Leaders',
+                author: 'Cheryl Sacks',
+                price: 17.99,
+                image: 'Assets/Product Images/EN-PrayerSaturatedChurch-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX',
+                isRecommendation: true
+            },
+            'rec_prayer_saturated_family': {
+                name: 'Prayer Saturated Family',
+                subtitle: 'How to Change the Atmosphere in Your Home through Prayer',
+                author: 'Cheryl Sacks',
+                price: 17.99,
+                image: 'Assets/Product Images/EN-PrayerSaturatedFamily-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX',
+                isRecommendation: true
+            },
+            'rec_prayer_saturated_kids': {
+                name: 'Prayer Saturated Kids',
+                subtitle: 'Equipping and empowering children in prayer',
+                author: 'Cheryl Sacks',
+                price: 13.99,
+                image: 'Assets/Product Images/EN-PrayerSaturatedKids-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX',
+                isRecommendation: true
+            },
+            'rec_reclaim_generation': {
+                name: 'Reclaim a Generation',
+                subtitle: '21 Days of Prayer for Schools',
+                author: 'Hal & Cheryl Sacks',
+                price: 10.79,
+                image: 'Assets/Product Images/EN-ReclaimAGeneration-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX',
+                isRecommendation: true
+            },
+            'rec_two_nations': {
+                name: 'Two Nations One Prayer',
+                subtitle: '',
+                author: 'Hal Sacks',
+                price: 10.99,
+                image: 'Assets/Product Images/EN-TwoNationsOnePrayer-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_XXXXX',
+                isRecommendation: true
+            }
+        };
+
+        // Cart Management
+        let cart = JSON.parse(localStorage.getItem('unshakableCart')) || [];
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add the Unshakable Family Bundle to get started!</p>
+                        <a href="unshakable_bundle_landing_page_v2.html" class="checkout-btn" style="display: inline-block; width: auto; padding: 15px 40px; text-decoration: none;">
+                            <i class="fas fa-book"></i> View Bundle
+                        </a>
+                    </div>
+                `;
+                document.getElementById('checkoutBtn').disabled = true;
+                updateSummary();
+                return;
+            }
+
+            document.getElementById('checkoutBtn').disabled = false;
+
+            container.innerHTML = cart.map((item, index) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return `
+                    <div class="cart-item">
+                        <img src="${product.image}" alt="${product.name}" class="item-image">
+                        <div class="item-details">
+                            <h3>${product.name}</h3>
+                            <p>${product.type === 'bundle' ? 'Both Books + FREE Bonuses' : product.type === 'paperback' ? 'Physical Book' : 'Digital Download'}</p>
+                            <span class="item-language"><i class="fas fa-globe"></i> ${product.language}</span>
+                        </div>
+                        <div class="item-actions">
+                            <div class="item-price">$${(product.price * item.quantity).toFixed(2)}</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
+                                <span class="quantity-display">${item.quantity}</span>
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            </div>
+                            <button class="remove-item" onclick="removeItem(${index})">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateSummary();
+        }
+
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                removeItem(index);
+                return;
+            }
+            localStorage.setItem('unshakableCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('unshakableCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function updateSummary() {
+            const subtotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return sum + (product.price * item.quantity);
+            }, 0);
+
+            const regularTotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                const regularPrice = product.regularPrice || product.price;
+                return sum + (regularPrice * item.quantity);
+            }, 0);
+
+            const savings = regularTotal - subtotal;
+
+            // Check if cart has any recommendation items for 10% discount
+            const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
+            let discount = 0;
+            let finalTotal = subtotal;
+
+            if (hasRecommendation) {
+                discount = subtotal * 0.10;
+                finalTotal = subtotal - discount;
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('discountAmount').textContent = discount.toFixed(2);
+                document.getElementById('addOnDiscountSection').style.display = 'block';
+            } else {
+                document.getElementById('discountRow').style.display = 'none';
+                document.getElementById('addOnDiscountSection').style.display = 'none';
+            }
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${finalTotal.toFixed(2)}`;
+            document.getElementById('itemCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            // Free shipping logic (based on final total after discount)
+            const FREE_SHIPPING_THRESHOLD = 100;
+            const freeShippingSection = document.getElementById('freeShippingSection');
+            const freeShippingProgress = document.getElementById('freeShippingProgress');
+            const shippingValue = document.getElementById('shippingValue');
+
+            if (cart.length > 0) {
+                if (finalTotal >= FREE_SHIPPING_THRESHOLD) {
+                    // Has free shipping
+                    shippingValue.innerHTML = '<span style="color: var(--success); font-weight: 700;">FREE</span>';
+                    freeShippingSection.style.display = 'block';
+                    freeShippingProgress.style.display = 'none';
+                } else {
+                    // Show progress to free shipping
+                    const amountNeeded = FREE_SHIPPING_THRESHOLD - finalTotal;
+                    shippingValue.textContent = 'Calculated at checkout';
+                    document.getElementById('amountNeeded').textContent = `$${amountNeeded.toFixed(2)}`;
+                    freeShippingSection.style.display = 'none';
+                    freeShippingProgress.style.display = 'block';
+                }
+            } else {
+                shippingValue.textContent = 'Calculated at checkout';
+                freeShippingSection.style.display = 'none';
+                freeShippingProgress.style.display = 'none';
+            }
+
+            // Determine which bonuses to show based on cart contents
+            const hasBundle = cart.some(item => PRODUCT_DETAILS[item.id].type === 'bundle');
+            const hasUnshakable = cart.some(item => {
+                const name = PRODUCT_DETAILS[item.id].name.toLowerCase();
+                return name.includes('unshakable') && PRODUCT_DETAILS[item.id].type !== 'bundle';
+            });
+            const hasFire = cart.some(item => {
+                const name = PRODUCT_DETAILS[item.id].name.toLowerCase();
+                return name.includes('fire');
+            });
+
+            // Calculate total savings including bonuses and discount
+            let bonusValue = 0;
+            if (hasBundle) {
+                bonusValue = 29.95 + 19.95; // Both bonuses
+            } else {
+                if (hasUnshakable) bonusValue += 29.95;
+                if (hasFire) bonusValue += 19.95;
+            }
+
+            const totalSavings = savings + bonusValue + discount;
+
+            if (totalSavings > 0) {
+                document.getElementById('savingsSection').style.display = 'block';
+                document.getElementById('savings').textContent = `$${totalSavings.toFixed(2)}`;
+            } else {
+                document.getElementById('savingsSection').style.display = 'none';
+            }
+
+            const bonusesList = document.getElementById('bonusesList');
+            const bonusesItems = document.getElementById('bonusesItems');
+
+            if (cart.length > 0) {
+                let bonusesHTML = '';
+
+                if (hasBundle) {
+                    bonusesHTML += '<li>30-Day Unshakable Action Guide ($29.95 value)</li>';
+                    bonusesHTML += '<li>10-Day Family Prayer Guide ($19.95 value)</li>';
+                } else {
+                    if (hasUnshakable) {
+                        bonusesHTML += '<li>30-Day Unshakable Action Guide ($29.95 value)</li>';
+                    }
+                    if (hasFire) {
+                        bonusesHTML += '<li>10-Day Family Prayer Guide ($19.95 value)</li>';
+                    }
+                }
+
+                bonusesHTML += '<li>Instant digital delivery via email</li>';
+                bonusesItems.innerHTML = bonusesHTML;
+                bonusesList.style.display = 'block';
+            } else {
+                bonusesList.style.display = 'none';
+            }
+
+            // Show recommendations
+            updateRecommendations();
+        }
+
+        function updateRecommendations() {
+            const recommendationsSection = document.getElementById('recommendationsSection');
+            const recommendationsGrid = document.getElementById('recommendationsGrid');
+
+            if (cart.length === 0) {
+                recommendationsSection.style.display = 'none';
+                return;
+            }
+
+            // Determine what to recommend
+            const hasBundle = cart.some(item => PRODUCT_DETAILS[item.id].type === 'bundle');
+            const hasUnshakable = cart.some(item => {
+                const name = PRODUCT_DETAILS[item.id].name.toLowerCase();
+                return name.includes('unshakable') && PRODUCT_DETAILS[item.id].type !== 'bundle';
+            });
+            const hasFire = cart.some(item => {
+                const name = PRODUCT_DETAILS[item.id].name.toLowerCase();
+                return name.includes('fire');
+            });
+
+            let recommendations = [];
+
+            // If customer has only Fire or only Unshakable, recommend the bundle
+            if ((hasUnshakable && !hasFire && !hasBundle) || (hasFire && !hasUnshakable && !hasBundle)) {
+                recommendations.push({
+                    id: 'prod_TKMYdi0tJ8PihI',
+                    featured: true,
+                    badge: 'SAVE $5.99'
+                });
+            }
+
+            // Always show other books by Hal and Cheryl
+            recommendations.push(
+                { id: 'rec_prayer_saturated_church' },
+                { id: 'rec_prayer_saturated_family' },
+                { id: 'rec_prayer_saturated_kids' },
+                { id: 'rec_reclaim_generation' },
+                { id: 'rec_two_nations' }
+            );
+
+            // Filter out items already in cart
+            const cartProductIds = cart.map(item => item.id);
+            recommendations = recommendations.filter(rec => !cartProductIds.includes(rec.id));
+
+            if (recommendations.length === 0) {
+                recommendationsSection.style.display = 'none';
+                return;
+            }
+
+            // Render recommendations
+            recommendationsGrid.innerHTML = recommendations.map(rec => {
+                const product = PRODUCT_DETAILS[rec.id];
+                const isFeatured = rec.featured || false;
+                const badge = rec.badge || '';
+
+                return `
+                    <div class="recommendation-card ${isFeatured ? 'featured' : ''}">
+                        ${isFeatured ? `<span class="recommendation-badge">${badge}</span>` : ''}
+                        <img src="${product.image}" alt="${product.name}" class="recommendation-image"
+                             onerror="this.src='Assets/Product Images/placeholder.jpg'">
+                        <div class="recommendation-title">${product.name}</div>
+                        ${product.author ? `<div class="recommendation-author">by ${product.author}</div>` : ''}
+                        ${product.regularPrice ? `<div class="recommendation-savings">Save $${(product.regularPrice - product.price).toFixed(2)}</div>` : ''}
+                        <div class="recommendation-price">$${product.price.toFixed(2)}</div>
+                        <button class="add-to-cart-btn ${isFeatured ? 'featured' : ''}"
+                                onclick="addRecommendationToCart('${rec.id}')">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            recommendationsSection.style.display = 'block';
+        }
+
+        function addRecommendationToCart(productId) {
+            // Check if item already in cart
+            const existingIndex = cart.findIndex(item => item.id === productId);
+
+            if (existingIndex >= 0) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({ id: productId, quantity: 1 });
+            }
+
+            localStorage.setItem('unshakableCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        async function proceedToCheckout() {
+            if (cart.length === 0) return;
+
+            // Show loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('checkoutBtn').disabled = true;
+
+            try {
+                // Prepare line items for Stripe
+                const lineItems = cart.map(item => {
+                    const product = PRODUCT_DETAILS[item.id];
+                    return {
+                        price: product.stripePriceId,
+                        quantity: item.quantity
+                    };
+                });
+
+                // Call your Cloudflare Worker to create checkout session
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        lineItems: lineItems,
+                        cart: cart
+                    })
+                });
+
+                const { sessionId } = await response.json();
+
+                // Redirect to Stripe Checkout
+                const { error } = await stripe.redirectToCheckout({ sessionId });
+
+                if (error) {
+                    console.error('Error:', error);
+                    alert('There was an error processing your checkout. Please try again.');
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    document.getElementById('checkoutBtn').disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error connecting to checkout. Please try again.');
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('checkoutBtn').disabled = false;
+            }
+        }
+
+        // Initialize
+        renderCart();
+    </script>
+</body>
+</html>

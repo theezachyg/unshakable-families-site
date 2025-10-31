@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - Thank You! | Unshakable Family</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --fire-red: #e63946;
+            --gold: #ffd700;
+            --text-dark: #1a202c;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --success: #38a169;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-light);
+        }
+
+        .success-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .success-icon i {
+            font-size: 60px;
+            color: white;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .order-number {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .success-message {
+            font-size: 18px;
+            color: var(--text-dark);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .bonus-alert {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .bonus-alert h2 {
+            font-size: 28px;
+            color: var(--fire-red);
+            margin-bottom: 15px;
+        }
+
+        .bonus-alert ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .bonus-alert li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+
+        .bonus-alert li::before {
+            content: "🎁";
+            position: absolute;
+            left: 0;
+            font-size: 24px;
+        }
+
+        .info-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .info-box {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box h3 i {
+            font-size: 24px;
+            color: var(--fire-red);
+        }
+
+        .info-box p {
+            color: var(--text-light);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .cta-section {
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 2px solid var(--bg-light);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: var(--fire-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .social-share {
+            margin-top: 40px;
+        }
+
+        .social-share h3 {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 22px;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .social-btn.facebook { background: #1877f2; }
+        .social-btn.twitter { background: #1da1f2; }
+        .social-btn.email { background: var(--text-dark); }
+
+        @media (max-width: 768px) {
+            .success-card {
+                padding: 40px 25px;
+            }
+
+            .info-boxes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+
+            <h1>Order Confirmed! 🎉</h1>
+            <p class="order-number" id="orderNumber">Order #<span id="orderNumberValue">Loading...</span></p>
+
+            <p class="success-message">
+                Thank you for your purchase! Your order has been confirmed and is being prepared for shipment. 
+                You'll receive a confirmation email shortly with all the details.
+            </p>
+
+            <div class="bonus-alert">
+                <h2>🎁 Check Your Email for Your FREE Bonuses!</h2>
+                <p style="margin-bottom: 20px;">Within the next few minutes, you'll receive an email with instant access to:</p>
+                <ul>
+                    <li><strong>30-Day Unshakable Action Guide</strong> ($29.95 value)</li>
+                    <li><strong>10-Day Family Prayer Guide</strong> ($19.95 value)</li>
+                </ul>
+                <p style="font-size: 14px; color: var(--text-light); margin-top: 20px;">
+                    <em>Don't see it? Check your spam/promotions folder and add us to your contacts!</em>
+                </p>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h3>
+                        <i class="fas fa-shipping-fast"></i>
+                        Shipping
+                    </h3>
+                    <p>Your books will ship within 1-2 business days. You'll receive tracking information via email.</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>
+                        <i class="fas fa-envelope"></i>
+                        Bonuses
+                    </h3>
+                    <p>Check your email for instant access to your free digital guides. Download and start today!</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>
+                        <i class="fas fa-shield-alt"></i>
+                        Guarantee
+                    </h3>
+                    <p>30-day money-back guarantee. Not satisfied? Return for a full refund, no questions asked.</p>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">What's Next?</h3>
+                <p style="margin-bottom: 30px; color: var(--text-light);">
+                    While you wait for your books to arrive, download your bonus guides and start transforming your family today!
+                </p>
+                
+                <a href="https://bridgebuilders.net" class="btn btn-primary">
+                    <i class="fas fa-globe"></i> Visit BridgeBuilders
+                </a>
+                <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-secondary">
+                    <i class="fas fa-book"></i> View More Books
+                </a>
+            </div>
+
+            <div class="social-share">
+                <h3>Share the Good News:</h3>
+                <div class="social-buttons">
+                    <a href="#" class="social-btn facebook" onclick="shareOnFacebook(); return false;" title="Share on Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-btn twitter" onclick="shareOnTwitter(); return false;" title="Share on Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-btn email" onclick="shareViaEmail(); return false;" title="Share via Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid var(--bg-light);">
+                <p style="font-size: 14px; color: var(--text-light);">
+                    Questions? Contact us at <a href="mailto:support@bridgebuilders.net" style="color: var(--fire-red); text-decoration: none;">support@bridgebuilders.net</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        if (sessionId) {
+            document.getElementById('orderNumberValue').textContent = sessionId.substr(sessionId.length - 12);
+        } else {
+            document.getElementById('orderNumberValue').textContent = 'Confirmed';
+        }
+
+        // Clear cart after successful purchase
+        localStorage.removeItem('unshakableCart');
+
+        // Track conversion
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'purchase', {
+                transaction_id: sessionId,
+                value: 30.00, // Update based on actual order
+                currency: 'USD',
+                items: [
+                    {
+                        item_name: 'Unshakable Family Bundle',
+                        price: 30.00,
+                        quantity: 1
+                    }
+                ]
+            });
+        }
+
+        // Social sharing functions
+        function shareOnFacebook() {
+            const url = 'https://yourdomain.com/unshakable_bundle_landing_page_v2.html';
+            const text = 'Just got the Unshakable Family Bundle! Transform your family with these powerful books.';
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnTwitter() {
+            const url = 'https://yourdomain.com/unshakable_bundle_landing_page_v2.html';
+            const text = 'Just got the Unshakable Family Bundle! 📚🔥 Building foundations that last and igniting revival at home. Check it out:';
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
+        }
+
+        function shareViaEmail() {
+            const subject = 'Check out the Unshakable Family Bundle';
+            const body = 'I just got the Unshakable Family Bundle and wanted to share it with you!\n\nThese books teach how to build unshakable foundations and ignite revival in your home.\n\nCheck it out: https://yourdomain.com/unshakable_bundle_landing_page_v2.html';
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        // Confetti animation (optional - can add confetti library)
+        console.log('🎉 Order successful! Thank you for your purchase!');
+    </script>
+</body>
+</html>

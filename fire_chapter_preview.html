@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire on the Family Altar - Chapter 1 Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --fire-red: #e63946;
+            --gold: #ffd700;
+            --text-dark: #1a202c;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .preview-header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .header-cta .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--fire-red);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .header-cta .btn:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid var(--gold);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+            border-radius: 15px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .welcome-message h3 {
+            color: var(--fire-red);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+
+        /* Book Container */
+        .book-container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .flipbook-wrapper {
+            position: relative;
+            margin: 0 auto;
+            perspective: 2000px;
+        }
+
+        #flipbook {
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Mobile Scroll View */
+        .mobile-scroll-view {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mobile-page {
+            background: white;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .flipbook-page {
+            background: white;
+            padding: 40px 45px;
+            overflow: hidden;
+            background: linear-gradient(to right, #fefefe 0%, #ffffff 5%, #ffffff 95%, #fefefe 100%);
+        }
+
+        .page-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        .page-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .page-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .page-content::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 10px;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Book Navigation */
+        .book-controls {
+            text-align: center;
+            margin: 30px 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .book-controls button {
+            background: var(--fire-red);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            margin: 0 10px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .book-controls button:hover:not(:disabled) {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .book-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            margin-top: 15px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Typography */
+        .chapter-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .chapter-subtitle {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--fire-red);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .scripture {
+            font-style: italic;
+            color: var(--text-dark);
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(230, 57, 70, 0.05);
+            border-left: 4px solid var(--fire-red);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .section-heading {
+            font-size: 19px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 25px 0 12px;
+        }
+
+        .page-text {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .page-text em {
+            font-style: italic;
+        }
+
+        .page-text strong {
+            font-weight: bold;
+        }
+
+        .quote-block {
+            font-size: 17px;
+            font-weight: bold;
+            color: var(--fire-red);
+            margin: 20px 0;
+            padding: 15px;
+            text-align: center;
+            border-top: 2px solid var(--fire-red);
+            border-bottom: 2px solid var(--fire-red);
+        }
+
+        .prayer {
+            font-style: italic;
+            padding: 15px;
+            background: rgba(26, 54, 93, 0.05);
+            border-radius: 10px;
+            margin: 15px 0;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, var(--fire-red), #c53030);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .cta-content p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--fire-red);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--fire-red);
+        }
+
+        /* Footer */
+        .preview-footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .preview-footer p {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            /* Hide flipbook on mobile, show scroll view */
+            .flipbook-wrapper {
+                display: none !important;
+            }
+
+            .book-controls {
+                display: none !important;
+            }
+
+            .mobile-scroll-view {
+                display: block !important;
+            }
+
+            .book-container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .chapter-title {
+                font-size: 24px;
+            }
+
+            .chapter-subtitle {
+                font-size: 18px;
+            }
+
+            .section-heading {
+                font-size: 18px;
+                margin: 20px 0 10px;
+            }
+
+            .page-text {
+                font-size: 15px;
+                line-height: 1.7;
+                margin-bottom: 12px;
+                text-align: left;
+            }
+
+            .scripture {
+                font-size: 14px;
+                padding: 15px;
+                margin: 15px 0;
+            }
+
+            .quote-block {
+                font-size: 16px;
+                padding: 15px;
+                margin: 20px 0;
+            }
+
+            .prayer {
+                font-size: 14px;
+                padding: 15px;
+            }
+
+            .cta-content h2 {
+                font-size: 24px;
+            }
+
+            .cta-content p {
+                font-size: 16px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="preview-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1>Fire on the Family Altar - Chapter 1</h1>
+                <p>Discover how to ignite God's presence in your home</p>
+            </div>
+            <div class="header-cta">
+                <a href="fire_on_family_altar_landing_page.html#order" class="btn">
+                    <i class="fas fa-shopping-cart"></i> Get The Full Book
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Message -->
+    <div class="welcome-message" id="welcomeMessage" style="display: none;">
+        <h3>🔥 Welcome, <span id="userName"></span>!</h3>
+        <p>Thank you for your interest in Fire on the Family Altar. Enjoy Chapter 1!</p>
+    </div>
+
+    <!-- Book Container -->
+    <div class="book-container">
+        <div class="flipbook-wrapper">
+            <div id="flipbook">
+                <!-- Page 1: Cover -->
+                <div class="flipbook-page">
+                    <div class="page-content" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+                        <div>
+                            <div class="chapter-title" style="font-size: 36px; margin-bottom: 20px;">Chapter 1</div>
+                            <div class="chapter-subtitle" style="font-size: 28px;">The Vision: Lighting the Nation</div>
+                            <div style="margin-top: 60px;">
+                                <img src="Assets/Product Images/Fire on The Family Altar Book Mockup.png"
+                                     alt="Fire on the Family Altar"
+                                     style="max-width: 200px; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page 2 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="scripture">
+                            <em>Arise, shine, for your light has come, and the glory of the Lord rises upon you. See, darkness covers the earth and thick darkness is over the peoples, but the Lord rises upon you and his glory appears over you. Nations will come to your light, and kings to the brightness of your dawn</em> (Isaiah 60:1-3 NIV).
+                        </div>
+                        <p class="page-text">
+                            I will never forget the moment. I was on stage at a large church conference, about to lead prayer for revival in America. As I stood quietly, the Holy Spirit suddenly spoke to me in a resounding, almost audible voice.
+                        </p>
+                        <p class="page-text">
+                            I nearly fell over! His words rang out with a force and urgency that shocked me:
+                        </p>
+                        <div class="quote-block">
+                            "Revival will come to America when the <em>family altar</em> is restored!"
+                        </div>
+                        <div class="page-number">2</div>
+                    </div>
+                </div>
+
+                <!-- Page 3 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            This came entirely out of the blue. No one at the conference was talking about the family. It wasn't even remotely what I expected to hear from the Lord.
+                        </p>
+                        <p class="page-text">
+                            As these words reverberated through me, I couldn't help but think of all the cultural depravity and complex problems facing America. <em>How could something as simple as families praying, reading the Bible, and worshiping together bring spiritual life to an entire nation?</em>
+                        </p>
+                        <p class="page-text">
+                            "Your plan sounds rather <em>simplistic,</em>" I replied to the Lord.
+                        </p>
+                        <p class="page-text">
+                            No sooner had I said this than a young man walked onto the platform and began to pray the exact words I'd just heard: <em>"Lord, <strong>restore</strong> the <strong>family altar</strong> in homes across America!"</em>
+                        </p>
+                        <div class="page-number">3</div>
+                    </div>
+                </div>
+
+                <!-- Page 4 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            <em>Wow!</em> What a confirmation!
+                        </p>
+                        <p class="page-text">
+                            At that moment the heavens seemed to open before me, and I saw a vision of the nation covered in deep, impenetrable darkness. Suddenly, as I looked closer, I saw a few homes begin to light up, glowing like stars across the dark night sky. The fireplaces in these homes were burning brightly where families were sitting together passionately praying and praising the Lord. Then, all at once, homes everywhere across the nation exploded with light as the families inside were worshiping and praying. This spread like wildfire until the whole nation was ablaze with the power and presence of God.
+                        </p>
+                        <p class="page-text">
+                            I could only stand in awe—what I saw took my breath away!
+                        </p>
+                        <p class="page-text">
+                            "Lord," I cried out, "Could it really be? Is <em>family</em> the very key to unlocking the revival we've been praying for?"
+                        </p>
+                        <div class="page-number">4</div>
+                    </div>
+                </div>
+
+                <!-- Page 5 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="section-heading">The Coming Move of God's Spirit</div>
+                        <p class="page-text">
+                            In the days that followed, the Lord began to speak to me that He is coming to visit households not only across America, but around the world. The Lord showed me that as families worship Him and invite His Holy Spirit into their homes, He will revive them—bring them back to life. His presence and power will fill their lives and households, igniting a passion and hunger for God that will spread to those around them.
+                        </p>
+                        <p class="page-text">
+                            This would not be the first time God has used the family altar to spark a revival. In the late 1600s, a Puritan minister named Thomas Boston was burdened by the state of his church in Scotland, which was not only spiritually cold but practically empty.
+                        </p>
+                        <div class="page-number">5</div>
+                    </div>
+                </div>
+
+                <!-- Page 6 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            He began visiting in the homes of his members and asking them specifically about their spiritual needs. Baxter discovered that some of his people were not even sure they were saved, and he led many to Christ. In each home he read the Bible and prayed and challenged the head of the house to begin a family altar each day. In a matter of months, a revival broke out in their community that filled the church and changed the people's lives forever. It all started with a family altar.
+                        </p>
+                        <p class="page-text">
+                            In the times in which we are living, God is calling His people to once again light the family altar—to establish our homes as places to regularly meet with and encounter Him. He is saying, "I want to come into your home in a fresh, new way!" I believe as God's people respond to this invitation, it will usher in an unprecedented move of the Holy Spirit, filling households with healing, restoration, and a renewed love for God and one another.
+                        </p>
+                        <div class="page-number">6</div>
+                    </div>
+                </div>
+
+                <!-- Page 7 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            In fact, in my vision the Lord showed me "fire from Heaven" falling on families, spreading to the family of God—a concentric move of God that starts in our own hearts as the Holy Spirit prepares us to once again become a place where He is welcome.
+                        </p>
+                        <p class="page-text">
+                            The fire of God is coming to <em>purge</em> sin—everything that separates us from God and one another. He will ignite righteousness and passion for the Kingdom! This will awaken the nation spiritually like nothing before it, lighting a fire that burns deep in the hearts of families and throughout the family of God.
+                        </p>
+                        <p class="page-text">
+                            The Holy Spirit will bring a deep work as believers repent of their wrong attitudes toward God and one another. This will provoke tangible demonstrations of love, unity, and honor among God's people.
+                        </p>
+                        <div class="page-number">7</div>
+                    </div>
+                </div>
+
+                <!-- Page 8 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Offenses will be laid down as believers repent of jealousy, unforgiveness, bitterness, and competition. This holy fire will burn up everything that had been built on a foundation of wood, hay, and stubble, so that our lives and homes are built on a firm foundation (see Rom. 14:10-12; 1 Cor. 3:11-15).
+                        </p>
+                        <p class="page-text">
+                            It is interesting to note that one definition of <em>revival</em> is "to return to its original intent, condition, or purpose." That is what the Lord will do in this next great move of the Holy Spirit. He will restore our homes and fill them with His presence—the same way that the first family, Adam and Eve, lived and communed with God in their garden home.
+                        </p>
+                        <p class="page-text">
+                            I know you may feel, as many people do, that your life, family, nation, or "_________" (fill in the blank) is too broken to be restored.
+                        </p>
+                        <div class="page-number">8</div>
+                    </div>
+                </div>
+
+                <!-- Page 9 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            But this simply is not true! The Bible speaks of this hope through the many stories of broken lives and a nation (Israel) seemingly too far from God to be restored. Yet, when His people called to Him, seeking Him with all their hearts, the Lord always answered. He restored.
+                        </p>
+                        <p class="page-text">
+                            This is not the time to give up on your spouse, child, or grandchild. God hasn't given up on our families, so why should we? This is not the time to give up on your nation. This is the time to cry out to God, to make your home an altar of prayer and worship to Him, and watch how He releases His power from Heaven to earth.
+                        </p>
+                        <div class="section-heading">Get Ready</div>
+                        <p class="page-text">
+                            There are things the Lord wants to say to us and our families during these extraordinary times.
+                        </p>
+                        <div class="page-number">9</div>
+                    </div>
+                </div>
+
+                <!-- Page 10 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            I hear the Lord's urgent call to His Church, "Get ready, get your houses in order, and make room for My Spirit to move with power!" This is a clarion call for us to get into position for an outpouring of His Holy Spirit that will fill and overflow our homes, bringing in a great harvest of souls.
+                        </p>
+                        <p class="page-text">
+                            I feel a strong, weighty urgency of the Lord to draw near to Him—to get off the proverbial hamster wheel of our everyday lives, to get quiet long enough to hear His voice and be willing to do what He's asking of us. If we are running ahead too quickly and not listening to the Lord's voice, if we are holding too tightly to "what was" or what is comfortable, we will miss what the Lord is saying and what He is wanting to do in and through our households. We must pay attention!
+                        </p>
+                        <div class="page-number">10</div>
+                    </div>
+                </div>
+
+                <!-- Page 11 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            I feel this is what the Lord is asking of all of us: "Are you willing to make the changes needed? To change and shift as I lead? To speed up when I say, 'Go quickly'? Will you welcome Me to make the changes when I say, 'Behold, I am doing a new thing'? Will you slow down and wait patiently when I impress upon you, 'Be still and know that I am God'?"
+                        </p>
+                        <p class="page-text">
+                            We all must be willing to change, to allow Him to put things in right order—to give our families a divine <em>reset</em>.
+                        </p>
+                        <div class="section-heading">Your Home Can Be a Storehouse of His Glory</div>
+                        <p class="page-text">
+                            It is possible to make your home a storehouse of God's glory, presence, and provision in times of cultural crisis.
+                        </p>
+                        <div class="page-number">11</div>
+                    </div>
+                </div>
+
+                <!-- Page 12 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            You also may desire to connect with other praying families as "houses of prayer" to erect a canopy of God's presence. You and those around you can create communities of refuge, much like the land of Goshen was for the Jewish people in Egypt. For the Israelites, Goshen was a place of God's special protection and provision. God told His children, <em>"You shall dwell in the land of Goshen, and you shall be near me, you and your children and your children's children, and your flocks, your herds, and all that you have"</em> (Gen. 45:10 ESV). Goshen became a flourishing place of refuge in the time of God's judgment when the angel of death passed through the nation—and they were spared (see Exod. 12).
+                        </p>
+                        <div class="page-number">12</div>
+                    </div>
+                </div>
+
+                <!-- Page 13 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            This is not a call for the Church to hide in our homes; it is a time for the Church to arise and shine, as the prophet Isaiah proclaimed: <em>"Arise, shine, for your light has come, and the glory of the Lord has risen upon you"</em> (Isa. 60:1 ESV). The Lord is signaling that there is coming a fiery move of His Spirit <em>within</em> homes that will bring rapid revival and a move of His Spirit in communities, cities, and nations.
+                        </p>
+                        <p class="page-text">
+                            The days we are living in are filled with tremendous stress, and the Scripture tells us this will only increase (see 2 Tim. 3:1). People will be looking for those who know how to touch God on their behalf. As the revival spreads, many new believers will need more of God's Good News—the "basics" of the Bible.
+                        </p>
+                        <div class="page-number">13</div>
+                    </div>
+                </div>
+
+                <!-- Page 14 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            This is why the Lord is calling us to prepare our homes to be a habitation for Him, filled with His presence, so that it is a warm and inviting place to disciple the harvest.
+                        </p>
+                        <p class="page-text">
+                            In this next season, as followers of Christ, we are going to need each other as never before. The enemy of our faith will push back against this move of God with all his might and power. The Lord is calling us to reach out to friends and neighbors—to invite them into our homes for times of Spirit-filled worship, prayer, and sharing God's faithfulness in our lives. Even as we see in the Acts of the Apostles when the early Christians were persecuted for their faith, they met together daily in homes, sharing meals and drawing courage by praying and worshiping together (see Acts 2:42-47).
+                        </p>
+                        <div class="page-number">14</div>
+                    </div>
+                </div>
+
+                <!-- Page 15 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            They left these times of encounter with the Lord empowered to preach the Gospel boldly (even with the threat of imprisonment or death), heal the sick, and raise the dead.
+                        </p>
+                        <p class="page-text">
+                            Just as we saw in the early Church, the gift of hospitality will be a vital component of this next great move of God.
+                        </p>
+                        <div class="scripture">
+                            <em>The end of all things is near. Therefore be alert and of sober mind so that you may pray. Above all, love each other deeply, because love covers over a multitude of sins. Offer hospitality to one another without grumbling. Each of you should use whatever gift you have received to serve others</em> (1 Peter 4:7-10 NIV).
+                        </div>
+                        <div class="page-number">15</div>
+                    </div>
+                </div>
+
+                <!-- Page 16 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Nothing is more effective at drawing people into the Kingdom and discipling them than nurturing friendships in a warm home setting. A friend of mine, Merrily, and her husband, Paul, regularly invite friends to their home for meals and to do life together. Sometimes these are friends from church or parents of their kids' friends from school, soccer, or gymnastics—most of whom are not yet believers in Christ.
+                        </p>
+                        <p class="page-text">
+                            Merrily had been talking about the Lord with her personal trainer, Jen, and with the children's babysitter, Christina. So, when Merrily and Paul planned a night of worship with extended family and friends, they decided to invite Jen and Christina.
+                        </p>
+                        <div class="page-number">16</div>
+                    </div>
+                </div>
+
+                <!-- Page 17 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Several guests brought instruments—a keyboard and guitars—and everyone joined in worshiping the Lord. It wasn't a formal program, but rather just a casual time of friends getting together to focus on Jesus.
+                        </p>
+                        <p class="page-text">
+                            Jen, who had never been inside a church, said later that her experience was so profound that she could barely stand; she felt "like Jell-o." She thought she might at any moment burst into tears. At the time, Jen was separated from her husband and was ready to file for divorce. But as a result of that encounter, Jen came to faith in Christ. She began to pray for her husband and her marriage. Shortly after that her husband reached out to her asking if they could talk. He agreed to go to counseling and the two of them reconciled.
+                        </p>
+                        <div class="page-number">17</div>
+                    </div>
+                </div>
+
+                <!-- Page 18 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Christina also encountered the Lord that night and began asking Merrily a lot of questions. She wanted to know more about God and what a personal relationship with Him looked like. At the time, Christina was under a lot of stress at school, and her relationship with her boyfriend, Josh, was stuck in an unhealthy cycle, filled with arguing and fighting.
+                        </p>
+                        <p class="page-text">
+                            One morning at two o'clock, Christina called Merrily, crying. Christina and Josh had been out late drinking, and Josh had gotten in a fight with another family member. When Christina tried to step in and stop them, she inadvertently got struck in the face and there was blood everywhere.
+                        </p>
+                        <div class="page-number">18</div>
+                    </div>
+                </div>
+
+                <!-- Page 19 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Merrily drove to pick up Christina. She brought her back home, cleaned her up, and put her to bed in the guest bedroom. The following morning, they prayed together. That same week, Paul reached out to Josh, and over the next few months began to meet with him regularly for prayer and Bible study.
+                        </p>
+                        <p class="page-text">
+                            The troubled couple started going to church with Merrily and Paul. They accepted Christ and were water baptized and filled with the Holy Spirit. They put their relationship under the lordship of Jesus Christ and were married. Today, Christina and Josh are one of the happiest couples you will ever meet. They beam with love for each other and the Lord. And they've expressed they want to do for others what Merrily and Paul did for them.
+                        </p>
+                        <div class="page-number">19</div>
+                    </div>
+                </div>
+
+                <!-- Page 20 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            These are the same kinds of encounters the Lord wants all of us to experience regularly in our homes. He wants to be the center of our marriages and families. He wants His Holy Spirit to be like a fire burning in our homes, so that everyone who walks through our front door will encounter His tangible presence.
+                        </p>
+                        <p class="page-text">
+                            As our families become saturated with God's heart and filled with His hope, joy, and love, we will reignite in others that which was reignited in us.
+                        </p>
+                        <p class="page-text">
+                            Whatever the season of life you and your family are in, there is an urgency in this hour for us to prepare our hearts and homes for this extraordinary move of God.
+                        </p>
+                        <div class="page-number">20</div>
+                    </div>
+                </div>
+
+                <!-- Page 21 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            I hear the Lord's urgent call, even a promise, to our families and to the family of God today: <em>"If you will build an altar, I will come—with awakening and revival fire—to your family and to your nation!"</em>
+                        </p>
+                        <div class="section-heading" style="margin-top: 50px;">Activation: Dedicating Your House to the Lord</div>
+                        <p class="page-text">
+                            The practice of dedicating a home to the Lord has been common since Old Testament times. We are not only dedicating the house to God for His purposes—the walls, doors, rooms, and objects—we are dedicating all the activities within it. Joshua said before the people of Israel: "<em>As for me and my house, we will serve the Lord</em>" (Josh. 24:15 NKJV). We can make this same declaration.
+                        </p>
+                        <div class="page-number">21</div>
+                    </div>
+                </div>
+
+                <!-- Page 22 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            Ideally you will do this with your spouse and children, but you can do this alone if they are not quite ready. You also may want to invite friends from your Christian community to join you. You don't need a priest or pastor to dedicate your home, but they would be a wonderful addition if you'd like to invite them.
+                        </p>
+                        <p class="page-text" style="margin-top: 20px;">
+                            <strong>1.</strong> Gather your family in one central location, such as your living room, and pray a prayer of dedication for your home. The prayer can be as simple as this: "Lord, we dedicate this house to You for Your purposes. Surround and fill our home with Your love, and may it be used to show Your love to all who enter here. Help us to reflect You in our hospitality. May we seek, honor, and encounter You here every day."
+                        </p>
+                        <div class="page-number">22</div>
+                    </div>
+                </div>
+
+                <!-- Page 23 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            <strong>2.</strong> Pray for God's protection over your home. You might say something like this: "Lord, we ask You to protect our home from all evil. Watch over every member of our household and over all our possessions. We ask You to send Your angelic hosts to surround our home and to put a barrier around every gateway into our home."
+                        </p>
+                        <p class="page-text" style="margin-top: 20px;">
+                            <strong>3.</strong> Then go through all the rooms of your house and pray an individual blessing in each room, using anointing oil, if you like. Anointing oil may be purchased at a Christian bookstore or website, or you can simply use olive or cooking oil. You may want to anoint (put a smudge) on all the gateways into your home such as doors, windows, fences between you and neighbors, the TV, and internet lines.
+                        </p>
+                        <div class="page-number">23</div>
+                    </div>
+                </div>
+
+                <!-- Page 24 -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <p class="page-text">
+                            <strong>4.</strong> You may like to ask God to give you a special Scripture to pray over your home. If your children participate, they can choose a special Scripture to pray over their own room.
+                        </p>
+                        <p class="page-text" style="margin-top: 20px;">
+                            <strong>5.</strong> Record the Scripture and date by writing it on a doorframe, under a threshold, on a plaque, in a family Bible, or some other place of significance.
+                        </p>
+                        <div class="section-heading" style="margin-top: 40px;">Let's Pray</div>
+                        <div class="prayer">
+                            <p style="margin-bottom: 15px;">
+                                <em>Dear Lord, our families and nation need You as never before. Only You can bring the healing and reconciliation we so desperately need. I ask You to send a sweeping nationwide revival and let it begin in my home.</em>
+                            </p>
+                        </div>
+                        <div class="page-number">24</div>
+                    </div>
+                </div>
+
+                <!-- Page 25: End -->
+                <div class="flipbook-page">
+                    <div class="page-content">
+                        <div class="prayer">
+                            <p>
+                                <em>I know that as my family and other families invite Your holy presence and power into our homes, we will see a massive returning to You, Your Word, and Your ways. I decree, in Jesus' name, that the family altar is being restored, and a movement of family prayer and worship is being ignited to set the nation ablaze with the power and presence of Almighty God! Amen!</em>
+                            </p>
+                        </div>
+                        <div style="text-align: center; margin-top: 80px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--fire-red); margin-bottom: 30px;">
+                                🔥 Continue Your Journey 🔥
+                            </div>
+                            <p class="page-text" style="text-align: center;">
+                                This is just the beginning! There are 11 more transformative chapters waiting for you.
+                            </p>
+                            <button onclick="window.location.href='fire_on_family_altar_landing_page.html#order'"
+                                    class="btn btn-primary"
+                                    style="margin-top: 20px; background: var(--fire-red); color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                <i class="fas fa-book"></i> Get the Full Book Now
+                            </button>
+                        </div>
+                        <div class="page-number">25</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Scroll View -->
+        <div class="mobile-scroll-view">
+            <!-- Cover -->
+            <div class="mobile-page" style="text-align: center; padding: 50px 20px;">
+                <div class="chapter-title" style="font-size: 32px; margin-bottom: 15px;">Chapter 1</div>
+                <div class="chapter-subtitle" style="font-size: 24px;">The Vision: Lighting the Nation</div>
+                <div style="margin-top: 40px;">
+                    <img src="Assets/Product Images/Fire on The Family Altar Book Mockup.png"
+                         alt="Fire on the Family Altar"
+                         style="max-width: 200px; height: auto;">
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="mobile-page">
+                <div class="scripture">
+                    <em>Arise, shine, for your light has come, and the glory of the Lord rises upon you. See, darkness covers the earth and thick darkness is over the peoples, but the Lord rises upon you and his glory appears over you. Nations will come to your light, and kings to the brightness of your dawn</em> (Isaiah 60:1-3 NIV).
+                </div>
+                <p class="page-text">
+                    I will never forget the moment. I was on stage at a large church conference, about to lead prayer for revival in America. As I stood quietly, the Holy Spirit suddenly spoke to me in a resounding, almost audible voice.
+                </p>
+                <p class="page-text">
+                    I nearly fell over! His words rang out with a force and urgency that shocked me:
+                </p>
+                <div class="quote-block">
+                    "Revival will come to America when the <em>family altar</em> is restored!"
+                </div>
+                <p class="page-text">
+                    This came entirely out of the blue. No one at the conference was talking about the family. It wasn't even remotely what I expected to hear from the Lord.
+                </p>
+                <p class="page-text">
+                    As these words reverberated through me, I couldn't help but think of all the cultural depravity and complex problems facing America. <em>How could something as simple as families praying, reading the Bible, and worshiping together bring spiritual life to an entire nation?</em>
+                </p>
+                <p class="page-text">
+                    "Your plan sounds rather <em>simplistic,</em>" I replied to the Lord.
+                </p>
+                <p class="page-text">
+                    No sooner had I said this than a young man walked onto the platform and began to pray the exact words I'd just heard: <em>"Lord, <strong>restore</strong> the <strong>family altar</strong> in homes across America!"</em>
+                </p>
+                <p class="page-text">
+                    <em>Wow!</em> What a confirmation!
+                </p>
+                <p class="page-text">
+                    At that moment the heavens seemed to open before me, and I saw a vision of the nation covered in deep, impenetrable darkness. Suddenly, as I looked closer, I saw a few homes begin to light up, glowing like stars across the dark night sky. The fireplaces in these homes were burning brightly where families were sitting together passionately praying and praising the Lord. Then, all at once, homes everywhere across the nation exploded with light as the families inside were worshiping and praying. This spread like wildfire until the whole nation was ablaze with the power and presence of God.
+                </p>
+                <p class="page-text">
+                    I could only stand in awe—what I saw took my breath away!
+                </p>
+                <p class="page-text">
+                    "Lord," I cried out, "Could it really be? Is <em>family</em> the very key to unlocking the revival we've been praying for?"
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">The Coming Move of God's Spirit</div>
+                <p class="page-text">
+                    In the days that followed, the Lord began to speak to me that He is coming to visit households not only across America, but around the world. The Lord showed me that as families worship Him and invite His Holy Spirit into their homes, He will revive them—bring them back to life. His presence and power will fill their lives and households, igniting a passion and hunger for God that will spread to those around them.
+                </p>
+                <p class="page-text">
+                    This would not be the first time God has used the family altar to spark a revival. In the late 1600s, a Puritan minister named Thomas Boston was burdened by the state of his church in Scotland, which was not only spiritually cold but practically empty. He began visiting in the homes of his members and asking them specifically about their spiritual needs. Baxter discovered that some of his people were not even sure they were saved, and he led many to Christ. In each home he read the Bible and prayed and challenged the head of the house to begin a family altar each day. In a matter of months, a revival broke out in their community that filled the church and changed the people's lives forever. It all started with a family altar.
+                </p>
+                <p class="page-text">
+                    In the times in which we are living, God is calling His people to once again light the family altar—to establish our homes as places to regularly meet with and encounter Him. He is saying, "I want to come into your home in a fresh, new way!" I believe as God's people respond to this invitation, it will usher in an unprecedented move of the Holy Spirit, filling households with healing, restoration, and a renewed love for God and one another.
+                </p>
+                <p class="page-text">
+                    In fact, in my vision the Lord showed me "fire from Heaven" falling on families, spreading to the family of God—a concentric move of God that starts in our own hearts as the Holy Spirit prepares us to once again become a place where He is welcome.
+                </p>
+                <p class="page-text">
+                    The fire of God is coming to <em>purge</em> sin—everything that separates us from God and one another. He will ignite righteousness and passion for the Kingdom! This will awaken the nation spiritually like nothing before it, lighting a fire that burns deep in the hearts of families and throughout the family of God.
+                </p>
+                <p class="page-text">
+                    The Holy Spirit will bring a deep work as believers repent of their wrong attitudes toward God and one another. This will provoke tangible demonstrations of love, unity, and honor among God's people. Offenses will be laid down as believers repent of jealousy, unforgiveness, bitterness, and competition. This holy fire will burn up everything that had been built on a foundation of wood, hay, and stubble, so that our lives and homes are built on a firm foundation (see Rom. 14:10-12; 1 Cor. 3:11-15).
+                </p>
+                <p class="page-text">
+                    It is interesting to note that one definition of <em>revival</em> is "to return to its original intent, condition, or purpose." That is what the Lord will do in this next great move of the Holy Spirit. He will restore our homes and fill them with His presence—the same way that the first family, Adam and Eve, lived and communed with God in their garden home.
+                </p>
+                <p class="page-text">
+                    I know you may feel, as many people do, that your life, family, nation, or "_________" (fill in the blank) is too broken to be restored. But this simply is not true! The Bible speaks of this hope through the many stories of broken lives and a nation (Israel) seemingly too far from God to be restored. Yet, when His people called to Him, seeking Him with all their hearts, the Lord always answered. He restored.
+                </p>
+                <p class="page-text">
+                    This is not the time to give up on your spouse, child, or grandchild. God hasn't given up on our families, so why should we? This is not the time to give up on your nation. This is the time to cry out to God, to make your home an altar of prayer and worship to Him, and watch how He releases His power from Heaven to earth.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">Get Ready</div>
+                <p class="page-text">
+                    There are things the Lord wants to say to us and our families during these extraordinary times. I hear the Lord's urgent call to His Church, "Get ready, get your houses in order, and make room for My Spirit to move with power!" This is a clarion call for us to get into position for an outpouring of His Holy Spirit that will fill and overflow our homes, bringing in a great harvest of souls.
+                </p>
+                <p class="page-text">
+                    I feel a strong, weighty urgency of the Lord to draw near to Him—to get off the proverbial hamster wheel of our everyday lives, to get quiet long enough to hear His voice and be willing to do what He's asking of us. If we are running ahead too quickly and not listening to the Lord's voice, if we are holding too tightly to "what was" or what is comfortable, we will miss what the Lord is saying and what He is wanting to do in and through our households. We must pay attention!
+                </p>
+                <p class="page-text">
+                    I feel this is what the Lord is asking of all of us: "Are you willing to make the changes needed? To change and shift as I lead? To speed up when I say, 'Go quickly'? Will you welcome Me to make the changes when I say, 'Behold, I am doing a new thing'? Will you slow down and wait patiently when I impress upon you, 'Be still and know that I am God'?"
+                </p>
+                <p class="page-text">
+                    We all must be willing to change, to allow Him to put things in right order—to give our families a divine <em>reset</em>.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">Your Home Can Be a Storehouse of His Glory</div>
+                <p class="page-text">
+                    It is possible to make your home a storehouse of God's glory, presence, and provision in times of cultural crisis. You also may desire to connect with other praying families as "houses of prayer" to erect a canopy of God's presence. You and those around you can create communities of refuge, much like the land of Goshen was for the Jewish people in Egypt. For the Israelites, Goshen was a place of God's special protection and provision. God told His children, <em>"You shall dwell in the land of Goshen, and you shall be near me, you and your children and your children's children, and your flocks, your herds, and all that you have"</em> (Gen. 45:10 ESV). Goshen became a flourishing place of refuge in the time of God's judgment when the angel of death passed through the nation—and they were spared (see Exod. 12).
+                </p>
+                <p class="page-text">
+                    This is not a call for the Church to hide in our homes; it is a time for the Church to arise and shine, as the prophet Isaiah proclaimed: <em>"Arise, shine, for your light has come, and the glory of the Lord has risen upon you"</em> (Isa. 60:1 ESV). The Lord is signaling that there is coming a fiery move of His Spirit <em>within</em> homes that will bring rapid revival and a move of His Spirit in communities, cities, and nations.
+                </p>
+                <p class="page-text">
+                    The days we are living in are filled with tremendous stress, and the Scripture tells us this will only increase (see 2 Tim. 3:1). People will be looking for those who know how to touch God on their behalf. As the revival spreads, many new believers will need more of God's Good News—the "basics" of the Bible. This is why the Lord is calling us to prepare our homes to be a habitation for Him, filled with His presence, so that it is a warm and inviting place to disciple the harvest.
+                </p>
+                <p class="page-text">
+                    In this next season, as followers of Christ, we are going to need each other as never before. The enemy of our faith will push back against this move of God with all his might and power. The Lord is calling us to reach out to friends and neighbors—to invite them into our homes for times of Spirit-filled worship, prayer, and sharing God's faithfulness in our lives. Even as we see in the Acts of the Apostles when the early Christians were persecuted for their faith, they met together daily in homes, sharing meals and drawing courage by praying and worshiping together (see Acts 2:42-47). They left these times of encounter with the Lord empowered to preach the Gospel boldly (even with the threat of imprisonment or death), heal the sick, and raise the dead.
+                </p>
+                <p class="page-text">
+                    Just as we saw in the early Church, the gift of hospitality will be a vital component of this next great move of God.
+                </p>
+                <div class="scripture">
+                    <em>The end of all things is near. Therefore be alert and of sober mind so that you may pray. Above all, love each other deeply, because love covers over a multitude of sins. Offer hospitality to one another without grumbling. Each of you should use whatever gift you have received to serve others</em> (1 Peter 4:7-10 NIV).
+                </div>
+            </div>
+
+            <div class="mobile-page">
+                <p class="page-text">
+                    Nothing is more effective at drawing people into the Kingdom and discipling them than nurturing friendships in a warm home setting. A friend of mine, Merrily, and her husband, Paul, regularly invite friends to their home for meals and to do life together. Sometimes these are friends from church or parents of their kids' friends from school, soccer, or gymnastics—most of whom are not yet believers in Christ.
+                </p>
+                <p class="page-text">
+                    Merrily had been talking about the Lord with her personal trainer, Jen, and with the children's babysitter, Christina. So, when Merrily and Paul planned a night of worship with extended family and friends, they decided to invite Jen and Christina. Several guests brought instruments—a keyboard and guitars—and everyone joined in worshiping the Lord. It wasn't a formal program, but rather just a casual time of friends getting together to focus on Jesus.
+                </p>
+                <p class="page-text">
+                    Jen, who had never been inside a church, said later that her experience was so profound that she could barely stand; she felt "like Jell-o." She thought she might at any moment burst into tears. At the time, Jen was separated from her husband and was ready to file for divorce. But as a result of that encounter, Jen came to faith in Christ. She began to pray for her husband and her marriage. Shortly after that her husband reached out to her asking if they could talk. He agreed to go to counseling and the two of them reconciled.
+                </p>
+                <p class="page-text">
+                    Christina also encountered the Lord that night and began asking Merrily a lot of questions. She wanted to know more about God and what a personal relationship with Him looked like. At the time, Christina was under a lot of stress at school, and her relationship with her boyfriend, Josh, was stuck in an unhealthy cycle, filled with arguing and fighting.
+                </p>
+                <p class="page-text">
+                    One morning at two o'clock, Christina called Merrily, crying. Christina and Josh had been out late drinking, and Josh had gotten in a fight with another family member. When Christina tried to step in and stop them, she inadvertently got struck in the face and there was blood everywhere.
+                </p>
+                <p class="page-text">
+                    Merrily drove to pick up Christina. She brought her back home, cleaned her up, and put her to bed in the guest bedroom. The following morning, they prayed together. That same week, Paul reached out to Josh, and over the next few months began to meet with him regularly for prayer and Bible study.
+                </p>
+                <p class="page-text">
+                    The troubled couple started going to church with Merrily and Paul. They accepted Christ and were water baptized and filled with the Holy Spirit. They put their relationship under the lordship of Jesus Christ and were married. Today, Christina and Josh are one of the happiest couples you will ever meet. They beam with love for each other and the Lord. And they've expressed they want to do for others what Merrily and Paul did for them.
+                </p>
+                <p class="page-text">
+                    These are the same kinds of encounters the Lord wants all of us to experience regularly in our homes. He wants to be the center of our marriages and families. He wants His Holy Spirit to be like a fire burning in our homes, so that everyone who walks through our front door will encounter His tangible presence.
+                </p>
+                <p class="page-text">
+                    As our families become saturated with God's heart and filled with His hope, joy, and love, we will reignite in others that which was reignited in us.
+                </p>
+                <p class="page-text">
+                    Whatever the season of life you and your family are in, there is an urgency in this hour for us to prepare our hearts and homes for this extraordinary move of God. I hear the Lord's urgent call, even a promise, to our families and to the family of God today: <em>"If you will build an altar, I will come—with awakening and revival fire—to your family and to your nation!"</em>
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">Activation: Dedicating Your House to the Lord</div>
+                <p class="page-text">
+                    The practice of dedicating a home to the Lord has been common since Old Testament times. We are not only dedicating the house to God for His purposes—the walls, doors, rooms, and objects—we are dedicating all the activities within it. Joshua said before the people of Israel: "<em>As for me and my house, we will serve the Lord</em>" (Josh. 24:15 NKJV). We can make this same declaration.
+                </p>
+                <p class="page-text">
+                    Ideally you will do this with your spouse and children, but you can do this alone if they are not quite ready. You also may want to invite friends from your Christian community to join you. You don't need a priest or pastor to dedicate your home, but they would be a wonderful addition if you'd like to invite them.
+                </p>
+                <p class="page-text" style="margin-top: 20px;">
+                    <strong>1.</strong> Gather your family in one central location, such as your living room, and pray a prayer of dedication for your home. The prayer can be as simple as this: "Lord, we dedicate this house to You for Your purposes. Surround and fill our home with Your love, and may it be used to show Your love to all who enter here. Help us to reflect You in our hospitality. May we seek, honor, and encounter You here every day."
+                </p>
+                <p class="page-text" style="margin-top: 20px;">
+                    <strong>2.</strong> Pray for God's protection over your home. You might say something like this: "Lord, we ask You to protect our home from all evil. Watch over every member of our household and over all our possessions. We ask You to send Your angelic hosts to surround our home and to put a barrier around every gateway into our home."
+                </p>
+                <p class="page-text" style="margin-top: 20px;">
+                    <strong>3.</strong> Then go through all the rooms of your house and pray an individual blessing in each room, using anointing oil, if you like. Anointing oil may be purchased at a Christian bookstore or website, or you can simply use olive or cooking oil. You may want to anoint (put a smudge) on all the gateways into your home such as doors, windows, fences between you and neighbors, the TV, and internet lines.
+                </p>
+                <p class="page-text" style="margin-top: 20px;">
+                    <strong>4.</strong> You may like to ask God to give you a special Scripture to pray over your home. If your children participate, they can choose a special Scripture to pray over their own room.
+                </p>
+                <p class="page-text" style="margin-top: 20px;">
+                    <strong>5.</strong> Record the Scripture and date by writing it on a doorframe, under a threshold, on a plaque, in a family Bible, or some other place of significance.
+                </p>
+            </div>
+
+            <div class="mobile-page">
+                <div class="section-heading">Let's Pray</div>
+                <div class="prayer">
+                    <p style="margin-bottom: 15px;">
+                        <em>Dear Lord, our families and nation need You as never before. Only You can bring the healing and reconciliation we so desperately need. I ask You to send a sweeping nationwide revival and let it begin in my home.</em>
+                    </p>
+                    <p>
+                        <em>I know that as my family and other families invite Your holy presence and power into our homes, we will see a massive returning to You, Your Word, and Your ways. I decree, in Jesus' name, that the family altar is being restored, and a movement of family prayer and worship is being ignited to set the nation ablaze with the power and presence of Almighty God! Amen!</em>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Final CTA -->
+            <div class="mobile-page" style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 24px; font-weight: bold; color: var(--fire-red); margin-bottom: 20px;">
+                    🔥 Continue Your Journey 🔥
+                </div>
+                <p class="page-text" style="text-align: center;">
+                    This is just the beginning! There are 11 more transformative chapters waiting for you.
+                </p>
+                <a href="fire_on_family_altar_landing_page.html#order"
+                   class="btn btn-primary"
+                   style="margin-top: 20px; background: var(--fire-red); color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <i class="fas fa-book"></i> Get the Full Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="book-controls">
+            <button id="prevBtn" onclick="previousPage()">
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button id="nextBtn" onclick="nextPage()">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="page-indicator">
+                Page <span id="currentPage">1</span> of <span id="totalPages">25</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Banner -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <h2>🔥 Ready to Transform Your Family?</h2>
+            <p>
+                You've just read Chapter 1. There are 11 more powerful chapters waiting for you,
+                packed with practical wisdom for igniting revival in your home.
+            </p>
+            <div class="cta-buttons">
+                <a href="fire_on_family_altar_landing_page.html#order" class="btn btn-primary">
+                    <i class="fas fa-book"></i> Order Now
+                </a>
+                <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-secondary">
+                    <i class="fas fa-gift"></i> Save with Bundle
+                </a>
+            </div>
+            <p style="margin-top: 25px; font-size: 16px;">
+                <i class="fas fa-shield-alt"></i> 30-Day Money-Back Guarantee
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="preview-footer">
+        <p>&copy; 2025 BridgeBuilders International. All rights reserved.</p>
+        <p style="margin-top: 10px;">
+            Questions? Email <a href="mailto:support@bridgebuilders.net" style="color: var(--gold); text-decoration: none;">support@bridgebuilders.net</a>
+        </p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Display personalized welcome message
+            const leadInfo = localStorage.getItem('chapterLead');
+            if (leadInfo) {
+                try {
+                    const lead = JSON.parse(leadInfo);
+                    const welcomeMsg = document.getElementById('welcomeMessage');
+                    const userName = document.getElementById('userName');
+
+                    if (lead.firstName) {
+                        userName.textContent = lead.firstName;
+                        welcomeMsg.style.display = 'block';
+                    }
+                } catch (e) {
+                    console.log('Could not parse lead info');
+                }
+            }
+
+            // Initialize flipbook
+            const flipbookWidth = 900;
+            const flipbookHeight = 700;
+
+            $("#flipbook").turn({
+                width: flipbookWidth,
+                height: flipbookHeight,
+                autoCenter: true,
+                acceleration: true,
+                elevation: 50,
+                gradients: true,
+                when: {
+                    turned: function(event, page) {
+                        updatePageIndicator(page);
+                    }
+                }
+            });
+
+            // Handle window resize
+            $(window).resize(function() {
+                const containerWidth = $('.book-container').width();
+                const scale = Math.min(1, (containerWidth - 40) / flipbookWidth);
+
+                if (scale < 1) {
+                    $("#flipbook").css({
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'top center'
+                    });
+                }
+            }).trigger('resize');
+
+            updatePageIndicator(1);
+        });
+
+        function nextPage() {
+            $("#flipbook").turn("next");
+        }
+
+        function previousPage() {
+            $("#flipbook").turn("previous");
+        }
+
+        function updatePageIndicator(page) {
+            const totalPages = $("#flipbook").turn("pages");
+            document.getElementById('currentPage').textContent = page;
+            document.getElementById('totalPages').textContent = totalPages;
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (page === 1);
+            document.getElementById('nextBtn').disabled = (page === totalPages);
+        }
+
+        // Track chapter preview view
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'chapter_preview', {
+                'event_category': 'engagement',
+                'event_label': 'Fire on the Family Altar - Chapter 1'
+            });
+        }
+    </script>
+</body>
+</html>

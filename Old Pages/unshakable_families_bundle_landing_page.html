@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unshakable Families - Transform Your Family & Build an Unshakable Life | Special Bundle Offer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Get both books in the Unshakable Families series and save! Build foundations that last and ignite revival in your home.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --fire-red: #e63946;
+            --fire-orange: #ff6b35;
+            --gold: #ffd700;
+            --text-dark: #1a202c;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+            --purple: #5b2c6f;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background: linear-gradient(90deg, var(--fire-red), var(--fire-orange), var(--gold));
+            color: var(--white);
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 50%, var(--fire-red) 100%);
+            color: var(--white);
+            padding: 100px 20px 120px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .series-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--primary);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        h1 {
+            font-size: clamp(42px, 8vw, 82px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(22px, 4vw, 36px);
+            font-weight: 400;
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .hero-description {
+            font-size: clamp(18px, 2.5vw, 24px);
+            margin-bottom: 50px;
+            opacity: 0.9;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Book Showcase */
+        .books-showcase {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin: 50px 0;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .book-card-mini {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .book-card-mini:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .book-mini-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .book-card-mini.fire .book-mini-image {
+            background: linear-gradient(135deg, var(--fire-red), var(--purple));
+        }
+
+        .book-mini-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .book-mini-author {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* CTA Buttons */
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 22px 50px;
+            font-size: 20px;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 60px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--primary);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: #ffed4e;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 3px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Special Offer Section */
+        .special-offer {
+            background: var(--white);
+            padding: 80px 20px;
+            margin-top: -60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .offer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #fff9e6 100%);
+            padding: 60px;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+            border: 3px solid var(--gold);
+            position: relative;
+        }
+
+        .deal-badge {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--fire-red);
+            color: var(--white);
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.4);
+        }
+
+        .offer-title {
+            text-align: center;
+            font-size: clamp(32px, 5vw, 48px);
+            color: var(--primary);
+            margin-bottom: 50px;
+            font-weight: 900;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.featured {
+            border: 4px solid var(--gold);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--primary);
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .pricing-type {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        .pricing-books {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .pricing-original {
+            text-decoration: line-through;
+            color: var(--text-light);
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .pricing-amount {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--fire-red);
+            margin-bottom: 5px;
+        }
+
+        .pricing-card.featured .pricing-amount {
+            color: var(--gold);
+            font-size: 64px;
+        }
+
+        .pricing-savings {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+
+        .pricing-features li::before {
+            content: "<i class="fas fa-check"></i>";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            padding: 18px 30px;
+            font-size: 16px;
+            font-weight: 800;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pricing-cta:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(44, 82, 130, 0.3);
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: var(--gold);
+            color: var(--primary);
+            font-size: 18px;
+            padding: 20px 35px;
+        }
+
+        .pricing-card.featured .pricing-cta:hover {
+            background: #ffed4e;
+        }
+
+        /* Why Bundle Section */
+        .why-bundle {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+            color: var(--white);
+        }
+
+        .why-title {
+            text-align: center;
+            font-size: clamp(36px, 5vw, 52px);
+            margin-bottom: 60px;
+            font-weight: 900;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .benefit-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .benefit-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .benefit-description {
+            font-size: 16px;
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+
+        /* Book Details Section */
+        .book-details {
+            padding: 80px 20px;
+            background: var(--bg-light);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 60px;
+            margin-top: 60px;
+        }
+
+        .book-detail-card {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .book-detail-card.unshakable {
+            border-top: 6px solid var(--primary);
+        }
+
+        .book-detail-card.fire {
+            border-top: 6px solid var(--fire-red);
+        }
+
+        .book-detail-header {
+            margin-bottom: 30px;
+        }
+
+        .book-detail-title {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .book-detail-card.unshakable .book-detail-title {
+            color: var(--primary);
+        }
+
+        .book-detail-card.fire .book-detail-title {
+            color: var(--fire-red);
+        }
+
+        .book-detail-author {
+            font-size: 18px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .book-detail-description {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .book-highlights {
+            list-style: none;
+            padding: 0;
+        }
+
+        .book-highlights li {
+            padding: 15px 0;
+            padding-left: 40px;
+            position: relative;
+            color: var(--text-dark);
+            font-weight: 500;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        .book-highlights li:last-child {
+            border-bottom: none;
+        }
+
+        .book-detail-card.unshakable .book-highlights li::before {
+            content: "<i class="fas fa-landmark"></i>";
+            position: absolute;
+            left: 0;
+            font-size: 24px;
+        }
+
+        .book-detail-card.fire .book-highlights li::before {
+            content: "<i class="fas fa-fire"></i>";
+            position: absolute;
+            left: 0;
+            font-size: 24px;
+        }
+
+        /* Authors Section */
+        .authors-section {
+            padding: 80px 20px;
+            background: var(--white);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(36px, 5vw, 52px);
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .authors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 50px;
+            margin-top: 60px;
+        }
+
+        .author-card {
+            background: var(--bg-light);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .author-image {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .author-card.cheryl .author-image {
+            background: linear-gradient(135deg, var(--fire-red), var(--purple));
+        }
+
+        .author-name {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .author-title {
+            font-size: 18px;
+            color: var(--fire-red);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .author-bio {
+            font-size: 16px;
+            color: var(--text-light);
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        /* Testimonials */
+        .testimonials-section {
+            padding: 80px 20px;
+            background: var(--bg-light);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .testimonial-quote {
+            font-size: 60px;
+            color: var(--gold);
+            line-height: 1;
+            opacity: 0.3;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .testimonial-author {
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 17px;
+        }
+
+        .testimonial-title {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Guarantee Section */
+        .guarantee-section {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            text-align: center;
+        }
+
+        .guarantee-box {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .guarantee-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .guarantee-title {
+            font-size: 36px;
+            color: #155724;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .guarantee-text {
+            font-size: 18px;
+            color: #155724;
+            line-height: 1.7;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, var(--fire-red) 0%, var(--purple) 50%, var(--primary) 100%);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-size: clamp(36px, 6vw, 62px);
+            margin-bottom: 30px;
+            font-weight: 900;
+        }
+
+        .final-cta p {
+            font-size: 22px;
+            margin-bottom: 50px;
+            opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 60px 20px 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--gold);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .books-showcase {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .authors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 20px 30px;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .offer-container {
+                padding: 40px 25px;
+            }
+
+            .book-detail-card {
+                padding: 35px 25px;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--gold), var(--fire-orange), var(--fire-red));
+            z-index: 9999;
+            transition: width 0.1s;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        🎉 SPECIAL BUNDLE LAUNCH: Save Up to $15.98 When You Get Both Books Together! 🎉
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content animate-in">
+            <span class="series-badge"><i class="fas fa-fire"></i> The Unshakable Families Series <i class="fas fa-landmark"></i></span>
+            <h1>Build Foundations That Last.<br>Ignite Revival in Your Home.</h1>
+            <p class="hero-subtitle">Two Powerful Books. One Complete System for Family Transformation.</p>
+            
+            <div class="books-showcase">
+                <div class="book-card-mini">
+                    <div class="book-mini-image">
+                        UNSHAKABLE<br>
+                        <span style="font-size: 14px; font-weight: 400;">Dr. Hal H. Sacks</span>
+                    </div>
+                    <div class="book-mini-title">Unshakable</div>
+                    <div class="book-mini-author">Build a Life That Cannot Be Shaken</div>
+                </div>
+                
+                <div class="book-card-mini fire">
+                    <div class="book-mini-image">
+                        FIRE ON THE<br>FAMILY ALTAR<br>
+                        <span style="font-size: 14px; font-weight: 400;">Cheryl Sacks</span>
+                    </div>
+                    <div class="book-mini-title">Fire on the Family Altar</div>
+                    <div class="book-mini-author">Experience the Holy Spirit's Power</div>
+                </div>
+            </div>
+
+            <p class="hero-description">
+                When the world is shaking, your family needs <strong>unshakable foundations</strong> AND the <strong>fire of God's presence</strong>. 
+                Get both books and discover the complete blueprint for building families that stand firm and burn bright.
+            </p>
+
+            <div class="cta-group">
+                <a href="#bundle" class="btn btn-primary"><i class="fas fa-gift"></i> Get Bundle Deal Now</a>
+                <a href="#books" class="btn btn-secondary">See What's Inside</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offer Section -->
+    <section class="special-offer" id="bundle">
+        <div class="container">
+            <div class="offer-container">
+                <div class="deal-badge"><i class="fas fa-bolt"></i> BUNDLE & SAVE <i class="fas fa-bolt"></i></div>
+                
+                <h2 class="offer-title">Choose Your Unshakable Families Bundle</h2>
+
+                <div class="pricing-grid">
+                    <!-- Single Paperback -->
+                    <div class="pricing-card">
+                        <div class="pricing-type">Paperback</div>
+                        <div class="pricing-books">Single Book</div>
+                        <div class="pricing-amount">$17.99</div>
+                        <div style="height: 30px;"></div>
+                        <ul class="pricing-features">
+                            <li>Choice of Unshakable OR Fire on the Family Altar</li>
+                            <li>Physical paperback edition</li>
+                            <li>FREE bonus guide included</li>
+                        </ul>
+                        <button class="pricing-cta">Buy One Book</button>
+                    </div>
+
+                    <!-- Bundle Paperback - FEATURED -->
+                    <div class="pricing-card featured">
+                        <div class="pricing-type">Paperback Bundle</div>
+                        <div class="pricing-books">Both Books</div>
+                        <div class="pricing-original">$35.98</div>
+                        <div class="pricing-amount">$30</div>
+                        <div class="pricing-savings"><i class="fas fa-piggy-bank"></i> SAVE $5.98</div>
+                        <ul class="pricing-features">
+                            <li><strong>BOTH Unshakable + Fire on the Family Altar</strong></li>
+                            <li>Physical paperback editions</li>
+                            <li>FREE 30-Day Unshakable Guide</li>
+                            <li>FREE 10-Day Family Prayer Guide</li>
+                            <li>Complete family transformation system</li>
+                        </ul>
+                        <button class="pricing-cta">Get Bundle - Best Deal! <i class="fas fa-fire"></i></button>
+                    </div>
+
+                    <!-- Single eBook -->
+                    <div class="pricing-card">
+                        <div class="pricing-type">Digital eBook</div>
+                        <div class="pricing-books">Single Book</div>
+                        <div class="pricing-amount">$9.99</div>
+                        <div style="height: 30px;"></div>
+                        <ul class="pricing-features">
+                            <li>Choice of Unshakable OR Fire on the Family Altar</li>
+                            <li>Instant digital download</li>
+                            <li>Read on any device</li>
+                            <li>FREE bonus guide included</li>
+                        </ul>
+                        <button class="pricing-cta">Buy One eBook</button>
+                    </div>
+
+                    <!-- Bundle eBook -->
+                    <div class="pricing-card">
+                        <div class="pricing-type">Digital Bundle</div>
+                        <div class="pricing-books">Both eBooks</div>
+                        <div class="pricing-original">$19.98</div>
+                        <div class="pricing-amount">$20</div>
+                        <div style="height: 30px;"></div>
+                        <ul class="pricing-features">
+                            <li><strong>BOTH books in digital format</strong></li>
+                            <li>Instant access - start reading now</li>
+                            <li>Works on Kindle, tablet, phone</li>
+                            <li>Both FREE bonus guides</li>
+                            <li>Complete digital library</li>
+                        </ul>
+                        <button class="pricing-cta">Get Digital Bundle</button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <p style="font-size: 18px; color: var(--text-dark); font-weight: 600;">
+                        <i class="fas fa-check"></i> 30-Day Money-Back Guarantee &nbsp;&nbsp; <i class="fas fa-check"></i> Secure Checkout &nbsp;&nbsp; <i class="fas fa-check"></i> Instant Bonus Access
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Bundle Section -->
+    <section class="why-bundle">
+        <div class="container">
+            <h2 class="why-title">Why Get Both Books Together?</h2>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="benefit-icon"><i class="fas fa-hard-hat"></i></span>
+                    <h3 class="benefit-title">Complete Foundation</h3>
+                    <p class="benefit-description">
+                        UNSHAKABLE gives you the personal foundations to stand firm in any storm. 
+                        Combined with FIRE ON THE FAMILY ALTAR, you'll build both individual strength AND family unity.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <span class="benefit-icon"><i class="fas fa-fire"></i></span>
+                    <h3 class="benefit-title">Personal + Corporate Power</h3>
+                    <p class="benefit-description">
+                        One book teaches you to become unshakable. The other ignites God's presence in your entire household. 
+                        Together, they create exponential transformation.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <span class="benefit-icon"><i class="fas fa-book-open"></i></span>
+                    <h3 class="benefit-title">Complementary Wisdom</h3>
+                    <p class="benefit-description">
+                        Dr. Hal Sacks focuses on building unshakable foundations in uncertain times. 
+                        Cheryl Sacks reveals how to experience God's tangible presence daily. Both perspectives are essential.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <span class="benefit-icon"><i class="fas fa-users"></i></span>
+                    <h3 class="benefit-title">For Every Family Member</h3>
+                    <p class="benefit-description">
+                        Husbands and wives can read different books and compare insights. Parents can apply both to raise 
+                        unshakable children in a Spirit-filled home.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <span class="benefit-icon"><i class="fas fa-clock"></i></span>
+                    <h3 class="benefit-title">Perfect Timing</h3>
+                    <p class="benefit-description">
+                        With cultural chaos accelerating and families under attack, you need BOTH the stability of 
+                        unshakable foundations AND the power of God's fire. Now more than ever.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <span class="benefit-icon"><i class="fas fa-piggy-bank"></i></span>
+                    <h3 class="benefit-title">Save Money</h3>
+                    <p class="benefit-description">
+                        Why pay full price for each book separately? Get the complete Unshakable Families system 
+                        at a discount and start your family transformation today.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Details Section -->
+    <section class="book-details" id="books">
+        <div class="container">
+            <div class="section-title">What's Inside Each Book</div>
+            <div class="section-subtitle">
+                Two powerful books that work together to create complete family transformation
+            </div>
+
+            <div class="books-grid">
+                <!-- Unshakable Details -->
+                <div class="book-detail-card unshakable">
+                    <div class="book-detail-header">
+                        <h3 class="book-detail-title">UNSHAKABLE</h3>
+                        <p class="book-detail-author">by Dr. Hal H. Sacks</p>
+                    </div>
+                    
+                    <p class="book-detail-description">
+                        A prophetic guide to building an unshakable life when everything around you is falling apart. 
+                        Dr. Sacks delivers urgent truth and practical wisdom for standing firm in uncertain times.
+                    </p>
+
+                    <ul class="book-highlights">
+                        <li>Build on Four Unshakable Foundation Stones</li>
+                        <li>Hear God's Voice with Crystal Clarity</li>
+                        <li>Break Free from Cultural Entanglement</li>
+                        <li>Build Authentic Spiritual Community</li>
+                        <li>Prepare the Next Generation</li>
+                        <li>Find Your Kingdom Assignment</li>
+                        <li>Transform Your Sphere of Influence</li>
+                        <li>Enter God's Rest in the Midst of Chaos</li>
+                    </ul>
+
+                    <div style="margin-top: 30px; padding: 20px; background: var(--bg-light); border-radius: 10px;">
+                        <p style="font-weight: 700; color: var(--primary); margin-bottom: 10px;">
+                            <i class="fas fa-book"></i> INCLUDES: FREE 30-Day Unshakable Action Guide
+                        </p>
+                        <p style="font-size: 14px; color: var(--text-light);">
+                            Daily scripture, reflection questions, practical action steps, and powerful prayers
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Fire on the Family Altar Details -->
+                <div class="book-detail-card fire">
+                    <div class="book-detail-header">
+                        <h3 class="book-detail-title">FIRE ON THE FAMILY ALTAR</h3>
+                        <p class="book-detail-author">by Cheryl Sacks</p>
+                    </div>
+                    
+                    <p class="book-detail-description">
+                        God's prophetic message: "Revival will come to America when the family altar is restored." 
+                        Discover how to experience the Holy Spirit's tangible presence and power in your home.
+                    </p>
+
+                    <ul class="book-highlights">
+                        <li>What a Family Altar Really Is (and Isn't)</li>
+                        <li>Why Satan Desperately Opposes Your Family</li>
+                        <li>Spend Quality Time Alone with God</li>
+                        <li>Enrich Your Marriage Through Prayer</li>
+                        <li>Engage the Whole Family (All Ages)</li>
+                        <li>Bless Your Children with Life-Changing Words</li>
+                        <li>Create a Life-Giving Atmosphere at Home</li>
+                        <li>Ignite Revival One Family at a Time</li>
+                    </ul>
+
+                    <div style="margin-top: 30px; padding: 20px; background: var(--bg-light); border-radius: 10px;">
+                        <p style="font-weight: 700; color: var(--fire-red); margin-bottom: 10px;">
+                            <i class="fas fa-fire"></i> INCLUDES: FREE 10-Day Family Prayer Guide
+                        </p>
+                        <p style="font-size: 14px; color: var(--text-light);">
+                            Complete action plan to start your family altar with daily prayers and activities
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authors Section -->
+    <section class="authors-section">
+        <div class="container">
+            <div class="section-title">Meet the Authors</div>
+            <div class="section-subtitle">
+                Husband and wife ministry partners with 40+ years of proven impact
+            </div>
+
+            <div class="authors-grid">
+                <div class="author-card">
+                    <div class="author-image">
+                        Dr. Hal H. Sacks<br>
+                        <span style="font-size: 14px; font-weight: 400;">Author Photo</span>
+                    </div>
+                    <h3 class="author-name">Dr. Hal H. Sacks</h3>
+                    <p class="author-title">Visionary Leader & Cultural Transformer</p>
+                    <p class="author-bio">
+                        President and CEO of BridgeBuilders International Leadership Network. For over 40 years, 
+                        Dr. Sacks has mobilized prayer and cultural transformation initiatives that have impacted millions. 
+                        Former Hollywood filmmaker turned ministry leader after encountering Jesus during the Jesus Movement. 
+                        Known for strategic prayer initiatives with measurable results, including historic movements that 
+                        led to the apprehension of top cartel leaders.
+                    </p>
+                </div>
+
+                <div class="author-card cheryl">
+                    <div class="author-image">
+                        Cheryl Sacks<br>
+                        <span style="font-size: 14px; font-weight: 400;">Author Photo</span>
+                    </div>
+                    <h3 class="author-name">Cheryl Sacks</h3>
+                    <p class="author-title">Prayer General & Best-Selling Author</p>
+                    <p class="author-bio">
+                        Best-selling author of the Prayer-Saturated book series that has blessed tens of thousands worldwide. 
+                        National conference speaker, prayer mobilizer, and church prayer consultant. Known throughout America 
+                        as a "prayer general" who knows how to bring Heaven to earth. Her passion is seeing families healed, 
+                        restored, and empowered by the Holy Spirit to ignite revival in homes and nations.
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px; padding: 40px; background: var(--bg-light); border-radius: 20px;">
+                <p style="font-size: 20px; color: var(--text-dark); line-height: 1.8; max-width: 800px; margin: 0 auto;">
+                    <strong>Together, Hal and Cheryl Sacks are co-founders of BridgeBuilders International,</strong> 
+                    a transformational prayer ministry located on the Arizona Christian University campus. They have one 
+                    married daughter and three beautiful grandchildren. Their combined wisdom and experience make the 
+                    Unshakable Families series uniquely powerful.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-title">What Leaders Are Saying</div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "Dr. Sacks has given us exactly what we need for this hour—practical wisdom married with prophetic insight."
+                    </p>
+                    <div class="testimonial-author">Ministry Leader</div>
+                    <div class="testimonial-title">Pastor & Author</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "Cheryl Sacks is uniquely qualified to write this book! This will help you bring the fire and presence of God into your home."
+                    </p>
+                    <div class="testimonial-author">Dutch Sheets</div>
+                    <div class="testimonial-title">Dutch Sheets Ministries</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "Allow this incredible handbook to shift the atmosphere of your home and ignite the fire of His passion in the next generation."
+                    </p>
+                    <div class="testimonial-author">Dr. Chuck D. Pierce</div>
+                    <div class="testimonial-title">Glory of Zion International</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "Every believer needs to read UNSHAKABLE. This is a wake-up call we cannot afford to ignore."
+                    </p>
+                    <div class="testimonial-author">Prayer Movement Leader</div>
+                    <div class="testimonial-title">Intercessor & Teacher</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "The family mountain is the most important! That's why I highly recommend this series."
+                    </p>
+                    <div class="testimonial-author">Dr. Lance Wallnau</div>
+                    <div class="testimonial-title">Lance Learning Group</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">
+                        "This is the best book I have ever read on prayer and the family! It has the power to change your family forever!"
+                    </p>
+                    <div class="testimonial-author">Dr. Jason Hubbard</div>
+                    <div class="testimonial-title">International Prayer Connect</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guarantee Section -->
+    <section class="guarantee-section">
+        <div class="container">
+            <div class="guarantee-box">
+                <div class="guarantee-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 class="guarantee-title">30-Day Money-Back Guarantee</h3>
+                <p class="guarantee-text">
+                    We're so confident these books will transform your family that we offer a complete 30-day guarantee. 
+                    If you're not completely satisfied for any reason, simply return the books for a full refund. 
+                    No questions asked. <strong>You have nothing to lose and an unshakable family to gain.</strong>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>Your Family's Transformation Starts Today</h2>
+            <p>
+                The shaking has begun. Families are under attack. But you don't have to face this moment unprepared. 
+                Get the complete Unshakable Families system and build a household that stands firm AND burns bright for God.
+            </p>
+
+            <div style="max-width: 600px; margin: 0 auto 50px; padding: 40px; background: rgba(255,255,255,0.15); border-radius: 20px; backdrop-filter: blur(10px);">
+                <p style="font-size: 18px; margin-bottom: 15px; opacity: 0.9;">
+                    <i class="fas fa-gift"></i> Paperback Bundle (Both Books)
+                </p>
+                <p style="font-size: 56px; font-weight: 900; margin-bottom: 10px;">
+                    $30
+                </p>
+                <p style="font-size: 18px; opacity: 0.9; margin-bottom: 20px;">
+                    <del style="opacity: 0.7;">$35.98</del> — Save $5.98
+                </p>
+                <p style="font-size: 14px; opacity: 0.85;">
+                    + FREE 30-Day Unshakable Guide<br>
+                    + FREE 10-Day Family Prayer Guide
+                </p>
+            </div>
+
+            <div class="cta-group">
+                <a href="#bundle" class="btn btn-primary" style="font-size: 22px; padding: 25px 60px;">
+                    <i class="fas fa-fire"></i> Get Your Bundle Now
+                </a>
+            </div>
+
+            <div style="margin-top: 50px; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; font-size: 16px; font-weight: 600;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;"><i class="fas fa-check"></i></span> Instant Bonus Access
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;"><i class="fas fa-check"></i></span> 30-Day Guarantee
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;"><i class="fas fa-check"></i></span> Secure Checkout
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>About BridgeBuilders</h4>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8;">
+                        BridgeBuilders International Leadership Network mobilizes prayer and cultural transformation 
+                        initiatives that impact millions worldwide.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#bundle">Bundle Offer</a></li>
+                        <li><a href="#books">About the Books</a></li>
+                        <li><a href="#">About the Authors</a></li>
+                        <li><a href="#">Speaking</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>More Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Prayer Guides</a></li>
+                        <li><a href="#">Other Books</a></li>
+                        <li><a href="#">Ministry Resources</a></li>
+                        <li><a href="#">Media Kit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://bridgebuilders.net" target="_blank"><i class="fas fa-globe"></i> BridgeBuilders.net</a></li>
+                        <li><strong>Dr. Hal Sacks:</strong></li>
+                        <li><a href="https://facebook.com/halsacksbbi" target="_blank"><i class="fab fa-facebook"></i> @halsacksbbi</a></li>
+                        <li><a href="https://twitter.com/halsacksbbi" target="_blank"><i class="fab fa-twitter"></i> @halsacksbbi</a></li>
+                        <li><a href="https://instagram.com/halsacksbbi" target="_blank"><i class="fab fa-instagram"></i> @halsacksbbi</a></li>
+                        <li style="margin-top: 10px;"><strong>Cheryl Sacks:</strong></li>
+                        <li><a href="https://facebook.com/cherylsacksbbi" target="_blank"><i class="fab fa-facebook"></i> @cherylsacksbbi</a></li>
+                        <li><a href="https://twitter.com/cherylsacksbbi" target="_blank"><i class="fab fa-twitter"></i> @cherylsacksbbi</a></li>
+                        <li><a href="https://instagram.com/cherylsacksbbi" target="_blank"><i class="fab fa-instagram"></i> @cherylsacksbbi</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Dr. Hal H. Sacks & Cheryl Sacks | BridgeBuilders International. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.pricing-card, .benefit-card, .testimonial-card, .book-detail-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Add click handlers to all pricing buttons
+        document.querySelectorAll('.pricing-cta').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('This would redirect to your checkout page with the selected bundle option!');
+            });
+        });
+    </script>
+</body>
+</html>
