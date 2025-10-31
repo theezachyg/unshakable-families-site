@@ -1051,7 +1051,7 @@
                             ${!isFreeBonus ? `
                             <div class="quantity-controls">
                                 <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
-                                <span class="quantity-display">${item.quantity}</span>
+                                <span class="quantity-display">${product.type === 'bundle' ? item.quantity + ' (' + (item.quantity * 2) + ' books)' : item.quantity}</span>
                                 <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
                             </div>
                             <button class="remove-item" onclick="removeItem(${index})">
