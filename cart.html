@@ -978,6 +978,29 @@
                 stripePriceId: 'price_1SO84GENTZGZDoIEgLiDJL3a',
                 isRecommendation: true,
                 weight: 5.0
+            },
+            // Free bonus items (automatically added)
+            'prod_TL15QCP70baXz8': {
+                name: '30-Day Unshakable Action Guide',
+                subtitle: 'FREE Bonus',
+                author: '',
+                price: 0.00,
+                image: 'Assets/Product Images/EN-Unshakable-Ebook-Cart.png',
+                type: 'bonus',
+                language: 'English',
+                stripePriceId: 'price_1SOL2yENTZGZDoIEndRZQzvZ',
+                isFreeBonus: true
+            },
+            'prod_TL15L4IFBZtld8': {
+                name: '10-Day Family Prayer Guide',
+                subtitle: 'FREE Bonus',
+                author: '',
+                price: 0.00,
+                image: 'Assets/Product Images/EN-FireOnTheFamilyAltar-Ebook-Cart.png',
+                type: 'bonus',
+                language: 'English',
+                stripePriceId: 'price_1SOL3RENTZGZDoIEyoSJ4lFh',
+                isFreeBonus: true
             }
         };
 
@@ -985,8 +1008,11 @@
         let cart = JSON.parse(localStorage.getItem('unshakableCart')) || [];
 
         function renderCart() {
+            // Manage free bonuses based on current cart
+            manageFreeBonuses();
+
             const container = document.getElementById('cartItemsContainer');
-            
+
             if (cart.length === 0) {
                 container.innerHTML = `
                     <div class="empty-cart">
@@ -1007,16 +1033,22 @@
 
             container.innerHTML = cart.map((item, index) => {
                 const product = PRODUCT_DETAILS[item.id];
+                const isFreeBonus = product.isFreeBonus === true;
+
                 return `
-                    <div class="cart-item">
+                    <div class="cart-item${isFreeBonus ? ' free-bonus-item' : ''}">
                         <img src="${product.image}" alt="${product.name}" class="item-image">
                         <div class="item-details">
-                            <h3>${product.name}</h3>
-                            <p>${product.type === 'bundle' ? 'Both Books + FREE Bonuses' : product.type === 'paperback' ? 'Physical Book' : 'Digital Download'}</p>
+                            <h3>
+                                ${product.name}
+                                ${isFreeBonus ? '<span style="background: var(--success); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-left: 10px;">FREE BONUS</span>' : ''}
+                            </h3>
+                            <p>${product.type === 'bundle' ? 'Both Books + FREE Bonuses' : product.type === 'bonus' ? 'Digital Download - Delivered via Email' : product.type === 'paperback' ? 'Physical Book' : 'Digital Download'}</p>
                             <span class="item-language"><i class="fas fa-globe"></i> ${product.language}</span>
                         </div>
                         <div class="item-actions">
-                            <div class="item-price">$${(product.price * item.quantity).toFixed(2)}</div>
+                            <div class="item-price">${isFreeBonus ? '<span style="color: var(--success); font-weight: bold;">FREE</span>' : '$' + (product.price * item.quantity).toFixed(2)}</div>
+                            ${!isFreeBonus ? `
                             <div class="quantity-controls">
                                 <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
                                 <span class="quantity-display">${item.quantity}</span>
@@ -1025,6 +1057,7 @@
                             <button class="remove-item" onclick="removeItem(${index})">
                                 <i class="fas fa-trash"></i> Remove
                             </button>
+                            ` : '<p style="font-size: 0.85rem; color: var(--text-light); font-style: italic;">Automatically included</p>'}
                         </div>
                     </div>
                 `;
@@ -1039,12 +1072,14 @@
                 removeItem(index);
                 return;
             }
+            manageFreeBonuses();
             localStorage.setItem('unshakableCart', JSON.stringify(cart));
             renderCart();
         }
 
         function removeItem(index) {
             cart.splice(index, 1);
+            manageFreeBonuses();
             localStorage.setItem('unshakableCart', JSON.stringify(cart));
             renderCart();
         }
@@ -1247,6 +1282,39 @@
             recommendationsSection.style.display = 'block';
         }
 
+        // Check and manage free bonus items based on cart contents
+        function manageFreeBonuses() {
+            const hasBundle = cart.some(item => PRODUCT_DETAILS[item.id]?.type === 'bundle');
+            const hasUnshakable = cart.some(item => {
+                const name = (PRODUCT_DETAILS[item.id]?.name || '').toLowerCase();
+                return name.includes('unshakable') && PRODUCT_DETAILS[item.id]?.type !== 'bundle';
+            });
+            const hasFire = cart.some(item => {
+                const name = (PRODUCT_DETAILS[item.id]?.name || '').toLowerCase();
+                return name.includes('fire') && PRODUCT_DETAILS[item.id]?.type !== 'bundle';
+            });
+
+            // 30-Day Unshakable Action Guide - add if Bundle or Unshakable
+            const shouldHaveUnshakableGuide = hasBundle || hasUnshakable;
+            const hasUnshakableGuide = cart.some(item => item.id === 'prod_TL15QCP70baXz8');
+
+            if (shouldHaveUnshakableGuide && !hasUnshakableGuide) {
+                cart.push({ id: 'prod_TL15QCP70baXz8', quantity: 1 });
+            } else if (!shouldHaveUnshakableGuide && hasUnshakableGuide) {
+                cart = cart.filter(item => item.id !== 'prod_TL15QCP70baXz8');
+            }
+
+            // 10-Day Family Prayer Guide - add if Bundle or Fire
+            const shouldHavePrayerGuide = hasBundle || hasFire;
+            const hasPrayerGuide = cart.some(item => item.id === 'prod_TL15L4IFBZtld8');
+
+            if (shouldHavePrayerGuide && !hasPrayerGuide) {
+                cart.push({ id: 'prod_TL15L4IFBZtld8', quantity: 1 });
+            } else if (!shouldHavePrayerGuide && hasPrayerGuide) {
+                cart = cart.filter(item => item.id !== 'prod_TL15L4IFBZtld8');
+            }
+        }
+
         function addRecommendationToCart(productId) {
             // Check if item already in cart
             const existingIndex = cart.findIndex(item => item.id === productId);
@@ -1256,6 +1324,9 @@
             } else {
                 cart.push({ id: productId, quantity: 1 });
             }
+
+            // Manage free bonuses
+            manageFreeBonuses();
 
             localStorage.setItem('unshakableCart', JSON.stringify(cart));
             renderCart();

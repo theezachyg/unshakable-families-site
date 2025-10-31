@@ -40,7 +40,11 @@ const PRICE_IDS = {
     'rec_prayer_saturated_family': 'price_1SO80EENTZGZDoIEzA7pWAe4', // Prayer Saturated Family
     'rec_prayer_saturated_kids': 'price_1SO81oENTZGZDoIE4LcprMsj', // Prayer Saturated Kids
     'rec_reclaim_generation': 'price_1SO83OENTZGZDoIELTB7Ea3k', // Reclaim a Generation
-    'rec_two_nations': 'price_1SO84GENTZGZDoIEgLiDJL3a' // Two Nations One Prayer
+    'rec_two_nations': 'price_1SO84GENTZGZDoIEgLiDJL3a', // Two Nations One Prayer
+
+    // Free Bonus Items
+    'prod_TL15QCP70baXz8': 'price_1SOL2yENTZGZDoIEndRZQzvZ', // 30-Day Unshakable Action Guide (FREE)
+    'prod_TL15L4IFBZtld8': 'price_1SOL3RENTZGZDoIEyoSJ4lFh' // 10-Day Family Prayer Guide (FREE)
 };
 
 // ===== MAIN HANDLER =====
