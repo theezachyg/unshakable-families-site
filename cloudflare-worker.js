@@ -353,6 +353,12 @@ async function handleCreateCheckout(request, env, corsHeaders) {
                     params.append('metadata[shipping_state]', shippingAddress.state);
                     params.append('metadata[shipping_postal_code]', shippingAddress.postalCode);
                     params.append('metadata[shipping_country]', shippingAddress.country);
+
+                    // Store gift recipient name if this is a gift
+                    if (shippingAddress.isGift && shippingAddress.giftRecipientName) {
+                        params.append('metadata[is_gift]', 'true');
+                        params.append('metadata[gift_recipient_name]', shippingAddress.giftRecipientName);
+                    }
                 } else if (hasPhysicalProducts) {
                     // Fallback to old logic if no shipping rate selected
                     const FREE_SHIPPING_THRESHOLD = 100;
@@ -486,8 +492,11 @@ async function createShipStationOrder(session, cart, shippingAddress, env) {
     let shipToAddress;
     if (session.metadata?.shipping_street) {
         // Address came from cart form
+        // Use gift recipient name if this is a gift, otherwise use customer name
+        const recipientName = session.metadata.gift_recipient_name || session.customer_details?.name;
+
         shipToAddress = {
-            name: session.customer_details?.name,
+            name: recipientName,
             street1: session.metadata.shipping_street,
             street2: null,
             city: session.metadata.shipping_city,

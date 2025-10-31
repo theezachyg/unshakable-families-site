@@ -737,6 +737,15 @@
                             <option value="CA">Canada</option>
                         </select>
                     </div>
+                    <div class="form-row" style="margin-top: 15px;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="isGiftCheckbox" onchange="toggleGiftRecipientField()" style="width: 20px; height: 20px; cursor: pointer;">
+                            <span style="font-size: 0.95rem;">This is a Gift</span>
+                        </label>
+                    </div>
+                    <div class="form-row" id="giftRecipientRow" style="display: none;">
+                        <input type="text" id="giftRecipientName" placeholder="Gift Recipient's Name">
+                    </div>
                     <button class="get-rates-btn" onclick="getShippingRates()">
                         <i class="fas fa-calculator"></i> Get Shipping Rates
                     </button>
@@ -1255,6 +1264,19 @@
         // Store selected shipping rate
         let selectedShippingRate = null;
 
+        // Toggle gift recipient name field
+        function toggleGiftRecipientField() {
+            const isGift = document.getElementById('isGiftCheckbox').checked;
+            const giftRecipientRow = document.getElementById('giftRecipientRow');
+
+            if (isGift) {
+                giftRecipientRow.style.display = 'block';
+            } else {
+                giftRecipientRow.style.display = 'none';
+                document.getElementById('giftRecipientName').value = '';
+            }
+        }
+
         // Get shipping rates from ShipStation
         async function getShippingRates() {
             const street = document.getElementById('shippingStreet').value.trim();
@@ -1465,12 +1487,25 @@
                     }
 
                     // Get shipping address from form
+                    const isGift = document.getElementById('isGiftCheckbox').checked;
+                    const giftRecipientName = isGift ? document.getElementById('giftRecipientName').value.trim() : null;
+
+                    // Validate gift recipient name if this is a gift
+                    if (isGift && !giftRecipientName) {
+                        alert('Please enter the gift recipient\'s name.');
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                        document.getElementById('checkoutBtn').disabled = false;
+                        return;
+                    }
+
                     shippingAddress = {
                         street: document.getElementById('shippingStreet').value.trim(),
                         city: document.getElementById('shippingCity').value.trim(),
                         state: document.getElementById('shippingState').value.trim(),
                         postalCode: document.getElementById('shippingPostalCode').value.trim(),
-                        country: document.getElementById('shippingCountry').value
+                        country: document.getElementById('shippingCountry').value,
+                        isGift: isGift,
+                        giftRecipientName: giftRecipientName
                     };
 
                     shippingRate = selectedShippingRate;
