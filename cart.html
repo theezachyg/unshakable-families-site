@@ -1286,32 +1286,42 @@
         function manageFreeBonuses() {
             const hasBundle = cart.some(item => PRODUCT_DETAILS[item.id]?.type === 'bundle');
             const hasUnshakable = cart.some(item => {
-                const name = (PRODUCT_DETAILS[item.id]?.name || '').toLowerCase();
-                return name.includes('unshakable') && PRODUCT_DETAILS[item.id]?.type !== 'bundle';
+                const product = PRODUCT_DETAILS[item.id];
+                if (!product) return false;
+                const name = product.name.toLowerCase();
+                // Only count Unshakable paperbacks/ebooks, not bundles or other bonuses
+                return name.includes('unshakable') && (product.type === 'paperback' || product.type === 'ebook') && !product.isFreeBonus;
             });
             const hasFire = cart.some(item => {
-                const name = (PRODUCT_DETAILS[item.id]?.name || '').toLowerCase();
-                return name.includes('fire') && PRODUCT_DETAILS[item.id]?.type !== 'bundle';
+                const product = PRODUCT_DETAILS[item.id];
+                if (!product) return false;
+                const name = product.name.toLowerCase();
+                // Only count Fire paperbacks/ebooks, not bundles or other bonuses
+                return name.includes('fire') && (product.type === 'paperback' || product.type === 'ebook') && !product.isFreeBonus;
             });
 
             // 30-Day Unshakable Action Guide - add if Bundle or Unshakable
             const shouldHaveUnshakableGuide = hasBundle || hasUnshakable;
-            const hasUnshakableGuide = cart.some(item => item.id === 'prod_TL15QCP70baXz8');
+            const unshakableGuideIndex = cart.findIndex(item => item.id === 'prod_TL15QCP70baXz8');
 
-            if (shouldHaveUnshakableGuide && !hasUnshakableGuide) {
+            if (shouldHaveUnshakableGuide && unshakableGuideIndex === -1) {
+                // Add the bonus
                 cart.push({ id: 'prod_TL15QCP70baXz8', quantity: 1 });
-            } else if (!shouldHaveUnshakableGuide && hasUnshakableGuide) {
-                cart = cart.filter(item => item.id !== 'prod_TL15QCP70baXz8');
+            } else if (!shouldHaveUnshakableGuide && unshakableGuideIndex !== -1) {
+                // Remove the bonus
+                cart.splice(unshakableGuideIndex, 1);
             }
 
             // 10-Day Family Prayer Guide - add if Bundle or Fire
             const shouldHavePrayerGuide = hasBundle || hasFire;
-            const hasPrayerGuide = cart.some(item => item.id === 'prod_TL15L4IFBZtld8');
+            const prayerGuideIndex = cart.findIndex(item => item.id === 'prod_TL15L4IFBZtld8');
 
-            if (shouldHavePrayerGuide && !hasPrayerGuide) {
+            if (shouldHavePrayerGuide && prayerGuideIndex === -1) {
+                // Add the bonus
                 cart.push({ id: 'prod_TL15L4IFBZtld8', quantity: 1 });
-            } else if (!shouldHavePrayerGuide && hasPrayerGuide) {
-                cart = cart.filter(item => item.id !== 'prod_TL15L4IFBZtld8');
+            } else if (!shouldHavePrayerGuide && prayerGuideIndex !== -1) {
+                // Remove the bonus
+                cart.splice(prayerGuideIndex, 1);
             }
         }
 
