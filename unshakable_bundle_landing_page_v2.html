@@ -306,11 +306,53 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
+        .book-image-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
         .book-mini-image {
             width: 100%;
             height: auto;
-            margin-bottom: 20px;
             flex-shrink: 0;
+        }
+
+        .book-sticker {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: rotate(12deg);
+            z-index: 10;
+            letter-spacing: 1px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .sticker-new {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #003d1a;
+            border: 3px solid #00ff88;
+        }
+
+        .sticker-bestseller {
+            background: linear-gradient(135deg, #ff006e, #d10054);
+            color: white;
+            border: 3px solid #ff006e;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: rotate(12deg) scale(1);
+            }
+            50% {
+                transform: rotate(12deg) scale(1.05);
+            }
         }
 
         .book-mini-title {
@@ -1126,7 +1168,10 @@
             <!-- Book Showcase -->
             <div class="books-showcase">
                 <div class="book-card-mini">
-                    <img src="Assets/Product Images/Unshakable-Book-Flat-Cover.png" alt="Unshakable Book Cover" class="book-mini-image">
+                    <div class="book-image-wrapper">
+                        <span class="book-sticker sticker-new">New</span>
+                        <img src="Assets/Product Images/Unshakable-Book-Flat-Cover.png" alt="Unshakable Book Cover" class="book-mini-image">
+                    </div>
                     <div class="book-mini-title">Unshakable</div>
                     <div class="book-mini-author">Dr. Hal H. Sacks</div>
                     <p class="book-mini-description">
@@ -1138,7 +1183,10 @@
                 </div>
 
                 <div class="book-card-mini">
-                    <img src="Assets/Product Images/Fireonthefamilyaltar-Book-Flat-Cover.png" alt="Fire on the Family Altar Book Cover" class="book-mini-image">
+                    <div class="book-image-wrapper">
+                        <span class="book-sticker sticker-bestseller">Best Seller</span>
+                        <img src="Assets/Product Images/Fireonthefamilyaltar-Book-Flat-Cover.png" alt="Fire on the Family Altar Book Cover" class="book-mini-image">
+                    </div>
                     <div class="book-mini-title">Fire on the Family Altar</div>
                     <div class="book-mini-author">Cheryl Sacks</div>
                     <p class="book-mini-description">
