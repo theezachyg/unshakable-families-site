@@ -686,9 +686,12 @@
                 right: 20px;
             }
 
-            /* Ensure video fills vertically on mobile */
+            /* Ensure video fills vertically on mobile - disable parallax and force full fill */
             .hero-video {
-                min-width: 300%; /* Wider to ensure coverage on narrow screens */
+                min-width: 400% !important;
+                width: 400% !important;
+                height: 100% !important;
+                transform: translateX(-50%) !important; /* Lock position, no parallax on mobile */
             }
         }
 
@@ -1548,9 +1551,9 @@
             const scrolled = (winScroll / height) * 100;
             document.getElementById('progressBar').style.width = scrolled + '%';
 
-            // Parallax effect for hero video
+            // Parallax effect for hero video (disabled on mobile)
             const heroVideo = document.querySelector('.hero-video');
-            if (heroVideo) {
+            if (heroVideo && window.innerWidth > 768) {
                 const scrollPosition = window.pageYOffset;
                 const parallaxSpeed = 0.5; // Adjust speed (lower = slower movement)
                 heroVideo.style.transform = `translateX(-50%) translateY(${scrollPosition * parallaxSpeed}px)`;
