@@ -785,10 +785,19 @@
                 min-width: 177.78vh !important;
                 min-height: 100vh !important;
                 transform: translateX(-50%) !important;
+                opacity: 1;
+                transition: opacity 0.3s ease-out;
             }
 
             .hero {
                 position: relative !important;
+            }
+
+            /* Ensure sections after hero appear above fixed video */
+            section:not(.hero) {
+                position: relative;
+                z-index: 10;
+                background: white;
             }
 
             .video-section {
@@ -1567,13 +1576,17 @@
                 heroVideo.style.transform = `translateX(-50%) translateY(${scrollPosition * parallaxSpeed}px)`;
             }
 
-            // Hide video on mobile when scrolling past hero section
+            // Fade out video on mobile when scrolling past hero section
             if (heroVideo && heroSection && window.innerWidth <= 768) {
                 const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-                if (window.pageYOffset > heroBottom) {
-                    heroVideo.style.display = 'none';
+                const fadeDistance = 100; // pixels before fully faded
+                const scrollPastHero = window.pageYOffset - heroBottom;
+
+                if (scrollPastHero > 0) {
+                    const opacity = Math.max(0, 1 - (scrollPastHero / fadeDistance));
+                    heroVideo.style.opacity = opacity;
                 } else {
-                    heroVideo.style.display = 'block';
+                    heroVideo.style.opacity = 1;
                 }
             }
         });
