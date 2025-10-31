@@ -145,12 +145,15 @@
         /* Background video */
         .hero-video {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
             z-index: 0;
+            pointer-events: none;
         }
 
         /* Static gradient overlay for colorization */
