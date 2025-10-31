@@ -38,9 +38,11 @@ const PRICE_IDS = {
     // Recommendation Products (English)
     'rec_prayer_saturated_church': 'price_1SO7xQENTZGZDoIEwuTNlQh4', // Prayer Saturated Church
     'rec_prayer_saturated_family': 'price_1SO80EENTZGZDoIEzA7pWAe4', // Prayer Saturated Family
-    'rec_prayer_saturated_kids': 'price_1SO81oENTZGZDoIE4LcprMsj', // Prayer Saturated Kids
+    'rec_prayer_saturated_kids': 'price_1SO81oENTZGZDoIE4LcprMsj', // Prayer Saturated Kids (English)
+    'rec_prayer_saturated_kids_es': 'price_1SO82eENTZGZDoIEousRiLA5', // Prayer Saturated Kids (Español)
     'rec_reclaim_generation': 'price_1SO83OENTZGZDoIELTB7Ea3k', // Reclaim a Generation
-    'rec_two_nations': 'price_1SO84GENTZGZDoIEgLiDJL3a', // Two Nations One Prayer
+    'rec_two_nations': 'price_1SO84GENTZGZDoIEgLiDJL3a', // Two Nations One Prayer (English)
+    'rec_two_nations_es': 'price_1SO85VENTZGZDoIEMQ2ujNqG', // Two Nations One Prayer (Español)
 
     // Free Bonus Items
     'prod_TL15QCP70baXz8': 'price_1SOL2yENTZGZDoIEndRZQzvZ', // 30-Day Unshakable Action Guide (FREE)

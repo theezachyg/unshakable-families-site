@@ -953,7 +953,23 @@
                 language: 'English',
                 stripePriceId: 'price_1SO81oENTZGZDoIE4LcprMsj',
                 isRecommendation: true,
-                weight: 8.0
+                weight: 8.0,
+                hasBilingualVersion: true,
+                spanishProductId: 'rec_prayer_saturated_kids_es'
+            },
+            'rec_prayer_saturated_kids_es': {
+                name: 'Niños Saturados de Oración',
+                subtitle: 'Equipando y empoderando a los niños en la oración',
+                author: 'Cheryl Sacks',
+                price: 13.99,
+                image: 'Assets/Product Images/EN-PrayerSaturatedKids-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_1SO82eENTZGZDoIEousRiLA5',
+                isRecommendation: true,
+                weight: 8.0,
+                hasBilingualVersion: true,
+                englishProductId: 'rec_prayer_saturated_kids'
             },
             'rec_reclaim_generation': {
                 name: 'Reclaim a Generation',
@@ -977,7 +993,23 @@
                 language: 'English',
                 stripePriceId: 'price_1SO84GENTZGZDoIEgLiDJL3a',
                 isRecommendation: true,
-                weight: 5.0
+                weight: 5.0,
+                hasBilingualVersion: true,
+                spanishProductId: 'rec_two_nations_es'
+            },
+            'rec_two_nations_es': {
+                name: 'Dos Naciones Una Oración',
+                subtitle: '',
+                author: 'Hal Sacks',
+                price: 10.99,
+                image: 'Assets/Product Images/EN-TwoNationsOnePrayer-Paperback-Cart.png',
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_1SO85VENTZGZDoIEMQ2ujNqG',
+                isRecommendation: true,
+                weight: 5.0,
+                hasBilingualVersion: true,
+                englishProductId: 'rec_two_nations'
             },
             // Free bonus items (automatically added)
             'prod_TL15QCP70baXz8': {
@@ -1259,9 +1291,10 @@
                 const product = PRODUCT_DETAILS[rec.id];
                 const isFeatured = rec.featured || false;
                 const badge = rec.badge || '';
+                const hasBilingual = product.hasBilingualVersion;
 
                 return `
-                    <div class="recommendation-card ${isFeatured ? 'featured' : ''}">
+                    <div class="recommendation-card ${isFeatured ? 'featured' : ''}" data-product-id="${rec.id}">
                         ${isFeatured ? `<span class="recommendation-badge">${badge}</span>` : ''}
                         <img src="${product.image}" alt="${product.name}" class="recommendation-image"
                              onerror="this.src='Assets/Product Images/placeholder.jpg'">
@@ -1269,6 +1302,26 @@
                         ${product.author ? `<div class="recommendation-author">by ${product.author}</div>` : ''}
                         ${product.regularPrice ? `<div class="recommendation-savings">Save $${(product.regularPrice - product.price).toFixed(2)}</div>` : ''}
                         <div class="recommendation-price">$${product.price.toFixed(2)}</div>
+                        ${hasBilingual ? `
+                            <div style="margin: 10px 0; display: flex; gap: 5px; justify-content: center;">
+                                <button class="language-selector ${product.language === 'English' ? 'active' : ''}"
+                                        onclick="switchRecommendationLanguage('${rec.id}', 'English')"
+                                        style="padding: 5px 15px; border: 2px solid var(--primary); background: ${product.language === 'English' ? 'var(--primary)' : 'white'}; color: ${product.language === 'English' ? 'white' : 'var(--primary)'}; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
+                                    English
+                                </button>
+                                <button class="language-selector ${product.language === 'Español' ? 'active' : ''}"
+                                        onclick="switchRecommendationLanguage('${rec.id}', 'Español')"
+                                        style="padding: 5px 15px; border: 2px solid var(--primary); background: ${product.language === 'Español' ? 'var(--primary)' : 'white'}; color: ${product.language === 'Español' ? 'white' : 'var(--primary)'}; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
+                                    Español
+                                </button>
+                            </div>
+                        ` : `
+                            <div style="margin: 10px 0; text-align: center;">
+                                <span style="display: inline-block; padding: 5px 15px; border: 2px solid var(--primary); background: var(--primary); color: white; border-radius: 20px; font-size: 0.85rem; font-weight: bold;">
+                                    ${product.language}
+                                </span>
+                            </div>
+                        `}
                         <button class="add-to-cart-btn ${isFeatured ? 'featured' : ''}"
                                 onclick="addRecommendationToCart('${rec.id}')">
                             <i class="fas fa-cart-plus"></i> Add to Cart
@@ -1278,6 +1331,66 @@
             }).join('');
 
             recommendationsSection.style.display = 'block';
+        }
+
+        // Switch recommendation card language
+        function switchRecommendationLanguage(currentProductId, targetLanguage) {
+            const product = PRODUCT_DETAILS[currentProductId];
+            if (!product || !product.hasBilingualVersion) return;
+
+            // Determine the target product ID
+            let targetProductId;
+            if (targetLanguage === 'Español' && product.language === 'English') {
+                targetProductId = product.spanishProductId;
+            } else if (targetLanguage === 'English' && product.language === 'Español') {
+                targetProductId = product.englishProductId;
+            } else {
+                return; // Already on target language
+            }
+
+            const targetProduct = PRODUCT_DETAILS[targetProductId];
+            if (!targetProduct) return;
+
+            // Find the card element
+            const card = document.querySelector(`[data-product-id="${currentProductId}"]`);
+            if (!card) return;
+
+            // Update the card's data-product-id
+            card.setAttribute('data-product-id', targetProductId);
+
+            // Update title
+            card.querySelector('.recommendation-title').textContent = targetProduct.name;
+
+            // Update author if exists
+            const authorElement = card.querySelector('.recommendation-author');
+            if (authorElement && targetProduct.author) {
+                authorElement.textContent = `by ${targetProduct.author}`;
+            }
+
+            // Update language selector buttons
+            const languageButtons = card.querySelectorAll('.language-selector');
+            languageButtons.forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText === targetLanguage) {
+                    btn.style.background = 'var(--primary)';
+                    btn.style.color = 'white';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = 'var(--primary)';
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update the onclick for add to cart button
+            const addBtn = card.querySelector('.add-to-cart-btn');
+            addBtn.setAttribute('onclick', `addRecommendationToCart('${targetProductId}')`);
+
+            // Update the language buttons' onclick
+            const enBtn = card.querySelector('.language-selector:nth-of-type(1)');
+            const esBtn = card.querySelector('.language-selector:nth-of-type(2)');
+            if (enBtn) enBtn.setAttribute('onclick', `switchRecommendationLanguage('${targetProductId}', 'English')`);
+            if (esBtn) esBtn.setAttribute('onclick', `switchRecommendationLanguage('${targetProductId}', 'Español')`);
         }
 
         // Check and manage free bonus items based on cart contents
