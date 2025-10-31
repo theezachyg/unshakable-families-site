@@ -119,7 +119,7 @@ async function ensureCoupon(env) {
 // ===== CREATE CHECKOUT SESSION =====
 async function handleCreateCheckout(request, env, corsHeaders) {
     try {
-        const { lineItems, cart, hasRecommendation } = await request.json();
+        const { lineItems, cart, hasRecommendation, cartTotal, hasPhysicalProducts } = await request.json();
 
         // Prepare line items for Stripe
         const stripeLineItems = cart.map(item => ({
@@ -133,6 +133,10 @@ async function handleCreateCheckout(request, env, corsHeaders) {
             couponId = await ensureCoupon(env);
         }
 
+        // Determine shipping options based on cart
+        const FREE_SHIPPING_THRESHOLD = 100;
+        const qualifiesForFreeShipping = cartTotal >= FREE_SHIPPING_THRESHOLD;
+
         // Create Stripe Checkout Session
         const session = await fetch('https://api.stripe.com/v1/checkout/sessions', {
             method: 'POST',
@@ -145,14 +149,34 @@ async function handleCreateCheckout(request, env, corsHeaders) {
                 params.append('success_url', `${SITE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`);
                 params.append('cancel_url', `${SITE_URL}/cart.html`);
                 params.append('mode', 'payment');
-                params.append('shipping_address_collection[allowed_countries][]', 'US');
-                params.append('shipping_address_collection[allowed_countries][]', 'CA');
-                params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
-                params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '0');
-                params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
-                params.append('shipping_options[0][shipping_rate_data][display_name]', 'Free Shipping');
                 params.append('phone_number_collection[enabled]', 'true');
                 params.append('metadata[cart]', JSON.stringify(cart));
+
+                // Only collect shipping address if there are physical products
+                if (hasPhysicalProducts) {
+                    params.append('shipping_address_collection[allowed_countries][]', 'US');
+                    params.append('shipping_address_collection[allowed_countries][]', 'CA');
+
+                    // Add shipping options
+                    if (qualifiesForFreeShipping) {
+                        // Free shipping only
+                        params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+                        params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '0');
+                        params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+                        params.append('shipping_options[0][shipping_rate_data][display_name]', 'Free Shipping');
+                    } else {
+                        // Standard shipping rates
+                        // Option 1: Standard US Shipping
+                        params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+                        params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '599'); // $5.99
+                        params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+                        params.append('shipping_options[0][shipping_rate_data][display_name]', 'Standard Shipping');
+                        params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][unit]', 'business_day');
+                        params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][value]', '5');
+                        params.append('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][unit]', 'business_day');
+                        params.append('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]', '7');
+                    }
+                }
 
                 stripeLineItems.forEach((item, index) => {
                     params.append(`line_items[${index}][price]`, item.price);

@@ -1103,8 +1103,23 @@
                 // Check if cart has recommendations for 10% discount
                 const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
 
+                // Calculate cart details for shipping
+                const subtotal = cart.reduce((sum, item) => {
+                    const product = PRODUCT_DETAILS[item.id];
+                    return sum + (product.price * item.quantity);
+                }, 0);
+
+                const discount = hasRecommendation ? subtotal * 0.10 : 0;
+                const cartTotal = subtotal - discount;
+
+                // Check if cart has physical products
+                const hasPhysicalProducts = cart.some(item => {
+                    const product = PRODUCT_DETAILS[item.id];
+                    return product.type === 'bundle' || product.type === 'paperback';
+                });
+
                 // Call your Cloudflare Worker to create checkout session
-                console.log('Calling Worker API with cart:', cart, 'hasRecommendation:', hasRecommendation);
+                console.log('Calling Worker API - cart:', cart, 'hasRecommendation:', hasRecommendation, 'cartTotal:', cartTotal, 'hasPhysicalProducts:', hasPhysicalProducts);
                 const response = await fetch('https://unshakable-families-checkout.bridgebuilders.workers.dev/api/create-checkout-session', {
                     method: 'POST',
                     headers: {
@@ -1113,7 +1128,9 @@
                     body: JSON.stringify({
                         lineItems: lineItems,
                         cart: cart,
-                        hasRecommendation: hasRecommendation
+                        hasRecommendation: hasRecommendation,
+                        cartTotal: cartTotal,
+                        hasPhysicalProducts: hasPhysicalProducts
                     })
                 });
 
