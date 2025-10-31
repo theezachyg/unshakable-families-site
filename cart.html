@@ -701,15 +701,10 @@
             <!-- Order Summary -->
             <div class="order-summary">
                 <h2>Order Summary</h2>
-                
+
                 <div class="summary-row">
                     <span class="summary-label">Subtotal:</span>
                     <span class="summary-value" id="subtotal">$0.00</span>
-                </div>
-
-                <div class="summary-row">
-                    <span class="summary-label">Shipping:</span>
-                    <span class="summary-value" id="shippingValue">Calculated at checkout</span>
                 </div>
 
                 <div class="summary-row" id="discountRow" style="display: none;">
@@ -717,32 +712,12 @@
                     <span class="summary-value" style="color: var(--success);">-$<span id="discountAmount">0.00</span></span>
                 </div>
 
-                <div class="savings-highlight" id="freeShippingSection" style="display: none; background: linear-gradient(135deg, #f0fff4, #c6f6d5); border: 2px solid var(--success);">
-                    <i class="fas fa-shipping-fast"></i> You've unlocked FREE shipping!
+                <div class="savings-highlight" id="addOnDiscountSection" style="display: none; background: linear-gradient(135deg, #e6f7ff, #b3e0ff); border: 2px solid var(--primary);">
+                    <i class="fas fa-tag"></i> 10% discount applied for adding recommended books!
                 </div>
 
                 <div class="savings-highlight" id="freeShippingProgress" style="display: none; background: linear-gradient(135deg, #fff3cd, #ffeaa7); border: 2px solid var(--gold);">
                     <i class="fas fa-truck"></i> Add <span id="amountNeeded">$0.00</span> more for FREE shipping!
-                </div>
-
-                <div class="savings-highlight" id="addOnDiscountSection" style="display: none; background: linear-gradient(135deg, #e6f7ff, #b3e0ff); border: 2px solid var(--primary);">
-                    10% discount applied for adding recommended books!
-                </div>
-
-                <div class="summary-row total">
-                    <span class="summary-label">Total:</span>
-                    <span class="summary-value" id="total">$0.00</span>
-                </div>
-
-                <div class="savings-highlight" id="savingsSection" style="display: none;">
-                    <i class="fas fa-check-circle"></i> You're saving <span id="savings">$0.00</span>!
-                </div>
-
-                <div class="bonuses-list" id="bonusesList" style="display: none;">
-                    <h4><i class="fas fa-gift"></i> Included FREE Bonuses:</h4>
-                    <ul id="bonusesItems">
-                        <!-- Bonuses will be dynamically inserted -->
-                    </ul>
                 </div>
 
                 <!-- Shipping Address Form -->
@@ -773,6 +748,32 @@
                     <div id="shippingRatesList">
                         <!-- Shipping rates will be dynamically inserted -->
                     </div>
+                </div>
+
+                <!-- Selected Shipping Display -->
+                <div class="summary-row" id="shippingRow" style="display: none;">
+                    <span class="summary-label">Shipping:</span>
+                    <span class="summary-value" id="shippingValue">$0.00</span>
+                </div>
+
+                <div class="savings-highlight" id="freeShippingSection" style="display: none; background: linear-gradient(135deg, #f0fff4, #c6f6d5); border: 2px solid var(--success);">
+                    <i class="fas fa-shipping-fast"></i> FREE Shipping Applied!
+                </div>
+
+                <div class="summary-row total">
+                    <span class="summary-label">Total:</span>
+                    <span class="summary-value" id="total">$0.00</span>
+                </div>
+
+                <div class="savings-highlight" id="savingsSection" style="display: none;">
+                    <i class="fas fa-check-circle"></i> You're saving <span id="savings">$0.00</span>!
+                </div>
+
+                <div class="bonuses-list" id="bonusesList" style="display: none;">
+                    <h4><i class="fas fa-gift"></i> Included FREE Bonuses:</h4>
+                    <ul id="bonusesItems">
+                        <!-- Bonuses will be dynamically inserted -->
+                    </ul>
                 </div>
 
                 <button class="checkout-btn" id="checkoutBtn" onclick="proceedToCheckout()">
@@ -1073,29 +1074,24 @@
             document.getElementById('total').textContent = `$${finalTotal.toFixed(2)}`;
             document.getElementById('itemCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-            // Free shipping logic (based on final total after discount)
+            // Free shipping threshold indicator (for physical products only)
             const FREE_SHIPPING_THRESHOLD = 100;
-            const freeShippingSection = document.getElementById('freeShippingSection');
             const freeShippingProgress = document.getElementById('freeShippingProgress');
-            const shippingValue = document.getElementById('shippingValue');
+            const hasPhysicalProducts = cart.some(item => {
+                const product = PRODUCT_DETAILS[item.id];
+                return product.type === 'bundle' || product.type === 'paperback';
+            });
 
-            if (cart.length > 0) {
-                if (finalTotal >= FREE_SHIPPING_THRESHOLD) {
-                    // Has free shipping
-                    shippingValue.innerHTML = '<span style="color: var(--success); font-weight: 700;">FREE</span>';
-                    freeShippingSection.style.display = 'block';
-                    freeShippingProgress.style.display = 'none';
-                } else {
+            if (cart.length > 0 && hasPhysicalProducts) {
+                if (finalTotal < FREE_SHIPPING_THRESHOLD) {
                     // Show progress to free shipping
                     const amountNeeded = FREE_SHIPPING_THRESHOLD - finalTotal;
-                    shippingValue.textContent = 'Calculated at checkout';
                     document.getElementById('amountNeeded').textContent = `$${amountNeeded.toFixed(2)}`;
-                    freeShippingSection.style.display = 'none';
                     freeShippingProgress.style.display = 'block';
+                } else {
+                    freeShippingProgress.style.display = 'none';
                 }
             } else {
-                shippingValue.textContent = 'Calculated at checkout';
-                freeShippingSection.style.display = 'none';
                 freeShippingProgress.style.display = 'none';
             }
 
@@ -1153,17 +1149,14 @@
                 bonusesList.style.display = 'none';
             }
 
-            // Show shipping form if cart has physical products
-            const hasPhysicalProducts = cart.some(item => {
-                const product = PRODUCT_DETAILS[item.id];
-                return product.type === 'bundle' || product.type === 'paperback';
-            });
-
+            // Show shipping form if cart has physical products (already calculated above)
             if (hasPhysicalProducts && cart.length > 0) {
                 document.getElementById('shippingForm').style.display = 'block';
             } else {
                 document.getElementById('shippingForm').style.display = 'none';
                 document.getElementById('shippingOptions').style.display = 'none';
+                document.getElementById('shippingRow').style.display = 'none';
+                document.getElementById('freeShippingSection').style.display = 'none';
             }
 
             // Show recommendations
@@ -1386,7 +1379,41 @@
             // Add selected class to clicked rate
             document.querySelector(`[data-rate-index="${index}"]`).classList.add('selected');
 
+            // Update summary with selected shipping cost
+            const shippingRow = document.getElementById('shippingRow');
+            const shippingValue = document.getElementById('shippingValue');
+            const freeShippingSection = document.getElementById('freeShippingSection');
+
+            if (selectedShippingRate.isFreeShipping || selectedShippingRate.shipmentCost === 0) {
+                shippingRow.style.display = 'none';
+                freeShippingSection.style.display = 'block';
+            } else {
+                shippingRow.style.display = 'flex';
+                shippingValue.textContent = '$' + selectedShippingRate.shipmentCost.toFixed(2);
+                freeShippingSection.style.display = 'none';
+            }
+
+            // Update total
+            updateTotalWithShipping();
+
             console.log('Selected shipping rate:', selectedShippingRate);
+        }
+
+        // Update total to include shipping
+        function updateTotalWithShipping() {
+            const subtotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return sum + (product.price * item.quantity);
+            }, 0);
+
+            const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
+            const discount = hasRecommendation ? subtotal * 0.10 : 0;
+            const cartTotal = subtotal - discount;
+
+            const shippingCost = selectedShippingRate ? (selectedShippingRate.isFreeShipping ? 0 : selectedShippingRate.shipmentCost) : 0;
+            const finalTotal = cartTotal + shippingCost;
+
+            document.getElementById('total').textContent = '$' + finalTotal.toFixed(2);
         }
 
         async function proceedToCheckout() {
