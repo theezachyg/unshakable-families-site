@@ -1561,10 +1561,22 @@
 
             // Parallax effect for hero video (disabled on mobile)
             const heroVideo = document.querySelector('.hero-video');
+            const heroSection = document.querySelector('.hero');
+
             if (heroVideo && window.innerWidth > 768) {
                 const scrollPosition = window.pageYOffset;
                 const parallaxSpeed = 0.5; // Adjust speed (lower = slower movement)
                 heroVideo.style.transform = `translateX(-50%) translateY(${scrollPosition * parallaxSpeed}px)`;
+            }
+
+            // Hide video on mobile when scrolling past hero section
+            if (heroVideo && heroSection && window.innerWidth <= 768) {
+                const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+                if (window.pageYOffset > heroBottom) {
+                    heroVideo.style.display = 'none';
+                } else {
+                    heroVideo.style.display = 'block';
+                }
             }
         });
 
