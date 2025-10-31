@@ -334,6 +334,128 @@
             transform: none;
         }
 
+        /* Shipping Form */
+        .shipping-form {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .shipping-form h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .shipping-form input,
+        .shipping-form select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .shipping-form input:focus,
+        .shipping-form select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .get-rates-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .get-rates-btn:hover {
+            background: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Shipping Options */
+        .shipping-options {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .shipping-options h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .shipping-rate {
+            background: white;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shipping-rate:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 54, 93, 0.1);
+        }
+
+        .shipping-rate.selected {
+            border-color: var(--success);
+            background: #f0fff4;
+        }
+
+        .shipping-rate-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .shipping-rate-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+
+        .shipping-rate-badge {
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .shipping-rate-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
         .trust-icons {
             display: flex;
             justify-content: center;
@@ -623,6 +745,36 @@
                     </ul>
                 </div>
 
+                <!-- Shipping Address Form -->
+                <div class="shipping-form" id="shippingForm" style="display: none;">
+                    <h4><i class="fas fa-map-marker-alt"></i> Shipping Address</h4>
+                    <div class="form-row">
+                        <input type="text" id="shippingStreet" placeholder="Street Address" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="shippingCity" placeholder="City" required>
+                        <input type="text" id="shippingState" placeholder="State" required style="width: 120px;">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="shippingPostalCode" placeholder="ZIP Code" required style="width: 150px;">
+                        <select id="shippingCountry" required style="width: 150px;">
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                        </select>
+                    </div>
+                    <button class="get-rates-btn" onclick="getShippingRates()">
+                        <i class="fas fa-calculator"></i> Get Shipping Rates
+                    </button>
+                </div>
+
+                <!-- Shipping Options -->
+                <div class="shipping-options" id="shippingOptions" style="display: none;">
+                    <h4><i class="fas fa-shipping-fast"></i> Select Shipping Method</h4>
+                    <div id="shippingRatesList">
+                        <!-- Shipping rates will be dynamically inserted -->
+                    </div>
+                </div>
+
                 <button class="checkout-btn" id="checkoutBtn" onclick="proceedToCheckout()">
                     <i class="fas fa-lock"></i> Proceed to Secure Checkout
                 </button>
@@ -676,7 +828,8 @@
                 type: 'bundle',
                 language: 'English',
                 regularPrice: 35.98,
-                stripePriceId: 'price_1SNhpqENTZGZDoIEfi6rFMQN'
+                stripePriceId: 'price_1SNhpqENTZGZDoIEfi6rFMQN',
+                weight: 30.4 // Unshakable (16oz) + Fire (14.4oz)
             },
             'prod_TKMZUqoZ3N0UqW': {
                 name: 'Unshakable Family Bundle (Español)',
@@ -685,7 +838,8 @@
                 type: 'bundle',
                 language: 'Español',
                 regularPrice: 35.98,
-                stripePriceId: 'price_1SNhqTENTZGZDoIEeEG3CazL'
+                stripePriceId: 'price_1SNhqTENTZGZDoIEeEG3CazL',
+                weight: 30.4 // Unshakable (16oz) + Fire (14.4oz)
             },
             'prod_TKMQIIUotITNZo': {
                 name: 'Unshakable Paperback',
@@ -693,7 +847,8 @@
                 image: 'Assets/Product Images/EN-Unshakable-Paperback-Cart.png',
                 type: 'paperback',
                 language: 'English',
-                stripePriceId: 'price_1SNhhNENTZGZDoIEJ1qhRhFI'
+                stripePriceId: 'price_1SNhhNENTZGZDoIEJ1qhRhFI',
+                weight: 16.0
             },
             'prod_TKMSsIjIYBf5Ev': {
                 name: 'Unshakable Paperback',
@@ -701,7 +856,8 @@
                 image: 'Assets/Product Images/ES-Unshakable-Paperback-Cart.png',
                 type: 'paperback',
                 language: 'Español',
-                stripePriceId: 'price_1SNhj9ENTZGZDoIEade9RdRT'
+                stripePriceId: 'price_1SNhj9ENTZGZDoIEade9RdRT',
+                weight: 16.0
             },
             'prod_TKMTKRgsWddE83': {
                 name: 'Unshakable Ebook',
@@ -725,7 +881,8 @@
                 image: 'Assets/Product Images/EN-FireOnTheFamilyAltar-Paperback-Cart.png',
                 type: 'paperback',
                 language: 'English',
-                stripePriceId: 'price_1SNhl7ENTZGZDoIEdv8igmrL'
+                stripePriceId: 'price_1SNhl7ENTZGZDoIEdv8igmrL',
+                weight: 14.4
             },
             'prod_TKMUV9sItr20yy': {
                 name: 'Fire on the Family Altar Paperback',
@@ -733,7 +890,8 @@
                 image: 'Assets/Product Images/ES-FireOnTheFamilyAltar-Paperback-Cart.png',
                 type: 'paperback',
                 language: 'Español',
-                stripePriceId: 'price_1SNhlTENTZGZDoIETaFD5Pap'
+                stripePriceId: 'price_1SNhlTENTZGZDoIETaFD5Pap',
+                weight: 14.4
             },
             'prod_TKMU12ym0FzbZM': {
                 name: 'Fire on the Family Altar Ebook',
@@ -760,7 +918,8 @@
                 type: 'paperback',
                 language: 'English',
                 stripePriceId: 'price_1SO7xQENTZGZDoIEwuTNlQh4',
-                isRecommendation: true
+                isRecommendation: true,
+                weight: 14.4
             },
             'rec_prayer_saturated_family': {
                 name: 'Prayer Saturated Family',
@@ -771,7 +930,8 @@
                 type: 'paperback',
                 language: 'English',
                 stripePriceId: 'price_1SO80EENTZGZDoIEzA7pWAe4',
-                isRecommendation: true
+                isRecommendation: true,
+                weight: 8.6
             },
             'rec_prayer_saturated_kids': {
                 name: 'Prayer Saturated Kids',
@@ -782,7 +942,8 @@
                 type: 'paperback',
                 language: 'English',
                 stripePriceId: 'price_1SO81oENTZGZDoIE4LcprMsj',
-                isRecommendation: true
+                isRecommendation: true,
+                weight: 8.0
             },
             'rec_reclaim_generation': {
                 name: 'Reclaim a Generation',
@@ -793,7 +954,8 @@
                 type: 'paperback',
                 language: 'English',
                 stripePriceId: 'price_1SO83OENTZGZDoIELTB7Ea3k',
-                isRecommendation: true
+                isRecommendation: true,
+                weight: 5.0
             },
             'rec_two_nations': {
                 name: 'Two Nations One Prayer',
@@ -804,7 +966,8 @@
                 type: 'paperback',
                 language: 'English',
                 stripePriceId: 'price_1SO84GENTZGZDoIEgLiDJL3a',
-                isRecommendation: true
+                isRecommendation: true,
+                weight: 5.0
             }
         };
 
@@ -990,6 +1153,19 @@
                 bonusesList.style.display = 'none';
             }
 
+            // Show shipping form if cart has physical products
+            const hasPhysicalProducts = cart.some(item => {
+                const product = PRODUCT_DETAILS[item.id];
+                return product.type === 'bundle' || product.type === 'paperback';
+            });
+
+            if (hasPhysicalProducts && cart.length > 0) {
+                document.getElementById('shippingForm').style.display = 'block';
+            } else {
+                document.getElementById('shippingForm').style.display = 'none';
+                document.getElementById('shippingOptions').style.display = 'none';
+            }
+
             // Show recommendations
             updateRecommendations();
         }
@@ -1083,6 +1259,136 @@
             renderCart();
         }
 
+        // Store selected shipping rate
+        let selectedShippingRate = null;
+
+        // Get shipping rates from ShipStation
+        async function getShippingRates() {
+            const street = document.getElementById('shippingStreet').value.trim();
+            const city = document.getElementById('shippingCity').value.trim();
+            const state = document.getElementById('shippingState').value.trim();
+            const postalCode = document.getElementById('shippingPostalCode').value.trim();
+            const country = document.getElementById('shippingCountry').value;
+
+            // Validate address
+            if (!street || !city || !state || !postalCode) {
+                alert('Please fill in all address fields');
+                return;
+            }
+
+            // Prepare cart data with weights
+            const cartWithWeights = cart.map(item => {
+                const product = PRODUCT_DETAILS[item.id];
+                return {
+                    id: item.id,
+                    quantity: item.quantity,
+                    weight: product.weight || 0
+                };
+            });
+
+            // Calculate cart total for free shipping check
+            const subtotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return sum + (product.price * item.quantity);
+            }, 0);
+
+            const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
+            const discount = hasRecommendation ? subtotal * 0.10 : 0;
+            const cartTotal = subtotal - discount;
+
+            try {
+                // Show loading state
+                const getRatesBtn = document.querySelector('.get-rates-btn');
+                getRatesBtn.disabled = true;
+                getRatesBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting Rates...';
+
+                const response = await fetch('https://unshakable-families-checkout.bridgebuilders.workers.dev/api/get-shipping-rates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cart: cartWithWeights,
+                        address: {
+                            street: street,
+                            city: city,
+                            state: state,
+                            postalCode: postalCode,
+                            country: country
+                        },
+                        cartTotal: cartTotal
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                displayShippingRates(data.rates);
+
+                // Reset button
+                getRatesBtn.disabled = false;
+                getRatesBtn.innerHTML = '<i class="fas fa-calculator"></i> Get Shipping Rates';
+
+            } catch (error) {
+                console.error('Error getting rates:', error);
+                alert('Error getting shipping rates: ' + error.message);
+
+                // Reset button
+                const getRatesBtn = document.querySelector('.get-rates-btn');
+                getRatesBtn.disabled = false;
+                getRatesBtn.innerHTML = '<i class="fas fa-calculator"></i> Get Shipping Rates';
+            }
+        }
+
+        // Display shipping rates
+        function displayShippingRates(rates) {
+            const ratesList = document.getElementById('shippingRatesList');
+
+            if (!rates || rates.length === 0) {
+                ratesList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No shipping rates available</p>';
+                document.getElementById('shippingOptions').style.display = 'block';
+                return;
+            }
+
+            ratesList.innerHTML = rates.map((rate, index) => `
+                <div class="shipping-rate" data-rate-index="${index}" onclick="selectShippingRate(${index})">
+                    <div class="shipping-rate-info">
+                        <div>
+                            <div class="shipping-rate-name">${rate.serviceName}</div>
+                            ${rate.isFreeShipping ? '<span class="shipping-rate-badge">FREE</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="shipping-rate-price">
+                        ${rate.isFreeShipping || rate.shipmentCost === 0 ? 'FREE' : '$' + rate.shipmentCost.toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('shippingOptions').style.display = 'block';
+
+            // Store rates for selection
+            window.availableShippingRates = rates;
+        }
+
+        // Select shipping rate
+        function selectShippingRate(index) {
+            const rates = window.availableShippingRates;
+            if (!rates || !rates[index]) return;
+
+            selectedShippingRate = rates[index];
+
+            // Update UI - remove all selected classes
+            document.querySelectorAll('.shipping-rate').forEach(el => el.classList.remove('selected'));
+
+            // Add selected class to clicked rate
+            document.querySelector(`[data-rate-index="${index}"]`).classList.add('selected');
+
+            console.log('Selected shipping rate:', selectedShippingRate);
+        }
+
         async function proceedToCheckout() {
             if (cart.length === 0) return;
 
@@ -1118,8 +1424,33 @@
                     return product.type === 'bundle' || product.type === 'paperback';
                 });
 
+                // If physical products, check if shipping rate is selected
+                let shippingAddress = null;
+                let shippingRate = null;
+
+                if (hasPhysicalProducts) {
+                    // Check if shipping rate was selected
+                    if (!selectedShippingRate) {
+                        alert('Please enter your address and select a shipping method before checking out.');
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                        document.getElementById('checkoutBtn').disabled = false;
+                        return;
+                    }
+
+                    // Get shipping address from form
+                    shippingAddress = {
+                        street: document.getElementById('shippingStreet').value.trim(),
+                        city: document.getElementById('shippingCity').value.trim(),
+                        state: document.getElementById('shippingState').value.trim(),
+                        postalCode: document.getElementById('shippingPostalCode').value.trim(),
+                        country: document.getElementById('shippingCountry').value
+                    };
+
+                    shippingRate = selectedShippingRate;
+                }
+
                 // Call your Cloudflare Worker to create checkout session
-                console.log('Calling Worker API - cart:', cart, 'hasRecommendation:', hasRecommendation, 'cartTotal:', cartTotal, 'hasPhysicalProducts:', hasPhysicalProducts);
+                console.log('Calling Worker API - cart:', cart, 'hasRecommendation:', hasRecommendation, 'cartTotal:', cartTotal, 'hasPhysicalProducts:', hasPhysicalProducts, 'shippingRate:', shippingRate);
                 const response = await fetch('https://unshakable-families-checkout.bridgebuilders.workers.dev/api/create-checkout-session', {
                     method: 'POST',
                     headers: {
@@ -1130,7 +1461,9 @@
                         cart: cart,
                         hasRecommendation: hasRecommendation,
                         cartTotal: cartTotal,
-                        hasPhysicalProducts: hasPhysicalProducts
+                        hasPhysicalProducts: hasPhysicalProducts,
+                        shippingAddress: shippingAddress,
+                        shippingRate: shippingRate
                     })
                 });
 

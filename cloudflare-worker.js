@@ -65,6 +65,10 @@ export default {
             return handleCreateCheckout(request, env, corsHeaders);
         }
 
+        if (url.pathname === '/api/get-shipping-rates' && request.method === 'POST') {
+            return handleGetShippingRates(request, env, corsHeaders);
+        }
+
         if (url.pathname === '/api/webhook' && request.method === 'POST') {
             return handleStripeWebhook(request, env);
         }
@@ -72,6 +76,126 @@ export default {
         return new Response('Not Found', { status: 404 });
     }
 };
+
+// ===== GET SHIPPING RATES FROM SHIPSTATION =====
+async function handleGetShippingRates(request, env, corsHeaders) {
+    try {
+        const { cart, address, cartTotal } = await request.json();
+
+        // Check if cart qualifies for free shipping
+        const FREE_SHIPPING_THRESHOLD = 100;
+        const qualifiesForFreeShipping = cartTotal >= FREE_SHIPPING_THRESHOLD;
+
+        // If qualifies for free shipping, return USPS Media Mail at $0
+        if (qualifiesForFreeShipping) {
+            return new Response(JSON.stringify({
+                rates: [{
+                    serviceName: 'USPS Media Mail',
+                    serviceCode: 'usps_media_mail',
+                    shipmentCost: 0,
+                    otherCost: 0,
+                    isFreeShipping: true
+                }]
+            }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // Skip if ShipStation is not configured
+        if (!env.SHIPSTATION_API_KEY || !env.SHIPSTATION_API_SECRET) {
+            throw new Error('ShipStation not configured');
+        }
+
+        // Calculate total weight from cart items
+        const totalWeight = cart.reduce((total, item) => {
+            return total + ((item.weight || 0) * item.quantity);
+        }, 0);
+
+        if (totalWeight === 0) {
+            throw new Error('No physical products with weight in cart');
+        }
+
+        // ShipStation getRates API request
+        // Default origin - update this to actual warehouse address
+        const rateRequest = {
+            carrierCode: 'stamps_com', // ShipStation's USPS integration
+            serviceCode: null, // Get all services
+            packageCode: 'package',
+            fromPostalCode: '90210', // TODO: Update with actual warehouse zip
+            toState: address.state,
+            toCountry: address.country || 'US',
+            toPostalCode: address.postalCode,
+            toCity: address.city,
+            weight: {
+                value: totalWeight,
+                units: 'ounces'
+            },
+            dimensions: {
+                units: 'inches',
+                length: 12,
+                width: 9,
+                height: 3
+            },
+            confirmation: 'none',
+            residential: true
+        };
+
+        const auth = btoa(`${env.SHIPSTATION_API_KEY}:${env.SHIPSTATION_API_SECRET}`);
+
+        const response = await fetch('https://ssapi.shipstation.com/shipments/getrates', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${auth}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(rateRequest)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`ShipStation API error: ${response.status} - ${errorText}`);
+        }
+
+        const ratesData = await response.json();
+
+        // Filter for specific services: Media Mail, Priority Mail, FedEx
+        const desiredServices = [
+            'usps_media_mail',
+            'usps_priority_mail',
+            'fedex_ground',
+            'fedex_2day',
+            'fedex_express_saver'
+        ];
+
+        const filteredRates = ratesData
+            .filter(rate => {
+                const serviceCode = rate.serviceCode?.toLowerCase() || '';
+                return desiredServices.some(desired => serviceCode.includes(desired.replace('_', ' ')));
+            })
+            .map(rate => ({
+                serviceName: rate.serviceName,
+                serviceCode: rate.serviceCode,
+                shipmentCost: rate.shipmentCost,
+                otherCost: rate.otherCost,
+                isFreeShipping: false
+            }))
+            .sort((a, b) => a.shipmentCost - b.shipmentCost); // Sort by price
+
+        return new Response(JSON.stringify({ rates: filteredRates }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+    } catch (error) {
+        console.error('Get rates error:', error);
+        return new Response(JSON.stringify({
+            error: error.message,
+            rates: []
+        }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+}
 
 // ===== ENSURE 10% DISCOUNT COUPON EXISTS =====
 async function ensureCoupon(env) {
@@ -119,7 +243,7 @@ async function ensureCoupon(env) {
 // ===== CREATE CHECKOUT SESSION =====
 async function handleCreateCheckout(request, env, corsHeaders) {
     try {
-        const { lineItems, cart, hasRecommendation, cartTotal, hasPhysicalProducts } = await request.json();
+        const { lineItems, cart, hasRecommendation, cartTotal, hasPhysicalProducts, shippingAddress, shippingRate } = await request.json();
 
         // Prepare line items for Stripe
         const stripeLineItems = cart.map(item => ({
@@ -132,10 +256,6 @@ async function handleCreateCheckout(request, env, corsHeaders) {
         if (hasRecommendation) {
             couponId = await ensureCoupon(env);
         }
-
-        // Determine shipping options based on cart
-        const FREE_SHIPPING_THRESHOLD = 100;
-        const qualifiesForFreeShipping = cartTotal >= FREE_SHIPPING_THRESHOLD;
 
         // Create Stripe Checkout Session
         const session = await fetch('https://api.stripe.com/v1/checkout/sessions', {
@@ -152,23 +272,38 @@ async function handleCreateCheckout(request, env, corsHeaders) {
                 params.append('phone_number_collection[enabled]', 'true');
                 params.append('metadata[cart]', JSON.stringify(cart));
 
-                // Only collect shipping address if there are physical products
-                if (hasPhysicalProducts) {
+                // If physical products and shipping address provided from cart
+                if (hasPhysicalProducts && shippingAddress && shippingRate) {
+                    // Still collect shipping address in Stripe for order fulfillment
                     params.append('shipping_address_collection[allowed_countries][]', 'US');
                     params.append('shipping_address_collection[allowed_countries][]', 'CA');
 
-                    // Add shipping options
+                    // Use the selected shipping rate from ShipStation
+                    const shippingCost = shippingRate.isFreeShipping ? 0 : Math.round(shippingRate.shipmentCost * 100);
+                    params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+                    params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', shippingCost.toString());
+                    params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+                    params.append('shipping_options[0][shipping_rate_data][display_name]', shippingRate.serviceName);
+
+                    // Store shipping details in metadata
+                    params.append('metadata[shipping_method]', shippingRate.serviceCode);
+                    params.append('metadata[shipping_cost]', shippingRate.shipmentCost.toString());
+                } else if (hasPhysicalProducts) {
+                    // Fallback to old logic if no shipping rate selected
+                    const FREE_SHIPPING_THRESHOLD = 100;
+                    const qualifiesForFreeShipping = cartTotal >= FREE_SHIPPING_THRESHOLD;
+
+                    params.append('shipping_address_collection[allowed_countries][]', 'US');
+                    params.append('shipping_address_collection[allowed_countries][]', 'CA');
+
                     if (qualifiesForFreeShipping) {
-                        // Free shipping only
                         params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
                         params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '0');
                         params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
                         params.append('shipping_options[0][shipping_rate_data][display_name]', 'Free Shipping');
                     } else {
-                        // Standard shipping rates
-                        // Option 1: Standard US Shipping
                         params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
-                        params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '599'); // $5.99
+                        params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '599');
                         params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
                         params.append('shipping_options[0][shipping_rate_data][display_name]', 'Standard Shipping');
                         params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][unit]', 'business_day');
