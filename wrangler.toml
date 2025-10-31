@@ -1,0 +1,14 @@
+name = "unshakable-families-checkout"
+main = "cloudflare-worker.js"
+compatibility_date = "2024-01-01"
+
+# Environment variables (set these in Cloudflare Dashboard or via wrangler secret)
+# STRIPE_SECRET_KEY
+# SHIPSTATION_API_KEY
+# SHIPSTATION_API_SECRET
+# MAILCHIMP_API_KEY
+# MAILCHIMP_SERVER_PREFIX
+# MAILCHIMP_LIST_ID
+
+[env.production]
+vars = { }

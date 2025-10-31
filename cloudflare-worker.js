@@ -2,36 +2,45 @@
 // This handles Stripe checkout, ShipStation orders, and Mailchimp bonus delivery
 
 // ===== CONFIGURATION =====
-// Add these as environment variables in Cloudflare Workers dashboard:
-// - STRIPE_SECRET_KEY
-// - SHIPSTATION_API_KEY
-// - SHIPSTATION_API_SECRET
-// - MAILCHIMP_API_KEY
-// - MAILCHIMP_SERVER_PREFIX
-// - MAILCHIMP_LIST_ID
-
-const STRIPE_SECRET_KEY = 'YOUR_STRIPE_SECRET_KEY_HERE'; // sk_live_...
-const SHIPSTATION_API_KEY = 'YOUR_SHIPSTATION_API_KEY';
-const SHIPSTATION_API_SECRET = 'YOUR_SHIPSTATION_API_SECRET';
-const MAILCHIMP_API_KEY = 'YOUR_MAILCHIMP_API_KEY';
-const MAILCHIMP_SERVER_PREFIX = 'YOUR_SERVER_PREFIX'; // e.g., 'us1', 'us2', etc.
-const MAILCHIMP_LIST_ID = 'YOUR_MAILCHIMP_LIST_ID';
+// Environment variables are configured in Cloudflare Workers dashboard:
+// - STRIPE_SECRET_KEY (required)
+// - SHIPSTATION_API_KEY (optional)
+// - SHIPSTATION_API_SECRET (optional)
+// - MAILCHIMP_API_KEY (optional)
+// - MAILCHIMP_SERVER_PREFIX (optional)
+// - MAILCHIMP_LIST_ID (optional)
 
 // Your website URL
-const SITE_URL = 'https://yourdomain.com'; // Update with your actual domain
+const SITE_URL = 'https://unshakable-families-site.pages.dev';
 
-// Product Price IDs from Stripe (you need to create these in Stripe Dashboard)
+// Product Price IDs from Stripe
 const PRICE_IDS = {
-    'prod_TKMYdi0tJ8PihI': 'price_BUNDLE_ENGLISH',
-    'prod_TKMZUqoZ3N0UqW': 'price_BUNDLE_SPANISH',
-    'prod_TKMQIIUotITNZo': 'price_UNSHAKABLE_PB_EN',
-    'prod_TKMSsIjIYBf5Ev': 'price_UNSHAKABLE_PB_ES',
-    'prod_TKMTKRgsWddE83': 'price_UNSHAKABLE_EB_EN',
-    'prod_TKMTfrTuMRr7c3': 'price_UNSHAKABLE_EB_ES',
-    'prod_TKMUdCfcPzrqrm': 'price_FIRE_PB_EN',
-    'prod_TKMUV9sItr20yy': 'price_FIRE_PB_ES',
-    'prod_TKMU12ym0FzbZM': 'price_FIRE_EB_EN',
-    'prod_TKMVhWKaAW2sZf': 'price_FIRE_EB_ES'
+    // Bundle Products
+    'prod_TKMYdi0tJ8PihI': 'price_1SNhpqENTZGZDoIEfi6rFMQN', // Bundle English
+    'prod_TKMZUqoZ3N0UqW': 'price_1SNhqTENTZGZDoIEeEG3CazL', // Bundle Spanish
+
+    // Unshakable Products
+    'prod_TKMQIIUotITNZo': 'price_1SNhhNENTZGZDoIEJ1qhRhFI', // Unshakable Paperback English
+    'prod_TKMSsIjIYBf5Ev': 'price_1SNhj9ENTZGZDoIEade9RdRT', // Unshakable Paperback Spanish
+    'prod_TKMTKRgsWddE83': 'price_1SNhkLENTZGZDoIELjfoA8tY', // Unshakable Ebook English
+    'prod_TKMTfrTuMRr7c3': 'price_1SNhkZENTZGZDoIEjl4bfDHk', // Unshakable Ebook Spanish
+
+    // Fire on the Family Altar Products
+    'prod_TKMUdCfcPzrqrm': 'price_1SNhl7ENTZGZDoIEdv8igmrL', // Fire Paperback English
+    'prod_TKMUV9sItr20yy': 'price_1SNhlTENTZGZDoIETaFD5Pap', // Fire Paperback Spanish
+    'prod_TKMU12ym0FzbZM': 'price_1SNhlmENTZGZDoIEH9KmZcwY', // Fire Ebook English
+    'prod_TKMVhWKaAW2sZf': 'price_1SNhm4ENTZGZDoIEbQtJY67i', // Fire Ebook Spanish
+
+    // Ebook Bundles
+    'prod_TKnXjt9xf5qOze': 'price_1SO7wbENTZGZDoIELabzVT7m', // Ebook Bundle English
+    'prod_TKnW58ssyIRVGf': 'price_1SO7vnENTZGZDoIE6y5VEqUq', // Ebook Bundle Spanish
+
+    // Recommendation Products (English)
+    'rec_prayer_saturated_church': 'price_1SO7xQENTZGZDoIEwuTNlQh4', // Prayer Saturated Church
+    'rec_prayer_saturated_family': 'price_1SO80EENTZGZDoIEzA7pWAe4', // Prayer Saturated Family
+    'rec_prayer_saturated_kids': 'price_1SO81oENTZGZDoIE4LcprMsj', // Prayer Saturated Kids
+    'rec_reclaim_generation': 'price_1SO83OENTZGZDoIELTB7Ea3k', // Reclaim a Generation
+    'rec_two_nations': 'price_1SO84GENTZGZDoIEgLiDJL3a' // Two Nations One Prayer
 };
 
 // ===== MAIN HANDLER =====
@@ -53,11 +62,11 @@ export default {
 
         // Route handlers
         if (url.pathname === '/api/create-checkout-session' && request.method === 'POST') {
-            return handleCreateCheckout(request, corsHeaders);
+            return handleCreateCheckout(request, env, corsHeaders);
         }
 
         if (url.pathname === '/api/webhook' && request.method === 'POST') {
-            return handleStripeWebhook(request);
+            return handleStripeWebhook(request, env);
         }
 
         return new Response('Not Found', { status: 404 });
@@ -65,7 +74,7 @@ export default {
 };
 
 // ===== CREATE CHECKOUT SESSION =====
-async function handleCreateCheckout(request, corsHeaders) {
+async function handleCreateCheckout(request, env, corsHeaders) {
     try {
         const { lineItems, cart } = await request.json();
 
@@ -79,29 +88,30 @@ async function handleCreateCheckout(request, corsHeaders) {
         const session = await fetch('https://api.stripe.com/v1/checkout/sessions', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
+                'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: new URLSearchParams({
-                'success_url': `${SITE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-                'cancel_url': `${SITE_URL}/cart.html`,
-                'mode': 'payment',
-                'shipping_address_collection[allowed_countries][]': 'US',
-                'shipping_address_collection[allowed_countries][]': 'CA',
-                'shipping_options[0][shipping_rate_data][type]': 'fixed_amount',
-                'shipping_options[0][shipping_rate_data][fixed_amount][amount]': '0',
-                'shipping_options[0][shipping_rate_data][fixed_amount][currency]': 'usd',
-                'shipping_options[0][shipping_rate_data][display_name]': 'Free Shipping',
-                'phone_number_collection[enabled]': 'true',
-                'customer_email': '',
-                'metadata[cart]': JSON.stringify(cart),
-                ...Object.fromEntries(
-                    stripeLineItems.flatMap((item, index) => [
-                        [`line_items[${index}][price]`, item.price],
-                        [`line_items[${index}][quantity]`, item.quantity.toString()]
-                    ])
-                )
-            })
+            body: (() => {
+                const params = new URLSearchParams();
+                params.append('success_url', `${SITE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`);
+                params.append('cancel_url', `${SITE_URL}/cart.html`);
+                params.append('mode', 'payment');
+                params.append('shipping_address_collection[allowed_countries][]', 'US');
+                params.append('shipping_address_collection[allowed_countries][]', 'CA');
+                params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+                params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '0');
+                params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+                params.append('shipping_options[0][shipping_rate_data][display_name]', 'Free Shipping');
+                params.append('phone_number_collection[enabled]', 'true');
+                params.append('metadata[cart]', JSON.stringify(cart));
+
+                stripeLineItems.forEach((item, index) => {
+                    params.append(`line_items[${index}][price]`, item.price);
+                    params.append(`line_items[${index}][quantity]`, item.quantity.toString());
+                });
+
+                return params;
+            })()
         });
 
         const sessionData = await session.json();
@@ -124,12 +134,12 @@ async function handleCreateCheckout(request, corsHeaders) {
 }
 
 // ===== STRIPE WEBHOOK HANDLER =====
-async function handleStripeWebhook(request) {
+async function handleStripeWebhook(request, env) {
     const signature = request.headers.get('stripe-signature');
     const body = await request.text();
 
     // Verify webhook signature (in production, implement proper verification)
-    // const event = stripe.webhooks.constructEvent(body, signature, WEBHOOK_SECRET);
+    // const event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
 
     try {
         const event = JSON.parse(body);
@@ -137,7 +147,7 @@ async function handleStripeWebhook(request) {
         // Handle successful payment
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
-            
+
             // Get customer details
             const customerEmail = session.customer_details?.email;
             const customerName = session.customer_details?.name;
@@ -145,10 +155,10 @@ async function handleStripeWebhook(request) {
             const cart = JSON.parse(session.metadata?.cart || '[]');
 
             // 1. Create ShipStation order (for physical products)
-            await createShipStationOrder(session, cart, shippingAddress);
+            await createShipStationOrder(session, cart, shippingAddress, env);
 
             // 2. Send bonuses via Mailchimp
-            await sendBonusesViaMailchimp(customerEmail, customerName, cart);
+            await sendBonusesViaMailchimp(customerEmail, customerName, cart, env);
 
             // 3. Track conversion (add to analytics if needed)
             console.log('Order completed:', session.id);
@@ -168,14 +178,20 @@ async function handleStripeWebhook(request) {
 }
 
 // ===== SHIPSTATION INTEGRATION =====
-async function createShipStationOrder(session, cart, shippingAddress) {
+async function createShipStationOrder(session, cart, shippingAddress, env) {
     // Only create order if cart contains physical products
-    const hasPhysicalProducts = cart.some(item => 
+    const hasPhysicalProducts = cart.some(item =>
         item.type === 'bundle' || item.type === 'paperback'
     );
 
     if (!hasPhysicalProducts) {
         console.log('No physical products, skipping ShipStation');
+        return;
+    }
+
+    // Skip if ShipStation is not configured
+    if (!env.SHIPSTATION_API_KEY || !env.SHIPSTATION_API_SECRET) {
+        console.log('ShipStation not configured, skipping');
         return;
     }
 
@@ -215,7 +231,7 @@ async function createShipStationOrder(session, cart, shippingAddress) {
     };
 
     try {
-        const auth = btoa(`${SHIPSTATION_API_KEY}:${SHIPSTATION_API_SECRET}`);
+        const auth = btoa(`${env.SHIPSTATION_API_KEY}:${env.SHIPSTATION_API_SECRET}`);
         
         const response = await fetch('https://ssapi.shipstation.com/orders/createorder', {
             method: 'POST',
@@ -242,17 +258,23 @@ async function createShipStationOrder(session, cart, shippingAddress) {
 }
 
 // ===== MAILCHIMP INTEGRATION =====
-async function sendBonusesViaMailchimp(email, name, cart) {
+async function sendBonusesViaMailchimp(email, name, cart, env) {
+    // Skip if Mailchimp is not configured
+    if (!env.MAILCHIMP_API_KEY || !env.MAILCHIMP_SERVER_PREFIX || !env.MAILCHIMP_LIST_ID) {
+        console.log('Mailchimp not configured, skipping');
+        return;
+    }
+
     try {
         // Determine which bonuses to send based on products in cart
-        const hasBundleOrUnshakable = cart.some(item => 
+        const hasBundleOrUnshakable = cart.some(item =>
             item.id.includes('TKMYdi0tJ8PihI') || // Bundle English
             item.id.includes('TKMZ') || // Bundle Spanish
             item.id.includes('TKMQ') || // Unshakable PB English
             item.id.includes('TKMS')    // Unshakable PB Spanish
         );
 
-        const hasFireOrBundle = cart.some(item => 
+        const hasFireOrBundle = cart.some(item =>
             item.id.includes('TKMY') || // Bundle
             item.id.includes('TKMZ') || // Bundle Spanish
             item.id.includes('TKMU')    // Fire books
@@ -279,11 +301,11 @@ async function sendBonusesViaMailchimp(email, name, cart) {
         subscriberData.tags.push('Purchased-Customer');
 
         const response = await fetch(
-            `https://${MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${MAILCHIMP_LIST_ID}/members`,
+            `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members`,
             {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${MAILCHIMP_API_KEY}`,
+                    'Authorization': `Bearer ${env.MAILCHIMP_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(subscriberData)
