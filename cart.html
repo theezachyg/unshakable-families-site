@@ -1100,8 +1100,11 @@
                     };
                 });
 
+                // Check if cart has recommendations for 10% discount
+                const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
+
                 // Call your Cloudflare Worker to create checkout session
-                console.log('Calling Worker API with cart:', cart);
+                console.log('Calling Worker API with cart:', cart, 'hasRecommendation:', hasRecommendation);
                 const response = await fetch('https://unshakable-families-checkout.bridgebuilders.workers.dev/api/create-checkout-session', {
                     method: 'POST',
                     headers: {
@@ -1109,7 +1112,8 @@
                     },
                     body: JSON.stringify({
                         lineItems: lineItems,
-                        cart: cart
+                        cart: cart,
+                        hasRecommendation: hasRecommendation
                     })
                 });
 

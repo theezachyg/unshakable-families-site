@@ -47,7 +47,7 @@ const PRICE_IDS = {
 export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
-        
+
         // Enable CORS
         const corsHeaders = {
             'Access-Control-Allow-Origin': '*',
@@ -73,16 +73,65 @@ export default {
     }
 };
 
+// ===== ENSURE 10% DISCOUNT COUPON EXISTS =====
+async function ensureCoupon(env) {
+    const couponId = 'addon_discount_10';
+
+    // Try to retrieve existing coupon
+    const getCoupon = await fetch(`https://api.stripe.com/v1/coupons/${couponId}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+        }
+    });
+
+    if (getCoupon.ok) {
+        // Coupon exists, return its ID
+        return couponId;
+    }
+
+    // Coupon doesn't exist, create it
+    const createCoupon = await fetch('https://api.stripe.com/v1/coupons', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'id': couponId,
+            'percent_off': '10',
+            'duration': 'once',
+            'name': '10% Add-On Discount'
+        })
+    });
+
+    const couponData = await createCoupon.json();
+
+    if (!createCoupon.ok) {
+        console.error('Failed to create coupon:', couponData);
+        // Return null if coupon creation fails - checkout will proceed without discount
+        return null;
+    }
+
+    return couponId;
+}
+
 // ===== CREATE CHECKOUT SESSION =====
 async function handleCreateCheckout(request, env, corsHeaders) {
     try {
-        const { lineItems, cart } = await request.json();
+        const { lineItems, cart, hasRecommendation } = await request.json();
 
         // Prepare line items for Stripe
         const stripeLineItems = cart.map(item => ({
             price: PRICE_IDS[item.id],
             quantity: item.quantity
         }));
+
+        // Create or get 10% discount coupon if needed
+        let couponId = null;
+        if (hasRecommendation) {
+            couponId = await ensureCoupon(env);
+        }
 
         // Create Stripe Checkout Session
         const session = await fetch('https://api.stripe.com/v1/checkout/sessions', {
@@ -109,6 +158,11 @@ async function handleCreateCheckout(request, env, corsHeaders) {
                     params.append(`line_items[${index}][price]`, item.price);
                     params.append(`line_items[${index}][quantity]`, item.quantity.toString());
                 });
+
+                // Apply 10% discount coupon if customer added recommendation items
+                if (couponId) {
+                    params.append('discounts[0][coupon]', couponId);
+                }
 
                 return params;
             })()
