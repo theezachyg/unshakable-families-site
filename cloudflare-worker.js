@@ -115,13 +115,11 @@ async function handleGetShippingRates(request, env, corsHeaders) {
             throw new Error('No physical products with weight in cart');
         }
 
-        // ShipStation getRates API request
-        // Default origin - update this to actual warehouse address
-        const rateRequest = {
-            carrierCode: 'stamps_com', // ShipStation's USPS integration
-            serviceCode: null, // Get all services
+        const auth = btoa(`${env.SHIPSTATION_API_KEY}:${env.SHIPSTATION_API_SECRET}`);
+
+        const baseRateRequest = {
             packageCode: 'package',
-            fromPostalCode: '90210', // TODO: Update with actual warehouse zip
+            fromPostalCode: '85001', // Phoenix, AZ
             toState: address.state,
             toCountry: address.country || 'US',
             toPostalCode: address.postalCode,
@@ -140,37 +138,100 @@ async function handleGetShippingRates(request, env, corsHeaders) {
             residential: true
         };
 
-        const auth = btoa(`${env.SHIPSTATION_API_KEY}:${env.SHIPSTATION_API_SECRET}`);
+        // Request USPS rates
+        const uspsRequest = {
+            ...baseRateRequest,
+            carrierCode: 'stamps_com',
+            serviceCode: null
+        };
 
-        const response = await fetch('https://ssapi.shipstation.com/shipments/getrates', {
+        console.log('ShipStation USPS rate request:', JSON.stringify(uspsRequest));
+
+        const uspsResponse = await fetch('https://ssapi.shipstation.com/shipments/getrates', {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${auth}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(rateRequest)
+            body: JSON.stringify(uspsRequest)
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`ShipStation API error: ${response.status} - ${errorText}`);
+        let allRates = [];
+
+        if (uspsResponse.ok) {
+            const uspsRates = await uspsResponse.json();
+            console.log('USPS rates received:', JSON.stringify(uspsRates));
+            allRates = allRates.concat(uspsRates);
         }
 
-        const ratesData = await response.json();
+        // Request FedEx rates - try with carrier ID first
+        const fedexRequestWithId = {
+            ...baseRateRequest,
+            carrierCode: 'se-576579',
+            serviceCode: null
+        };
 
-        // Filter for specific services: Media Mail, Priority Mail, FedEx
+        console.log('ShipStation FedEx rate request (with carrier ID):', JSON.stringify(fedexRequestWithId));
+
+        let fedexResponse = await fetch('https://ssapi.shipstation.com/shipments/getrates', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${auth}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(fedexRequestWithId)
+        });
+
+        if (fedexResponse.ok) {
+            const fedexRates = await fedexResponse.json();
+            console.log('FedEx rates received:', JSON.stringify(fedexRates));
+            allRates = allRates.concat(fedexRates);
+        } else {
+            const fedexError = await fedexResponse.text();
+            console.error('FedEx rate request failed (carrier ID):', fedexResponse.status, fedexError);
+
+            // Try again with generic 'fedex' code
+            const fedexRequest = {
+                ...baseRateRequest,
+                carrierCode: 'fedex',
+                serviceCode: null
+            };
+
+            console.log('ShipStation FedEx rate request (generic):', JSON.stringify(fedexRequest));
+
+            fedexResponse = await fetch('https://ssapi.shipstation.com/shipments/getrates', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Basic ${auth}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(fedexRequest)
+            });
+
+            if (fedexResponse.ok) {
+                const fedexRates = await fedexResponse.json();
+                console.log('FedEx rates received (generic):', JSON.stringify(fedexRates));
+                allRates = allRates.concat(fedexRates);
+            } else {
+                const fedexError2 = await fedexResponse.text();
+                console.error('FedEx rate request failed (generic):', fedexResponse.status, fedexError2);
+            }
+        }
+
+        // Filter for specific services only (exact match)
         const desiredServices = [
             'usps_media_mail',
             'usps_priority_mail',
-            'fedex_ground',
-            'fedex_2day',
-            'fedex_express_saver'
+            'fedex_express_saver',
+            'fedex_standard_overnight',  // FedEx Next Day
+            'fedex_priority_overnight'   // FedEx Next Day (alternative)
         ];
 
-        const filteredRates = ratesData
+        const filteredRates = allRates
             .filter(rate => {
-                const serviceCode = rate.serviceCode?.toLowerCase() || '';
-                return desiredServices.some(desired => serviceCode.includes(desired.replace('_', ' ')));
+                const serviceCode = (rate.serviceCode || '').toLowerCase();
+                // Use exact match instead of includes to avoid matching express variants
+                return desiredServices.includes(serviceCode);
             })
             .map(rate => ({
                 serviceName: rate.serviceName,
@@ -180,6 +241,8 @@ async function handleGetShippingRates(request, env, corsHeaders) {
                 isFreeShipping: false
             }))
             .sort((a, b) => a.shipmentCost - b.shipmentCost); // Sort by price
+
+        console.log('Filtered rates:', JSON.stringify(filteredRates));
 
         return new Response(JSON.stringify({ rates: filteredRates }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -274,10 +337,7 @@ async function handleCreateCheckout(request, env, corsHeaders) {
 
                 // If physical products and shipping address provided from cart
                 if (hasPhysicalProducts && shippingAddress && shippingRate) {
-                    // Still collect shipping address in Stripe for order fulfillment
-                    params.append('shipping_address_collection[allowed_countries][]', 'US');
-                    params.append('shipping_address_collection[allowed_countries][]', 'CA');
-
+                    // Don't collect shipping address - we already have it from cart
                     // Use the selected shipping rate from ShipStation
                     const shippingCost = shippingRate.isFreeShipping ? 0 : Math.round(shippingRate.shipmentCost * 100);
                     params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
@@ -285,9 +345,14 @@ async function handleCreateCheckout(request, env, corsHeaders) {
                     params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
                     params.append('shipping_options[0][shipping_rate_data][display_name]', shippingRate.serviceName);
 
-                    // Store shipping details in metadata
+                    // Store shipping address and details in metadata for ShipStation
                     params.append('metadata[shipping_method]', shippingRate.serviceCode);
                     params.append('metadata[shipping_cost]', shippingRate.shipmentCost.toString());
+                    params.append('metadata[shipping_street]', shippingAddress.street);
+                    params.append('metadata[shipping_city]', shippingAddress.city);
+                    params.append('metadata[shipping_state]', shippingAddress.state);
+                    params.append('metadata[shipping_postal_code]', shippingAddress.postalCode);
+                    params.append('metadata[shipping_country]', shippingAddress.country);
                 } else if (hasPhysicalProducts) {
                     // Fallback to old logic if no shipping rate selected
                     const FREE_SHIPPING_THRESHOLD = 100;
@@ -417,6 +482,36 @@ async function createShipStationOrder(session, cart, shippingAddress, env) {
             unitPrice: item.price
         }));
 
+    // Use shipping address from metadata if available (from cart), otherwise from shipping_details (Stripe form)
+    let shipToAddress;
+    if (session.metadata?.shipping_street) {
+        // Address came from cart form
+        shipToAddress = {
+            name: session.customer_details?.name,
+            street1: session.metadata.shipping_street,
+            street2: null,
+            city: session.metadata.shipping_city,
+            state: session.metadata.shipping_state,
+            postalCode: session.metadata.shipping_postal_code,
+            country: session.metadata.shipping_country,
+            phone: session.customer_details?.phone
+        };
+    } else {
+        // Address came from Stripe checkout form (fallback)
+        shipToAddress = {
+            name: shippingAddress?.name || session.customer_details?.name,
+            street1: shippingAddress?.line1,
+            street2: shippingAddress?.line2,
+            city: shippingAddress?.city,
+            state: shippingAddress?.state,
+            postalCode: shippingAddress?.postal_code,
+            country: shippingAddress?.country,
+            phone: session.customer_details?.phone
+        };
+    }
+
+    const shippingCost = session.metadata?.shipping_cost ? parseFloat(session.metadata.shipping_cost) : 0;
+
     const orderData = {
         orderNumber: session.id,
         orderDate: new Date().toISOString(),
@@ -427,20 +522,12 @@ async function createShipStationOrder(session, cart, shippingAddress, env) {
             name: session.customer_details?.name,
             email: session.customer_details?.email
         },
-        shipTo: {
-            name: shippingAddress?.name || session.customer_details?.name,
-            street1: shippingAddress?.line1,
-            street2: shippingAddress?.line2,
-            city: shippingAddress?.city,
-            state: shippingAddress?.state,
-            postalCode: shippingAddress?.postal_code,
-            country: shippingAddress?.country,
-            phone: session.customer_details?.phone
-        },
+        shipTo: shipToAddress,
         items: orderItems,
         amountPaid: session.amount_total / 100,
-        shippingAmount: 0,
-        taxAmount: 0
+        shippingAmount: shippingCost,
+        taxAmount: 0,
+        requestedShippingService: session.metadata?.shipping_method || null
     };
 
     try {
