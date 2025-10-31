@@ -1051,12 +1051,20 @@
                 font-size: 36px;
             }
 
-            /* Ensure video fills vertically on mobile - disable parallax and force full fill */
+            /* Fixed video background on mobile - fills vertically and stays in place */
             .hero-video {
-                min-width: 400% !important;
-                width: 400% !important;
-                height: 100% !important;
-                transform: translateX(-50%) !important; /* Lock position, no parallax on mobile */
+                position: fixed !important;
+                top: 0 !important;
+                left: 50% !important;
+                width: auto !important;
+                height: 100vh !important;
+                min-width: 100vw !important;
+                min-height: 100vh !important;
+                transform: translateX(-50%) !important;
+            }
+
+            .hero {
+                position: relative !important;
             }
         }
 
