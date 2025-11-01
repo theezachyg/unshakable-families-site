@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmed - Thank You! | Unshakable Family</title>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PLXHCM4T');</script>
+    <!-- End Google Tag Manager -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         * {
             margin: 0;
@@ -249,6 +258,11 @@
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLXHCM4T"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <div class="success-container">
         <div class="success-card">
             <div class="success-icon">
@@ -263,12 +277,11 @@
                 You'll receive a confirmation email shortly with all the details.
             </p>
 
-            <div class="bonus-alert">
+            <div class="bonus-alert" id="bonusAlert">
                 <h2>🎁 Check Your Email for Your FREE Bonuses!</h2>
                 <p style="margin-bottom: 20px;">Within the next few minutes, you'll receive an email with instant access to:</p>
-                <ul>
-                    <li><strong>30-Day Unshakable Action Guide</strong> ($29.95 value)</li>
-                    <li><strong>10-Day Family Prayer Guide</strong> ($19.95 value)</li>
+                <ul id="bonusList">
+                    <!-- Bonuses will be populated dynamically based on purchase -->
                 </ul>
                 <p style="font-size: 14px; color: var(--text-light); margin-top: 20px;">
                     <em>Don't see it? Check your spam/promotions folder and add us to your contacts!</em>
@@ -310,8 +323,8 @@
                 <a href="https://bridgebuilders.net" class="btn btn-primary">
                     <i class="fas fa-globe"></i> Visit BridgeBuilders
                 </a>
-                <a href="unshakable_bundle_landing_page_v2.html" class="btn btn-secondary">
-                    <i class="fas fa-book"></i> View More Books
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-book"></i> Back to Home
                 </a>
             </div>
 
@@ -339,6 +352,152 @@
     </div>
 
     <script>
+        // Product details mapping (matches cart.html exactly)
+        const PRODUCT_DETAILS = {
+            'prod_TKMYdi0tJ8PihI': {
+                name: 'Unshakable Family Bundle (English)',
+                price: 30.00,
+                type: 'bundle',
+                language: 'English',
+                stripePriceId: 'price_1SNhpqENTZGZDoIEfi6rFMQN'
+            },
+            'prod_TKMZUqoZ3N0UqW': {
+                name: 'Unshakable Family Bundle (Español)',
+                price: 30.00,
+                type: 'bundle',
+                language: 'Español',
+                stripePriceId: 'price_1SNhqTENTZGZDoIEeEG3CazL'
+            },
+            'prod_TKMQIIUotITNZo': {
+                name: 'Unshakable Paperback',
+                price: 17.99,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SNhhNENTZGZDoIEJ1qhRhFI'
+            },
+            'prod_TKMSsIjIYBf5Ev': {
+                name: 'Unshakable Paperback',
+                price: 17.99,
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_1SNhj9ENTZGZDoIEade9RdRT'
+            },
+            'prod_TKMTKRgsWddE83': {
+                name: 'Unshakable Ebook',
+                price: 9.99,
+                type: 'ebook',
+                language: 'English',
+                stripePriceId: 'price_1SNhkLENTZGZDoIELjfoA8tY'
+            },
+            'prod_TKMTfrTuMRr7c3': {
+                name: 'Unshakable Ebook',
+                price: 9.99,
+                type: 'ebook',
+                language: 'Español',
+                stripePriceId: 'price_1SNhkZENTZGZDoIEjl4bfDHk'
+            },
+            'prod_TKMUdCfcPzrqrm': {
+                name: 'Fire on the Family Altar Paperback',
+                price: 17.99,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SNhl7ENTZGZDoIEdv8igmrL'
+            },
+            'prod_TKMUV9sItr20yy': {
+                name: 'Fire on the Family Altar Paperback',
+                price: 17.99,
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_1SNhlTENTZGZDoIETaFD5Pap'
+            },
+            'prod_TKMU12ym0FzbZM': {
+                name: 'Fire on the Family Altar Ebook',
+                price: 9.99,
+                type: 'ebook',
+                language: 'English',
+                stripePriceId: 'price_1SNhlmENTZGZDoIEH9KmZcwY'
+            },
+            'prod_TKMVhWKaAW2sZf': {
+                name: 'Fire on the Family Altar Ebook',
+                price: 9.99,
+                type: 'ebook',
+                language: 'Español',
+                stripePriceId: 'price_1SNhm4ENTZGZDoIEbQtJY67i'
+            },
+            'rec_prayer_saturated_church': {
+                name: 'Prayer Saturated Church',
+                price: 17.99,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SO7xQENTZGZDoIEwuTNlQh4',
+                isRecommendation: true
+            },
+            'rec_prayer_saturated_family': {
+                name: 'Prayer Saturated Family',
+                price: 17.99,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SO80EENTZGZDoIEzA7pWAe4',
+                isRecommendation: true
+            },
+            'rec_prayer_saturated_kids': {
+                name: 'Prayer Saturated Kids',
+                price: 13.99,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SO81oENTZGZDoIE4LcprMsj',
+                isRecommendation: true
+            },
+            'rec_prayer_saturated_kids_es': {
+                name: 'Niños Saturados de Oración',
+                price: 13.99,
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_1SO82eENTZGZDoIEousRiLA5',
+                isRecommendation: true
+            },
+            'rec_reclaim_generation': {
+                name: 'Reclaim a Generation',
+                price: 10.79,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SO83OENTZGZDoIELTB7Ea3k',
+                isRecommendation: true
+            },
+            'rec_two_nations': {
+                name: 'Two Nations One Prayer',
+                price: 10.99,
+                type: 'paperback',
+                language: 'English',
+                stripePriceId: 'price_1SO84GENTZGZDoIEgLiDJL3a',
+                isRecommendation: true
+            },
+            'rec_two_nations_es': {
+                name: 'Dos Naciones Una Oración',
+                price: 10.99,
+                type: 'paperback',
+                language: 'Español',
+                stripePriceId: 'price_1SO85VENTZGZDoIEMQ2ujNqG',
+                isRecommendation: true
+            },
+            'prod_TL15QCP70baXz8': {
+                name: '30-Day Unshakable Action Guide',
+                price: 0.00,
+                type: 'bonus',
+                language: 'English',
+                stripePriceId: 'price_1SOL2yENTZGZDoIEndRZQzvZ',
+                isFreeBonus: true
+            },
+            'prod_TL15L4IFBZtld8': {
+                name: '10-Day Family Prayer Guide',
+                price: 0.00,
+                type: 'bonus',
+                language: 'English',
+                stripePriceId: 'price_1SOL3RENTZGZDoIEyoSJ4lFh',
+                isFreeBonus: true
+            }
+        };
+
         // Get session ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
@@ -349,46 +508,154 @@
             document.getElementById('orderNumberValue').textContent = 'Confirmed';
         }
 
+        // Get cart data before clearing for purchase tracking
+        let cart = [];
+        try {
+            const cartData = localStorage.getItem('unshakableCart');
+            if (cartData) {
+                cart = JSON.parse(cartData);
+            }
+        } catch (e) {
+            console.error('Error reading cart data:', e);
+        }
+
+        // Determine which bonuses to show based on purchase
+        function displayBonuses(cart) {
+            const bonusList = document.getElementById('bonusList');
+            const bonusAlert = document.getElementById('bonusAlert');
+
+            if (cart.length === 0) {
+                // If no cart data, hide bonus section
+                bonusAlert.style.display = 'none';
+                return;
+            }
+
+            const bonuses = [];
+
+            // Check what was purchased
+            const hasUnshakable = cart.some(item => {
+                const product = PRODUCT_DETAILS[item.id];
+                return item.id.includes('unshakable') || item.id.includes('bundle');
+            });
+
+            const hasFire = cart.some(item => {
+                const product = PRODUCT_DETAILS[item.id];
+                return item.id.includes('fire') || item.id.includes('bundle');
+            });
+
+            // Add bonuses based on purchase
+            if (hasUnshakable) {
+                bonuses.push('<li><strong>30-Day Unshakable Action Guide</strong> ($29.95 value)</li>');
+            }
+
+            if (hasFire) {
+                bonuses.push('<li><strong>10-Day Family Prayer Guide</strong> ($19.95 value)</li>');
+            }
+
+            // Populate the bonus list
+            if (bonuses.length > 0) {
+                bonusList.innerHTML = bonuses.join('');
+            } else {
+                // Hide bonus alert if no bonuses
+                bonusAlert.style.display = 'none';
+            }
+        }
+
+        // Display bonuses based on cart
+        displayBonuses(cart);
+
+        // Track purchase event with GA4 e-commerce
+        if (cart.length > 0) {
+            const subtotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return sum + (product.price * item.quantity);
+            }, 0);
+
+            const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
+            const discount = hasRecommendation ? subtotal * 0.10 : 0;
+            const total = subtotal - discount;
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'purchase',
+                ecommerce: {
+                    transaction_id: sessionId || 'unknown',
+                    value: total,
+                    tax: 0,
+                    shipping: 0, // Shipping is added by Stripe
+                    currency: 'USD',
+                    coupon: hasRecommendation ? 'RECOMMENDATION_10' : '',
+                    items: cart.map(item => {
+                        const product = PRODUCT_DETAILS[item.id];
+                        return {
+                            item_id: item.id,
+                            item_name: product.name,
+                            item_category: product.type === 'ebook' ? 'Ebook' : (product.type === 'bundle' ? 'Bundle' : 'Paperback'),
+                            item_category2: product.language === 'english' ? 'English' : 'Spanish',
+                            price: product.price,
+                            quantity: item.quantity
+                        };
+                    })
+                }
+            });
+
+            console.log('Purchase tracked:', { transaction_id: sessionId, value: total, items: cart.length });
+        }
+
         // Clear cart after successful purchase
         localStorage.removeItem('unshakableCart');
 
-        // Track conversion
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'purchase', {
-                transaction_id: sessionId,
-                value: 30.00, // Update based on actual order
-                currency: 'USD',
-                items: [
-                    {
-                        item_name: 'Unshakable Family Bundle',
-                        price: 30.00,
-                        quantity: 1
-                    }
-                ]
-            });
-        }
-
         // Social sharing functions
         function shareOnFacebook() {
-            const url = 'https://yourdomain.com/unshakable_bundle_landing_page_v2.html';
-            const text = 'Just got the Unshakable Family Bundle! Transform your family with these powerful books.';
+            // Track share
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'share',
+                share_method: 'facebook',
+                content_type: 'order_confirmation',
+                page_location: window.location.href
+            });
+
+            const url = 'https://unshakablefamily.bridgebuilders.net';
+            const text = 'Just got the Unshakable Family resources from BridgeBuilders! Transform your family with these powerful books and guides.';
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank', 'width=600,height=400');
         }
 
         function shareOnTwitter() {
-            const url = 'https://yourdomain.com/unshakable_bundle_landing_page_v2.html';
-            const text = 'Just got the Unshakable Family Bundle! 📚🔥 Building foundations that last and igniting revival at home. Check it out:';
+            // Track share
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'share',
+                share_method: 'twitter',
+                content_type: 'order_confirmation',
+                page_location: window.location.href
+            });
+
+            const url = 'https://unshakablefamily.bridgebuilders.net';
+            const text = 'Just got Unshakable Family resources from BridgeBuilders! 📚🔥 Building foundations that last and igniting revival at home. Check it out:';
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
         }
 
         function shareViaEmail() {
-            const subject = 'Check out the Unshakable Family Bundle';
-            const body = 'I just got the Unshakable Family Bundle and wanted to share it with you!\n\nThese books teach how to build unshakable foundations and ignite revival in your home.\n\nCheck it out: https://yourdomain.com/unshakable_bundle_landing_page_v2.html';
+            // Track share
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'share',
+                share_method: 'email',
+                content_type: 'order_confirmation',
+                page_location: window.location.href
+            });
+
+            const subject = 'Check out Unshakable Family Resources from BridgeBuilders';
+            const body = 'I just got the Unshakable Family resources from BridgeBuilders and wanted to share it with you!\n\nThese books and guides teach how to build unshakable foundations and ignite revival in your home.\n\nCheck it out: https://unshakablefamily.bridgebuilders.net';
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         }
 
         // Confetti animation (optional - can add confetti library)
         console.log('🎉 Order successful! Thank you for your purchase!');
     </script>
+
+    <!-- Universal GTM Tracking Library -->
+    <script src="tracking.js"></script>
 </body>
 </html>
