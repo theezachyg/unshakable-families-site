@@ -15,6 +15,18 @@
     })(window,document,'script','dataLayer','GTM-PLXHCM4T');</script>
     <!-- End Google Tag Manager -->
 
+    <!-- Mouseflow -->
+    <script type="text/javascript">
+      window._mfq = window._mfq || [];
+      (function() {
+        var mf = document.createElement("script");
+        mf.type = "text/javascript"; mf.defer = true;
+        mf.src = "//cdn.mouseflow.com/projects/f01aea75-23e0-4e1a-93c8-8ab567a13b30.js";
+        document.getElementsByTagName("head")[0].appendChild(mf);
+      })();
+    </script>
+    <!-- End Mouseflow -->
+
     <style>
         * {
             margin: 0;
@@ -1894,14 +1906,52 @@
                 alert('✅ Bundle added to cart! Click the cart icon to checkout.');
             }
 
-            // Track event for analytics
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'add_to_cart', {
-                    items: [{
-                        item_name: 'Bundle',
-                        price: format === 'ebook' ? 17.98 : 30.00,
-                        quantity: 1
-                    }]
+            // Track add_to_cart event for GA4
+            window.dataLayer = window.dataLayer || [];
+            if (format === 'ebook') {
+                // Track both ebook items
+                window.dataLayer.push({
+                    event: 'add_to_cart',
+                    ecommerce: {
+                        currency: 'USD',
+                        value: 17.98,
+                        items: [
+                            {
+                                item_id: item1.id,
+                                item_name: item1.name,
+                                item_category: 'Ebook',
+                                item_category2: language === 'english' ? 'English' : 'Spanish',
+                                price: 9.99,
+                                quantity: 1
+                            },
+                            {
+                                item_id: item2.id,
+                                item_name: item2.name,
+                                item_category: 'Ebook',
+                                item_category2: language === 'english' ? 'English' : 'Spanish',
+                                price: 9.99,
+                                quantity: 1
+                            }
+                        ]
+                    }
+                });
+            } else {
+                // Track paperback bundle
+                const productId = language === 'english' ? PRODUCTS.bundleEnglish : PRODUCTS.bundleSpanish;
+                window.dataLayer.push({
+                    event: 'add_to_cart',
+                    ecommerce: {
+                        currency: 'USD',
+                        value: 30.00,
+                        items: [{
+                            item_id: productId,
+                            item_name: `Unshakable Family Bundle (${language === 'english' ? 'English' : 'Español'})`,
+                            item_category: 'Bundle',
+                            item_category2: language === 'english' ? 'English' : 'Spanish',
+                            price: 30.00,
+                            quantity: 1
+                        }]
+                    }
                 });
             }
         }
@@ -2034,6 +2084,14 @@
 
         // Free Chapter Modal
         function openFreeChapter() {
+            // Track modal open
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'modal_open',
+                modal_name: 'free_chapter',
+                page_location: window.location.href
+            });
+
             document.getElementById('freeChapterModal').style.display = 'block';
         }
 
@@ -2107,5 +2165,68 @@
             observer.observe(el);
         });
     </script>
+
+    <!-- Product View Tracking -->
+    <script>
+        // Track bundle view on page load
+        window.addEventListener('load', function() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'view_item',
+                ecommerce: {
+                    currency: 'USD',
+                    value: 29.99,
+                    items: [{
+                        item_id: 'prod_TKMVD62CefwOHo',
+                        item_name: 'Unshakable Family Bundle',
+                        item_category: 'Bundle',
+                        item_category2: 'English',
+                        price: 29.99,
+                        quantity: 1
+                    }]
+                }
+            });
+        });
+    </script>
+
+    <!-- UTM Tracking -->
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmParams = {
+                utm_source: urlParams.get('utm_source'),
+                utm_medium: urlParams.get('utm_medium'),
+                utm_campaign: urlParams.get('utm_campaign'),
+                utm_content: urlParams.get('utm_content'),
+                utm_term: urlParams.get('utm_term')
+            };
+
+            if (utmParams.utm_source || utmParams.utm_medium || utmParams.utm_campaign) {
+                localStorage.setItem('utm_params', JSON.stringify(utmParams));
+
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'utm_capture',
+                    ...utmParams,
+                    page_location: window.location.href,
+                    page_title: document.title
+                });
+            }
+
+            // Also track page view with UTM data
+            const storedUtm = localStorage.getItem('utm_params');
+            const utmData = storedUtm ? JSON.parse(storedUtm) : utmParams;
+
+            window.dataLayer.push({
+                event: 'page_view',
+                page_location: window.location.href,
+                page_title: document.title,
+                ...utmData
+            });
+        })();
+    </script>
+
+    <!-- Universal GTM Tracking Library -->
+    <script src="tracking.js"></script>
 </body>
 </html>
