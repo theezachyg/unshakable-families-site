@@ -79,6 +79,18 @@ export default {
             return handleStripeWebhook(request, env);
         }
 
+        if (url.pathname === '/api/send-contact-email' && request.method === 'POST') {
+            return handleSendContactEmail(request, env, corsHeaders);
+        }
+
+        if (url.pathname === '/api/add-mailchimp-lead' && request.method === 'POST') {
+            return handleAddMailchimpLead(request, env, corsHeaders);
+        }
+
+        if (url.pathname === '/api/send-booking-request' && request.method === 'POST') {
+            return handleSendBookingRequest(request, env, corsHeaders);
+        }
+
         return new Response('Not Found', { status: 404 });
     }
 };
@@ -266,6 +278,280 @@ async function handleGetShippingRates(request, env, corsHeaders) {
     }
 }
 
+// ===== SEND CONTACT FORM EMAIL =====
+async function handleSendContactEmail(request, env, corsHeaders) {
+    try {
+        const { name, email, subject, message, leadTag } = await request.json();
+
+        // Validate required fields
+        if (!name || !email || !subject || !message) {
+            return new Response(JSON.stringify({
+                success: false,
+                error: 'Missing required fields'
+            }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // Add to Mailchimp if leadTag provided
+        if (leadTag) {
+            await addLeadToMailchimp(email, name, leadTag, env);
+        }
+
+        // Send email using Mandrill API (Mailchimp's transactional email service)
+        const emailResponse = await fetch('https://mandrillapp.com/api/1.0/messages/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                key: env.MANDRILL_API_KEY,
+                message: {
+                    from_email: 'noreply@bridgebuilders.net',
+                    from_name: 'Unshakable Families Contact Form',
+                    to: [
+                        {
+                            email: 'contact@bridgebuilders.net',
+                            type: 'to'
+                        }
+                    ],
+                    subject: `Contact Form: ${subject}`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #333;">New Contact Form Submission</h2>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Name:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${name}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Email:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;"><a href="mailto:${email}">${email}</a></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Subject:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${subject}</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 4px solid #4CAF50;">
+                                <h3 style="margin-top: 0;">Message:</h3>
+                                <p style="white-space: pre-wrap;">${message}</p>
+                            </div>
+                            <p style="margin-top: 20px; font-size: 12px; color: #666;">
+                                Sent from: ${request.headers.get('referer') || 'Direct'}
+                            </p>
+                        </div>
+                    `,
+                    text: `New contact form submission:\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\n---\nSent from: ${request.headers.get('referer') || 'Direct'}`,
+                    headers: {
+                        'Reply-To': email
+                    }
+                }
+            })
+        });
+
+        if (!emailResponse.ok) {
+            const errorText = await emailResponse.text();
+            console.error('Mandrill error status:', emailResponse.status);
+            console.error('Mandrill error body:', errorText);
+
+            // Still add to Mailchimp even if email fails
+            // Return success since the lead was captured
+            return new Response(JSON.stringify({
+                success: true,
+                message: 'Your message was received and added to our contact list. We will respond via email shortly.',
+                emailSent: false
+            }), {
+                status: 200,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        return new Response(JSON.stringify({
+            success: true,
+            message: 'Email sent successfully'
+        }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+    } catch (error) {
+        console.error('Error sending contact email:', error);
+        return new Response(JSON.stringify({
+            success: false,
+            error: error.message
+        }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// ===== SEND BOOKING REQUEST EMAIL =====
+async function handleSendBookingRequest(request, env, corsHeaders) {
+    try {
+        const { firstName, lastName, organization, phone, email, bookingType, message, speakerName } = await request.json();
+
+        // Validate required fields
+        if (!firstName || !lastName || !email || !bookingType || !speakerName) {
+            return new Response(JSON.stringify({
+                success: false,
+                error: 'Missing required fields'
+            }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // Send email using Mandrill API
+        const emailResponse = await fetch('https://mandrillapp.com/api/1.0/messages/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                key: env.MANDRILL_API_KEY,
+                message: {
+                    from_email: 'noreply@bridgebuilders.net',
+                    from_name: 'Unshakable Families Booking Request',
+                    to: [
+                        {
+                            email: 'contact@bridgebuilders.net',
+                            type: 'to'
+                        }
+                    ],
+                    subject: `Speaking Engagement Request: ${speakerName} - ${bookingType}`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #333;">New Speaking Engagement Request</h2>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Speaker:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${speakerName}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Booking Type:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${bookingType}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">First Name:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${firstName}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Last Name:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${lastName}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Email:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;"><a href="mailto:${email}">${email}</a></td>
+                                </tr>
+                                ${phone ? `
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Phone:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;"><a href="tel:${phone}">${phone}</a></td>
+                                </tr>
+                                ` : ''}
+                                ${organization ? `
+                                <tr>
+                                    <td style="padding: 10px; background: #f5f5f5; border: 1px solid #ddd; font-weight: bold;">Organization:</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${organization}</td>
+                                </tr>
+                                ` : ''}
+                            </table>
+                            ${message ? `
+                            <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 4px solid #4CAF50;">
+                                <h3 style="margin-top: 0;">Message:</h3>
+                                <p style="white-space: pre-wrap;">${message}</p>
+                            </div>
+                            ` : ''}
+                            <p style="margin-top: 20px; font-size: 12px; color: #666;">
+                                Sent from: ${request.headers.get('referer') || 'Direct'}
+                            </p>
+                        </div>
+                    `,
+                    text: `New speaking engagement request:\n\nSpeaker: ${speakerName}\nBooking Type: ${bookingType}\n\nFirst Name: ${firstName}\nLast Name: ${lastName}\nEmail: ${email}${phone ? `\nPhone: ${phone}` : ''}${organization ? `\nOrganization: ${organization}` : ''}\n\n${message ? `Message:\n${message}\n\n` : ''}---\nSent from: ${request.headers.get('referer') || 'Direct'}`,
+                    headers: {
+                        'Reply-To': email
+                    }
+                }
+            })
+        });
+
+        if (!emailResponse.ok) {
+            const errorText = await emailResponse.text();
+            console.error('Mandrill error status:', emailResponse.status);
+            console.error('Mandrill error body:', errorText);
+
+            return new Response(JSON.stringify({
+                success: false,
+                error: 'Failed to send booking request. Please try again or email us directly at contact@bridgebuilders.net',
+                emailSent: false
+            }), {
+                status: 500,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        return new Response(JSON.stringify({
+            success: true,
+            message: 'Booking request sent successfully! We will contact you shortly.'
+        }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+    } catch (error) {
+        console.error('Error sending booking request:', error);
+        return new Response(JSON.stringify({
+            success: false,
+            error: error.message
+        }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// ===== ADD LEAD TO MAILCHIMP API ENDPOINT =====
+async function handleAddMailchimpLead(request, env, corsHeaders) {
+    try {
+        const { name, email, leadTag } = await request.json();
+
+        // Validate required fields
+        if (!name || !email || !leadTag) {
+            return new Response(JSON.stringify({
+                success: false,
+                error: 'Missing required fields'
+            }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // Add to Mailchimp
+        await addLeadToMailchimp(email, name, leadTag, env);
+
+        return new Response(JSON.stringify({
+            success: true,
+            message: 'Lead added to Mailchimp'
+        }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+    } catch (error) {
+        console.error('Error adding lead to Mailchimp:', error);
+        return new Response(JSON.stringify({
+            success: false,
+            error: error.message
+        }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+}
+
 // ===== ENSURE 10% DISCOUNT COUPON EXISTS =====
 async function ensureCoupon(env) {
     const couponId = 'addon_discount_10';
@@ -441,14 +727,44 @@ async function handleStripeWebhook(request, env) {
             // Get customer details
             const customerEmail = session.customer_details?.email;
             const customerName = session.customer_details?.name;
-            const shippingAddress = session.shipping_details?.address;
             const cart = JSON.parse(session.metadata?.cart || '[]');
+
+            // Extract shipping address (same logic as ShipStation)
+            let shippingAddress;
+            if (session.metadata?.shipping_street) {
+                // Address came from cart form
+                const recipientName = session.metadata.gift_recipient_name || session.customer_details?.name;
+                shippingAddress = {
+                    name: recipientName,
+                    street1: session.metadata.shipping_street,
+                    street2: null,
+                    city: session.metadata.shipping_city,
+                    state: session.metadata.shipping_state,
+                    postalCode: session.metadata.shipping_postal_code,
+                    country: session.metadata.shipping_country,
+                    phone: session.customer_details?.phone
+                };
+            } else {
+                // Address came from Stripe checkout form (fallback)
+                const stripeAddress = session.shipping_details?.address;
+                shippingAddress = {
+                    name: stripeAddress?.name || session.customer_details?.name,
+                    street1: stripeAddress?.line1,
+                    street2: stripeAddress?.line2,
+                    city: stripeAddress?.city,
+                    state: stripeAddress?.state,
+                    postalCode: stripeAddress?.postal_code,
+                    country: stripeAddress?.country,
+                    phone: session.customer_details?.phone
+                };
+            }
 
             // 1. Create ShipStation order (for physical products)
             await createShipStationOrder(session, cart, shippingAddress, env);
 
             // 2. Send bonuses via Mailchimp
-            await sendBonusesViaMailchimp(customerEmail, customerName, cart, env);
+            const isGift = session.metadata?.is_gift === 'true';
+            await sendBonusesViaMailchimp(customerEmail, customerName, cart, shippingAddress, isGift, env);
 
             // 3. Track conversion (add to analytics if needed)
             console.log('Order completed:', session.id);
@@ -491,63 +807,100 @@ async function createShipStationOrder(session, cart, shippingAddress, env) {
             name: item.name,
             sku: item.id,
             quantity: item.quantity,
-            unitPrice: item.price
+            unitPrice: item.price,
+            weight: {
+                value: 12, // Estimate 12 ounces per book
+                units: "ounces"
+            }
         }));
 
-    // Use shipping address from metadata if available (from cart), otherwise from shipping_details (Stripe form)
-    let shipToAddress;
-    if (session.metadata?.shipping_street) {
-        // Address came from cart form
-        // Use gift recipient name if this is a gift, otherwise use customer name
-        const recipientName = session.metadata.gift_recipient_name || session.customer_details?.name;
+    const shippingCost = session.metadata?.shipping_cost ? parseFloat(session.metadata.shipping_cost) : 0;
+    const productCost = orderItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+    const shippingMethod = session.metadata?.shipping_method || '';
 
-        shipToAddress = {
-            name: recipientName,
-            street1: session.metadata.shipping_street,
-            street2: null,
-            city: session.metadata.shipping_city,
-            state: session.metadata.shipping_state,
-            postalCode: session.metadata.shipping_postal_code,
-            country: session.metadata.shipping_country,
-            phone: session.customer_details?.phone
-        };
-    } else {
-        // Address came from Stripe checkout form (fallback)
-        shipToAddress = {
-            name: shippingAddress?.name || session.customer_details?.name,
-            street1: shippingAddress?.line1,
-            street2: shippingAddress?.line2,
-            city: shippingAddress?.city,
-            state: shippingAddress?.state,
-            postalCode: shippingAddress?.postal_code,
-            country: shippingAddress?.country,
-            phone: session.customer_details?.phone
-        };
+    // Map shipping method to ShipStation service names for requestedShippingService
+    let requestedService = null;
+    if (shippingMethod) {
+        if (shippingMethod.includes('media_mail') || shippingMethod.includes('Media Mail')) {
+            requestedService = 'USPS Media Mail';
+        } else if (shippingMethod.includes('priority_mail_express') || shippingMethod.includes('Priority Mail Express')) {
+            requestedService = 'USPS Priority Mail Express';
+        } else if (shippingMethod.includes('priority') || shippingMethod.includes('Priority Mail')) {
+            requestedService = 'USPS Priority Mail';
+        } else if (shippingMethod.includes('first_class') || shippingMethod.includes('First Class')) {
+            requestedService = 'USPS First Class Mail';
+        } else if (shippingMethod.includes('ground_advantage') || shippingMethod.includes('Ground Advantage')) {
+            requestedService = 'USPS Ground Advantage';
+        } else if (shippingMethod.includes('parcel_select') || shippingMethod.includes('Parcel Select')) {
+            requestedService = 'USPS Parcel Select Ground';
+        }
     }
 
-    const shippingCost = session.metadata?.shipping_cost ? parseFloat(session.metadata.shipping_cost) : 0;
+    // Calculate ship by date (2 business days from now)
+    const now = new Date();
+    const shipByDate = new Date(now);
+    shipByDate.setDate(shipByDate.getDate() + 2);
+
+    // Format dates for ShipStation (ShipStation expects 7 decimal places: 2015-06-29T08:46:27.0000000)
+    const formatDate = (date) => date.toISOString().split('.')[0] + '.0000000';
 
     const orderData = {
         orderNumber: session.id,
-        orderDate: new Date().toISOString(),
+        orderKey: session.payment_intent || session.id,
+        orderDate: formatDate(now),
+        paymentDate: formatDate(now),
+        shipByDate: formatDate(shipByDate),
         orderStatus: 'awaiting_shipment',
+        paymentMethod: 'Credit Card',
         customerEmail: session.customer_details?.email,
         customerUsername: session.customer_details?.name,
         billTo: {
-            name: session.customer_details?.name,
-            email: session.customer_details?.email
+            name: shippingAddress.name,
+            company: null,
+            street1: shippingAddress.street1,
+            street2: shippingAddress.street2,
+            street3: null,
+            city: shippingAddress.city,
+            state: shippingAddress.state,
+            postalCode: shippingAddress.postalCode,
+            country: shippingAddress.country,
+            phone: shippingAddress.phone,
+            residential: true
         },
-        shipTo: shipToAddress,
+        shipTo: {
+            name: shippingAddress.name,
+            company: null,
+            street1: shippingAddress.street1,
+            street2: shippingAddress.street2,
+            street3: null,
+            city: shippingAddress.city,
+            state: shippingAddress.state,
+            postalCode: shippingAddress.postalCode,
+            country: shippingAddress.country,
+            phone: shippingAddress.phone,
+            residential: true
+        },
         items: orderItems,
+        orderTotal: productCost,
         amountPaid: session.amount_total / 100,
         shippingAmount: shippingCost,
         taxAmount: 0,
-        requestedShippingService: session.metadata?.shipping_method || null
+        customerNotes: `Stripe Payment ID: ${session.payment_intent}\nPaid: ${formatDate(now)}`,
+        internalNotes: `Stripe Checkout Session: ${session.id}\nShip By: ${formatDate(shipByDate)}\nShipping Method: ${shippingMethod}`,
+        requestedShippingService: requestedService,
+        advancedOptions: {
+            storeId: 373617,
+            customField1: `Paid: ${formatDate(now)}`,
+            customField2: `Ship By: ${formatDate(shipByDate)}`,
+            customField3: `Stripe: ${session.payment_intent}`
+        }
     };
+
+    console.log('ShipStation using shippingAddress:', JSON.stringify(shippingAddress));
 
     try {
         const auth = btoa(`${env.SHIPSTATION_API_KEY}:${env.SHIPSTATION_API_SECRET}`);
-        
+
         const response = await fetch('https://ssapi.shipstation.com/orders/createorder', {
             method: 'POST',
             headers: {
@@ -558,7 +911,10 @@ async function createShipStationOrder(session, cart, shippingAddress, env) {
         });
 
         if (!response.ok) {
-            throw new Error(`ShipStation error: ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('ShipStation API error:', response.status, errorText);
+            console.error('Order data sent:', JSON.stringify(orderData, null, 2));
+            throw new Error(`ShipStation error: ${response.statusText} - ${errorText}`);
         }
 
         const result = await response.json();
@@ -573,7 +929,7 @@ async function createShipStationOrder(session, cart, shippingAddress, env) {
 }
 
 // ===== MAILCHIMP INTEGRATION =====
-async function sendBonusesViaMailchimp(email, name, cart, env) {
+async function sendBonusesViaMailchimp(email, name, cart, shippingAddress, isGift, env) {
     // Skip if Mailchimp is not configured
     if (!env.MAILCHIMP_API_KEY || !env.MAILCHIMP_SERVER_PREFIX || !env.MAILCHIMP_LIST_ID) {
         console.log('Mailchimp not configured, skipping');
@@ -581,44 +937,104 @@ async function sendBonusesViaMailchimp(email, name, cart, env) {
     }
 
     try {
-        // Determine which bonuses to send based on products in cart
-        const hasBundleOrUnshakable = cart.some(item =>
-            item.id.includes('TKMYdi0tJ8PihI') || // Bundle English
-            item.id.includes('TKMZ') || // Bundle Spanish
-            item.id.includes('TKMQ') || // Unshakable PB English
-            item.id.includes('TKMS')    // Unshakable PB Spanish
-        );
+        // Add subscriber to Mailchimp (using PUT for create or update)
+        // Generate subscriber hash (MD5 of lowercase email)
+        const subscriberHash = generateMD5Hash(email.toLowerCase());
 
-        const hasFireOrBundle = cart.some(item =>
-            item.id.includes('TKMY') || // Bundle
-            item.id.includes('TKMZ') || // Bundle Spanish
-            item.id.includes('TKMU')    // Fire books
-        );
+        // If this is a gift, don't include shipping address (it's for the recipient, not the buyer)
+        const mergeFields = {
+            FNAME: name?.split(' ')[0] || '',
+            LNAME: name?.split(' ').slice(1).join(' ') || ''
+        };
 
-        // Add subscriber to Mailchimp
+        if (!isGift) {
+            // Only add address fields if this is NOT a gift
+            mergeFields.ADDRESS = {
+                addr1: shippingAddress?.street1 || '',
+                addr2: shippingAddress?.street2 || '',
+                city: shippingAddress?.city || '',
+                state: shippingAddress?.state || '',
+                zip: shippingAddress?.postalCode || '',
+                country: shippingAddress?.country || ''
+            };
+            mergeFields.PHONE = shippingAddress?.phone || '';
+            mergeFields.ZIPCODE = shippingAddress?.postalCode || '';
+            mergeFields.STATE = shippingAddress?.state || '';
+        }
+
         const subscriberData = {
             email_address: email,
-            status: 'subscribed',
-            merge_fields: {
-                FNAME: name?.split(' ')[0] || '',
-                LNAME: name?.split(' ').slice(1).join(' ') || ''
-            },
-            tags: []
+            status_if_new: 'subscribed',
+            merge_fields: mergeFields
         };
 
         // Add tags based on purchase
-        if (hasBundleOrUnshakable) {
-            subscriberData.tags.push('30-Day-Unshakable-Guide');
+        const tags = [];
+
+        // Check which books were purchased
+        const hasUnshakable = cart.some(item =>
+            item.id.includes('TKMYdi0tJ8PihI') || // Bundle English
+            item.id.includes('TKMZ') || // Bundle Spanish
+            item.id.includes('TKMQ') || // Unshakable PB English
+            item.id.includes('TKMS') || // Unshakable PB Spanish
+            item.id.includes('TKMT') || // Unshakable Ebook English
+            item.id.includes('TKnX')    // Ebook Bundle
+        );
+
+        const hasFire = cart.some(item =>
+            item.id.includes('TKMYdi0tJ8PihI') || // Bundle English
+            item.id.includes('TKMZ') || // Bundle Spanish
+            item.id.includes('TKMU') || // Fire books (all variants)
+            item.id.includes('TKnX')    // Ebook Bundle
+        );
+
+        const hasPrayerSaturatedChurch = cart.some(item => item.id.includes('rec_prayer_saturated_church'));
+        const hasPrayerSaturatedFamily = cart.some(item => item.id.includes('rec_prayer_saturated_family'));
+        const hasPrayerSaturatedKids = cart.some(item =>
+            item.id.includes('rec_prayer_saturated_kids')
+        );
+        const hasReclaimGeneration = cart.some(item => item.id.includes('rec_reclaim_generation'));
+        const hasTwoNations = cart.some(item => item.id.includes('rec_two_nations'));
+
+        // Journey tags (only if this is NOT a gift - buyer is participating, not recipient)
+        if (!isGift) {
+            if (hasUnshakable) {
+                tags.push('UNSHAKABLE_25-Journey-Active');
+            }
+            if (hasFire) {
+                tags.push('FIREONTHEFAMILY_25-Journey-Active');
+            }
         }
-        if (hasFireOrBundle) {
-            subscriberData.tags.push('10-Day-Prayer-Guide');
+
+        // Category tags for each book purchased
+        if (hasUnshakable) {
+            tags.push('CATEGORY_Purchased-Book-Unshakable');
         }
-        subscriberData.tags.push('Purchased-Customer');
+        if (hasFire) {
+            tags.push('CATEGORY_Purchased-Book-Fire_on_the_Family_Altar');
+        }
+        if (hasPrayerSaturatedChurch) {
+            tags.push('CATEGORY_Purchased-Book-Prayer_Saturated_Church');
+        }
+        if (hasPrayerSaturatedFamily) {
+            tags.push('CATEGORY_Purchased-Book-Prayer_Saturated_Family');
+        }
+        if (hasPrayerSaturatedKids) {
+            tags.push('CATEGORY_Purchased-Book-Prayer_Saturated_Kids');
+        }
+        if (hasReclaimGeneration) {
+            tags.push('CATEGORY_Purchased-Book-Reclaim_a_Generation');
+        }
+        if (hasTwoNations) {
+            tags.push('CATEGORY_Purchased-Book-Two_Nations_One_Prayer');
+        }
+
+        console.log('Sending to Mailchimp:', JSON.stringify(subscriberData, null, 2));
 
         const response = await fetch(
-            `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members`,
+            `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members/${subscriberHash}`,
             {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${env.MAILCHIMP_API_KEY}`,
                     'Content-Type': 'application/json'
@@ -627,11 +1043,40 @@ async function sendBonusesViaMailchimp(email, name, cart, env) {
             }
         );
 
-        if (!response.ok && response.status !== 400) { // 400 means already exists
-            throw new Error(`Mailchimp error: ${response.statusText}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Mailchimp API error:', response.status, errorText);
+            console.error('Mailchimp request URL:', `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members/${subscriberHash}`);
+            console.error('Subscriber data sent:', JSON.stringify(subscriberData, null, 2));
+            throw new Error(`Mailchimp error: ${response.statusText} - ${errorText}`);
         }
 
-        console.log('Mailchimp automation triggered for:', email);
+        console.log('Mailchimp subscriber added/updated:', email);
+        console.log('Merge fields sent:', JSON.stringify(subscriberData.merge_fields, null, 2));
+
+        // Add tags to subscriber
+        if (tags.length > 0) {
+            const tagResponse = await fetch(
+                `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members/${subscriberHash}/tags`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${env.MAILCHIMP_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tags: tags.map(name => ({ name, status: 'active' }))
+                    })
+                }
+            );
+
+            if (!tagResponse.ok) {
+                const tagErrorText = await tagResponse.text();
+                console.error('Mailchimp tag error:', tagResponse.status, tagErrorText);
+            } else {
+                console.log('Mailchimp tags added:', tags);
+            }
+        }
 
         // Trigger automation (your Mailchimp automation should send the bonus guides)
         // This is done via tags - setup your automation in Mailchimp to trigger on these tags
@@ -642,7 +1087,228 @@ async function sendBonusesViaMailchimp(email, name, cart, env) {
     }
 }
 
+// ===== ADD LEAD TO MAILCHIMP =====
+async function addLeadToMailchimp(email, name, leadTag, env) {
+    // Skip if Mailchimp is not configured
+    if (!env.MAILCHIMP_API_KEY || !env.MAILCHIMP_SERVER_PREFIX || !env.MAILCHIMP_LIST_ID) {
+        console.log('Mailchimp not configured, skipping lead addition');
+        return;
+    }
+
+    try {
+        const subscriberHash = generateMD5Hash(email.toLowerCase());
+
+        const mergeFields = {
+            FNAME: name?.split(' ')[0] || '',
+            LNAME: name?.split(' ').slice(1).join(' ') || ''
+        };
+
+        const subscriberData = {
+            email_address: email,
+            status_if_new: 'subscribed',
+            merge_fields: mergeFields
+        };
+
+        console.log('Adding lead to Mailchimp:', JSON.stringify(subscriberData, null, 2));
+
+        // Add/update subscriber
+        const response = await fetch(
+            `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members/${subscriberHash}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${env.MAILCHIMP_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(subscriberData)
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Mailchimp API error:', response.status, errorText);
+            throw new Error(`Mailchimp error: ${response.statusText}`);
+        }
+
+        console.log('Mailchimp lead added/updated:', email);
+
+        // Add tag if provided
+        if (leadTag) {
+            const tagResponse = await fetch(
+                `https://${env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members/${subscriberHash}/tags`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${env.MAILCHIMP_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tags: [{ name: leadTag, status: 'active' }]
+                    })
+                }
+            );
+
+            if (!tagResponse.ok) {
+                const tagErrorText = await tagResponse.text();
+                console.error('Mailchimp tag error:', tagResponse.status, tagErrorText);
+            } else {
+                console.log('Mailchimp tag added:', leadTag);
+            }
+        }
+
+    } catch (error) {
+        console.error('Mailchimp lead error:', error);
+        // Don't fail if Mailchimp fails
+    }
+}
+
 // ===== HELPER FUNCTIONS =====
+
+// Generate MD5 hash for Mailchimp subscriber hash
+function generateMD5Hash(text) {
+    // Simple MD5 implementation for Cloudflare Workers
+    // Based on the RSA Data Security, Inc. MD5 Message-Digest Algorithm
+    function md5cycle(x, k) {
+        let a = x[0], b = x[1], c = x[2], d = x[3];
+        a = ff(a, b, c, d, k[0], 7, -680876936);
+        d = ff(d, a, b, c, k[1], 12, -389564586);
+        c = ff(c, d, a, b, k[2], 17, 606105819);
+        b = ff(b, c, d, a, k[3], 22, -1044525330);
+        a = ff(a, b, c, d, k[4], 7, -176418897);
+        d = ff(d, a, b, c, k[5], 12, 1200080426);
+        c = ff(c, d, a, b, k[6], 17, -1473231341);
+        b = ff(b, c, d, a, k[7], 22, -45705983);
+        a = ff(a, b, c, d, k[8], 7, 1770035416);
+        d = ff(d, a, b, c, k[9], 12, -1958414417);
+        c = ff(c, d, a, b, k[10], 17, -42063);
+        b = ff(b, c, d, a, k[11], 22, -1990404162);
+        a = ff(a, b, c, d, k[12], 7, 1804603682);
+        d = ff(d, a, b, c, k[13], 12, -40341101);
+        c = ff(c, d, a, b, k[14], 17, -1502002290);
+        b = ff(b, c, d, a, k[15], 22, 1236535329);
+        a = gg(a, b, c, d, k[1], 5, -165796510);
+        d = gg(d, a, b, c, k[6], 9, -1069501632);
+        c = gg(c, d, a, b, k[11], 14, 643717713);
+        b = gg(b, c, d, a, k[0], 20, -373897302);
+        a = gg(a, b, c, d, k[5], 5, -701558691);
+        d = gg(d, a, b, c, k[10], 9, 38016083);
+        c = gg(c, d, a, b, k[15], 14, -660478335);
+        b = gg(b, c, d, a, k[4], 20, -405537848);
+        a = gg(a, b, c, d, k[9], 5, 568446438);
+        d = gg(d, a, b, c, k[14], 9, -1019803690);
+        c = gg(c, d, a, b, k[3], 14, -187363961);
+        b = gg(b, c, d, a, k[8], 20, 1163531501);
+        a = gg(a, b, c, d, k[13], 5, -1444681467);
+        d = gg(d, a, b, c, k[2], 9, -51403784);
+        c = gg(c, d, a, b, k[7], 14, 1735328473);
+        b = gg(b, c, d, a, k[12], 20, -1926607734);
+        a = hh(a, b, c, d, k[5], 4, -378558);
+        d = hh(d, a, b, c, k[8], 11, -2022574463);
+        c = hh(c, d, a, b, k[11], 16, 1839030562);
+        b = hh(b, c, d, a, k[14], 23, -35309556);
+        a = hh(a, b, c, d, k[1], 4, -1530992060);
+        d = hh(d, a, b, c, k[4], 11, 1272893353);
+        c = hh(c, d, a, b, k[7], 16, -155497632);
+        b = hh(b, c, d, a, k[10], 23, -1094730640);
+        a = hh(a, b, c, d, k[13], 4, 681279174);
+        d = hh(d, a, b, c, k[0], 11, -358537222);
+        c = hh(c, d, a, b, k[3], 16, -722521979);
+        b = hh(b, c, d, a, k[6], 23, 76029189);
+        a = hh(a, b, c, d, k[9], 4, -640364487);
+        d = hh(d, a, b, c, k[12], 11, -421815835);
+        c = hh(c, d, a, b, k[15], 16, 530742520);
+        b = hh(b, c, d, a, k[2], 23, -995338651);
+        a = ii(a, b, c, d, k[0], 6, -198630844);
+        d = ii(d, a, b, c, k[7], 10, 1126891415);
+        c = ii(c, d, a, b, k[14], 15, -1416354905);
+        b = ii(b, c, d, a, k[5], 21, -57434055);
+        a = ii(a, b, c, d, k[12], 6, 1700485571);
+        d = ii(d, a, b, c, k[3], 10, -1894986606);
+        c = ii(c, d, a, b, k[10], 15, -1051523);
+        b = ii(b, c, d, a, k[1], 21, -2054922799);
+        a = ii(a, b, c, d, k[8], 6, 1873313359);
+        d = ii(d, a, b, c, k[15], 10, -30611744);
+        c = ii(c, d, a, b, k[6], 15, -1560198380);
+        b = ii(b, c, d, a, k[13], 21, 1309151649);
+        a = ii(a, b, c, d, k[4], 6, -145523070);
+        d = ii(d, a, b, c, k[11], 10, -1120210379);
+        c = ii(c, d, a, b, k[2], 15, 718787259);
+        b = ii(b, c, d, a, k[9], 21, -343485551);
+        x[0] = add32(a, x[0]);
+        x[1] = add32(b, x[1]);
+        x[2] = add32(c, x[2]);
+        x[3] = add32(d, x[3]);
+    }
+
+    function cmn(q, a, b, x, s, t) {
+        a = add32(add32(a, q), add32(x, t));
+        return add32((a << s) | (a >>> (32 - s)), b);
+    }
+
+    function ff(a, b, c, d, x, s, t) {
+        return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+    }
+
+    function gg(a, b, c, d, x, s, t) {
+        return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+    }
+
+    function hh(a, b, c, d, x, s, t) {
+        return cmn(b ^ c ^ d, a, b, x, s, t);
+    }
+
+    function ii(a, b, c, d, x, s, t) {
+        return cmn(c ^ (b | (~d)), a, b, x, s, t);
+    }
+
+    function add32(a, b) {
+        return (a + b) & 0xFFFFFFFF;
+    }
+
+    function md5blk(s) {
+        const md5blks = [];
+        for (let i = 0; i < 64; i += 4) {
+            md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+        }
+        return md5blks;
+    }
+
+    function rhex(n) {
+        let s = '', j = 0;
+        for (; j < 4; j++)
+            s += '0123456789abcdef'.charAt((n >> (j * 8 + 4)) & 0x0F) + '0123456789abcdef'.charAt((n >> (j * 8)) & 0x0F);
+        return s;
+    }
+
+    function md51(s) {
+        const n = s.length;
+        const state = [1732584193, -271733879, -1732584194, 271733878];
+        let i;
+        for (i = 64; i <= s.length; i += 64) {
+            md5cycle(state, md5blk(s.substring(i - 64, i)));
+        }
+        s = s.substring(i - 64);
+        const tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        for (i = 0; i < s.length; i++)
+            tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
+        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+        if (i > 55) {
+            md5cycle(state, tail);
+            for (i = 0; i < 16; i++) tail[i] = 0;
+        }
+        tail[14] = n * 8;
+        md5cycle(state, tail);
+        return state;
+    }
+
+    const hex_chr = '0123456789abcdef'.split('');
+    const state = md51(text);
+    let ret = '';
+    for (let i = 0; i < 4; i++) {
+        ret += rhex(state[i]);
+    }
+    return ret;
+}
 
 // Generate order confirmation email content
 function generateOrderConfirmation(session, cart) {
