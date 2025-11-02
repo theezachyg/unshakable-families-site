@@ -22,14 +22,12 @@
     <!-- End Google Tag Manager -->
 
     <!-- Google Ads Global Site Tag (gtag.js) -->
-    <!-- SETUP REQUIRED: Replace AW-XXXXXXXXXX with your actual Google Ads Conversion ID -->
-    <!-- Find this at: Google Ads > Tools > Conversions > Set up conversion tracking -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17686320080"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'AW-XXXXXXXXXX'); // Replace with your Google Ads Conversion ID
+        gtag('config', 'AW-17686320080');
     </script>
     <!-- End Google Ads Global Site Tag -->
 
@@ -623,11 +621,11 @@
             });
 
             // Google Ads Conversion Tracking
-            // SETUP REQUIRED: Replace with your actual conversion label from Google Ads
+            // SETUP REQUIRED: Replace CONVERSION_LABEL with your actual label from Google Ads
             // Find this at: Google Ads > Tools > Conversions > Purchase conversion > Tag setup
             if (typeof gtag === 'function') {
                 gtag('event', 'conversion', {
-                    'send_to': 'AW-XXXXXXXXXX/YYYYYYYYYYYYYY', // Replace with AW-[Conversion ID]/[Conversion Label]
+                    'send_to': 'AW-17686320080/CONVERSION_LABEL', // Replace CONVERSION_LABEL with your actual label
                     'value': total,
                     'currency': 'USD',
                     'transaction_id': sessionId || 'unknown'
