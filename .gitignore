@@ -43,3 +43,9 @@ yarn-error.log*
 # Large video files (upload directly to Cloudflare)
 Assets/Videos/*.mp4
 Assets/*.mp4
+
+# Google Ads API credentials
+google-ads.yaml
+google-ads-data.json
+*.yaml
+
