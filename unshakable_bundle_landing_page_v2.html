@@ -1907,6 +1907,9 @@
             }
 
             // Track add_to_cart event for GA4
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "product-added"]);
+
             window.dataLayer = window.dataLayer || [];
             if (format === 'ebook') {
                 // Track both ebook items

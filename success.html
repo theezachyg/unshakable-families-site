@@ -575,6 +575,9 @@
             const discount = hasRecommendation ? subtotal * 0.10 : 0;
             const total = subtotal - discount;
 
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "purchase-completed"]);
+
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 event: 'purchase',

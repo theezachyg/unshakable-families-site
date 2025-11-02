@@ -1121,6 +1121,25 @@
         }
 
         function removeItem(index) {
+            const removedItem = cart[index];
+            const product = PRODUCT_DETAILS[removedItem.id];
+
+            // Track removal
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'remove_from_cart',
+                ecommerce: {
+                    currency: 'USD',
+                    value: product.price * removedItem.quantity,
+                    items: [{
+                        item_id: removedItem.id,
+                        item_name: product.name,
+                        price: product.price,
+                        quantity: removedItem.quantity
+                    }]
+                }
+            });
+
             cart.splice(index, 1);
             manageFreeBonuses();
             localStorage.setItem('unshakableCart', JSON.stringify(cart));
@@ -1554,6 +1573,16 @@
 
             } catch (error) {
                 console.error('Error getting rates:', error);
+
+                // Track error
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'shipping_error',
+                    error_type: 'get_rates_failure',
+                    error_message: error.message || 'Unknown error',
+                    page_location: window.location.href
+                });
+
                 alert('Error getting shipping rates: ' + error.message);
 
                 // Reset button
@@ -1623,6 +1652,32 @@
             // Update total
             updateTotalWithShipping();
 
+            // Track shipping selection
+            const subtotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return sum + (product.price * item.quantity);
+            }, 0);
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'add_shipping_info',
+                ecommerce: {
+                    currency: 'USD',
+                    value: subtotal,
+                    shipping_tier: selectedShippingRate.serviceName || 'Standard',
+                    items: cart.map(item => {
+                        const product = PRODUCT_DETAILS[item.id];
+                        return {
+                            item_id: item.id,
+                            item_name: product.name,
+                            item_category: product.type === 'ebook' ? 'Ebook' : (product.type === 'bundle' ? 'Bundle' : 'Paperback'),
+                            price: product.price,
+                            quantity: item.quantity
+                        };
+                    })
+                }
+            });
+
             console.log('Selected shipping rate:', selectedShippingRate);
         }
 
@@ -1645,6 +1700,40 @@
 
         async function proceedToCheckout() {
             if (cart.length === 0) return;
+
+            // Track begin_checkout event with GA4 e-commerce
+            const subtotal = cart.reduce((sum, item) => {
+                const product = PRODUCT_DETAILS[item.id];
+                return sum + (product.price * item.quantity);
+            }, 0);
+
+            const hasRecommendation = cart.some(item => PRODUCT_DETAILS[item.id].isRecommendation);
+            const discount = hasRecommendation ? subtotal * 0.10 : 0;
+            const cartTotal = subtotal - discount;
+
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "checkout-started"]);
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'begin_checkout',
+                ecommerce: {
+                    currency: 'USD',
+                    value: cartTotal,
+                    coupon: hasRecommendation ? 'RECOMMENDATION_10' : '',
+                    items: cart.map(item => {
+                        const product = PRODUCT_DETAILS[item.id];
+                        return {
+                            item_id: item.id,
+                            item_name: product.name,
+                            item_category: product.type === 'ebook' ? 'Ebook' : (product.type === 'bundle' ? 'Bundle' : 'Paperback'),
+                            item_category2: product.language === 'english' ? 'English' : 'Spanish',
+                            price: product.price,
+                            quantity: item.quantity
+                        };
+                    })
+                }
+            });
 
             // Show loading
             document.getElementById('loadingSpinner').style.display = 'block';
@@ -1755,12 +1844,32 @@
 
                 if (error) {
                     console.error('Stripe redirect error:', error);
+
+                    // Track error
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        event: 'checkout_error',
+                        error_type: 'stripe_redirect',
+                        error_message: error.message || 'Unknown Stripe error',
+                        page_location: window.location.href
+                    });
+
                     alert('There was an error processing your checkout. Please try again.');
                     document.getElementById('loadingSpinner').style.display = 'none';
                     document.getElementById('checkoutBtn').disabled = false;
                 }
             } catch (error) {
                 console.error('Checkout error details:', error);
+
+                // Track error
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'checkout_error',
+                    error_type: 'api_failure',
+                    error_message: error.message || 'Unknown error',
+                    page_location: window.location.href
+                });
+
                 alert(`There was an error connecting to checkout: ${error.message}\n\nPlease check the browser console for details.`);
                 document.getElementById('loadingSpinner').style.display = 'none';
                 document.getElementById('checkoutBtn').disabled = false;
@@ -1770,5 +1879,42 @@
         // Initialize
         renderCart();
     </script>
+
+    <!-- View Cart Tracking -->
+    <script>
+        // Track cart view on page load
+        window.addEventListener('load', function() {
+            const cart = JSON.parse(localStorage.getItem('unshakableCart')) || [];
+
+            if (cart.length > 0) {
+                const total = cart.reduce((sum, item) => {
+                    const product = PRODUCT_DETAILS[item.id];
+                    return sum + (product.price * item.quantity);
+                }, 0);
+
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'view_cart',
+                    ecommerce: {
+                        currency: 'USD',
+                        value: total,
+                        items: cart.map(item => {
+                            const product = PRODUCT_DETAILS[item.id];
+                            return {
+                                item_id: item.id,
+                                item_name: product.name,
+                                item_category: product.type === 'ebook' ? 'Ebook' : (product.type === 'bundle' ? 'Bundle' : 'Paperback'),
+                                price: product.price,
+                                quantity: item.quantity
+                            };
+                        })
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Universal GTM Tracking Library -->
+    <script src="tracking.js"></script>
 </body>
 </html>

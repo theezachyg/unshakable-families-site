@@ -1564,6 +1564,9 @@
             }
 
             // Track add_to_cart event with GA4 e-commerce
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "product-added"]);
+
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 event: 'add_to_cart',
@@ -1677,6 +1680,9 @@
             const message = formData.get('message');
 
             // Track lead generation
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "lead-contact"]);
+
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 event: 'generate_lead',
@@ -1753,6 +1759,9 @@
             const message = formData.get('message');
 
             // Track booking request
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "lead-booking"]);
+
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 event: 'generate_lead',
@@ -1845,6 +1854,9 @@
             const postal = formData.get('postal');
 
             // Track lead generation for Google Ads
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "lead-chapter"]);
+
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 event: 'generate_lead',

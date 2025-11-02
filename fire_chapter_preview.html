@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fire on the Family Altar - Chapter 1 Preview</title>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PLXHCM4T');</script>
+    <!-- End Google Tag Manager -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
@@ -452,6 +461,10 @@
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLXHCM4T"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!-- Header -->
     <div class="preview-header">
         <div class="header-content">
@@ -1192,5 +1205,53 @@
             });
         }
     </script>
+
+    <!-- Chapter-Specific GTM Tracking -->
+    <script>
+        // Track chapter view event
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'view_chapter',
+            chapter_number: 1,
+            book_name: 'Fire on the Family Altar',
+            page_location: window.location.href
+        });
+
+        // Track page turns in flipbook
+        $(document).ready(function() {
+            $('#flipbook').bind('turned', function(event, page, view) {
+                window.dataLayer.push({
+                    event: 'chapter_page_turn',
+                    page_number: page,
+                    book_name: 'Fire on the Family Altar',
+                    page_location: window.location.href
+                });
+            });
+        });
+
+        // Track lead form if user came from landing page
+        const chapterLead = localStorage.getItem('chapterLead');
+        if (chapterLead) {
+            const leadData = JSON.parse(chapterLead);
+            window._mfq = window._mfq || [];
+            window._mfq.push(["tag", "lead-chapter"]);
+
+            window.dataLayer.push({
+                event: 'generate_lead',
+                lead_type: 'chapter_preview',
+                book_name: 'Fire on the Family Altar',
+                lead_source: 'chapter_modal_form',
+                user_data: {
+                    first_name: leadData.firstName,
+                    last_name: leadData.lastName,
+                    email: leadData.email,
+                    country: leadData.country
+                }
+            });
+        }
+    </script>
+
+    <!-- Universal GTM Tracking Library -->
+    <script src="tracking.js"></script>
 </body>
 </html>
