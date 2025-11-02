@@ -1,0 +1,24 @@
+# robots.txt for Unshakable Families
+# Generated 2025-01-02
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://unshakablefamily.bridgebuilders.net/sitemap.xml
+
+# Block old/deprecated pages from indexing (if any exist)
+Disallow: /Old Pages/
+Disallow: /old/
+Disallow: /test/
+Disallow: /archive/
+
+# Allow crawling of CSS, JS, and images for better rendering
+Allow: /Assets/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
